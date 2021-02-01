@@ -2,7 +2,7 @@ spring:
   jpa:
     database: mysql
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
     generate-ddl: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
