@@ -19,10 +19,10 @@ public class AccommodationService {
 
         return accommodationRepository.findByCityContaining(searchKeyword, pageable);
     }
-    
+
     public Page<Accommodation> findByCityContainingOrGuContaining(String searchKeyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
 
-        return accommodationRepository.findByCityContainingOrGuContaining(searchKeyword, pageable);
+        return accommodationRepository.findByCityContainingOrGuContaining(searchKeyword, searchKeyword, pageable);
     }
 }
