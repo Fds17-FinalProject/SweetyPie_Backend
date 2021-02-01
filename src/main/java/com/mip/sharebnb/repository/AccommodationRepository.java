@@ -8,4 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface AccommodationRepository extends CrudRepository<Accommodation, Long> {
 
     Page<Accommodation> findByCityContaining(String searchKeyword, Pageable pageable);
+
+    Page<Accommodation> findByCityContainingOrGuContaining(String searchKeyword, Pageable pageable);
 }
