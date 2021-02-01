@@ -33,9 +33,8 @@ class ReservationRepositoryTest {
     @Test
     public void getReservationByMemberId(){
 
-        setReservations();
         List<Reservation> reservationByMember = reservationRepository.findReservationByMemberId(1L);
-        System.out.println(reservationByMember.get(0).getCheckInDate());
+        System.out.println(reservationByMember.get(0));
 
         assertThat(reservationByMember.size()).isEqualTo(2);
         assertThat(reservationByMember.get(0).getTotalPrice()).isEqualTo(20000);
