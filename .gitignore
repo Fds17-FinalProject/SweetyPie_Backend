@@ -201,3 +201,4 @@ Temporary Items
 
 ### datasource
 /src/main/resources/datasource.yml
+/src/main/resources/application.yml
