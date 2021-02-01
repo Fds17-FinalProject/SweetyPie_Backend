@@ -1,6 +1,3 @@
-logging-module:
-  version: 0.0.8
-
 spring:
   jpa:
     database: mysql
