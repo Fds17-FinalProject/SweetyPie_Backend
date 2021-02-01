@@ -32,11 +32,15 @@ public class AccommodationController {
         return (List<Accommodation>) accommodationRepository.findAll();
     }
 
-    @GetMapping("/accommodations/search")
-    public Page<Accommodation> searchAccommodations(@RequestParam String searchKeyword, @RequestParam int page) {
+    @GetMapping("/accommodations/city/{city}")
+    public Page<Accommodation> getAccommodationsByCity(@PathVariable String city, @RequestParam int page) {
 
-        return accommodationService.findByCityContaining(searchKeyword, page);
+        return accommodationService.findByCityContaining(city, page);
     }
 
+    @GetMapping("/accommodations/search")
+    public Page<Accommodation> getAccommodationsByAddress(@RequestParam String address, @RequestParam int page) {
 
+        return accommodationService.findByCityContainingOrGuContaining(address, page);
+    }
 }
