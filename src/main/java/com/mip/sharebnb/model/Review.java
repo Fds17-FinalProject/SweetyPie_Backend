@@ -3,6 +3,7 @@ package com.mip.sharebnb.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
@@ -32,10 +33,12 @@ public class Review {
     @CreationTimestamp
     private LocalDate createdDate;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
+    @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;

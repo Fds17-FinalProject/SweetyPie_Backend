@@ -14,10 +14,6 @@ configurations {
         extendsFrom annotationProcessor
     }
 }
-apply plugin: 'war'
-war {
-    baseName = 'test-sharebnb'
-}
 
 repositories {
     mavenCentral()
