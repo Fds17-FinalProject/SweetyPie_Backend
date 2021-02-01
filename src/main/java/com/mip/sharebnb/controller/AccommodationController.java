@@ -22,7 +22,7 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations")
-    public List<Accommodation> getAll() {
+    public List<Accommodation> getAllAccommodations() {
 
         return (List<Accommodation>) accommodationRepository.findAll();
     }
