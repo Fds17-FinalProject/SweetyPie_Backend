@@ -1,7 +1,9 @@
 package com.mip.sharebnb.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +20,7 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
-//@Where(clause = "isDeleted = false")
+@Where(clause = "isDeleted = false")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -47,6 +49,7 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Review> reviews;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
     private List<Reservation> reservations;
 
