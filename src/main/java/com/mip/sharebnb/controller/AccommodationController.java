@@ -2,7 +2,9 @@ package com.mip.sharebnb.controller;
 
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.service.AccommodationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +18,8 @@ public class AccommodationController {
 
     private final AccommodationRepository accommodationRepository;
 
+    private final AccommodationService accommodationService;
+
     @GetMapping("/accommodation/{id}")
     public Accommodation getAccommodation(@PathVariable Long id) {
 
@@ -28,9 +32,11 @@ public class AccommodationController {
         return (List<Accommodation>) accommodationRepository.findAll();
     }
 
-    @GetMapping("/accommodations")
-    public List<Accommodation> searchAccommodations(@RequestParam String searchKeyword) {
+    @GetMapping("/accommodations/search")
+    public Page<Accommodation> searchAccommodations(@RequestParam String searchKeyword, @RequestParam int page) {
 
-        return null;
+        return accommodationService.findByCityContaining(searchKeyword, page);
     }
+
+
 }
