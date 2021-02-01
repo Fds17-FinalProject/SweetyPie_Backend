@@ -1,5 +1,6 @@
 package com.mip.sharebnb.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Where;
@@ -44,11 +45,13 @@ public class Reservation {
 
     private String reservationCode; // 우리가 만들어 줘야 함.
 
+    @JsonBackReference
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
+    @JsonBackReference
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "ACCOMMODATION_ID")
