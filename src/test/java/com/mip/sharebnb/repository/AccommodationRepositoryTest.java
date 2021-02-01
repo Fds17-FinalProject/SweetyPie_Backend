@@ -8,8 +8,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(properties = "spring.config.location="
         + "classpath:application.yml,"
@@ -25,7 +26,6 @@ class AccommodationRepositoryTest {
         givenAccommodation();
 
         Pageable pageable = PageRequest.of(0, 1);
-
         Accommodation accommodation = accommodationRepository.findByCityContaining("서울", pageable).toList().get(0);
 
         assertThat(accommodation.getCity()).isEqualTo("서울특별시");
@@ -36,6 +36,16 @@ class AccommodationRepositoryTest {
     @DisplayName("도시 or 구로 검색")
     @Test
     void findByCityContainingOrGuContaining() {
+
+        givenAccommodation();
+
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Accommodation> accommodations = accommodationRepository.findByCityContainingOrGuContaining("서울", "서울", pageable).toList();
+
+        assertThat(accommodations.size()).isEqualTo(1);
+        assertThat(accommodations.get(0).getCity()).isEqualTo("서울특별시");
+        assertThat(accommodations.get(0).getGu()).isEqualTo("마포구");
+        assertThat(accommodations.get(0).getLocationDesc()).isEqualTo("마포역 1번 출구 앞");
     }
 
     private void givenAccommodation() {
