@@ -96,4 +96,8 @@ public class Accommodation {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOMMODATION_ID")
     private List<AccommodationPicture> accommodationPictures;
+
+    public static Accommodation emptyObject() {
+        return new Accommodation();
+    }
 }
