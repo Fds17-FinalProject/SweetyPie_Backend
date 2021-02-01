@@ -20,37 +20,31 @@ import java.util.List;
 @AllArgsConstructor
 public class Accommodation {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ACCOMMODATION_ID")
     private Long id;
 
-    @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
     private String gu;
 
-    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private int bathroomNum;
+    private Integer bathroomNum;
 
-    @Column(nullable = false)
-    private int bedroomNum;
+    private Integer bedroomNum;
 
-    @Column(nullable = false)
-    private int price;
+    private Integer bedNum;
 
-    @Column(nullable = false)
-    private int capacity;
+    private Integer price;
 
-    @Column(nullable = false)
+    private Integer capacity;
+
     private String contact;
 
-    private float latitude;
+    private String latitude;
 
-    private float longitude;
+    private String longitude;
 
     @Column(columnDefinition = "TEXT")
     private String locationDesc;
@@ -64,28 +58,27 @@ public class Accommodation {
     @Column(columnDefinition = "TEXT")
     private String hostDesc;
 
-    private float rating;
+    private String rating;
 
-    private int reviewNum;
+    private Integer reviewNum;
 
-    @Column(nullable = false)
     private String accommodationType;
 
-    @Column(nullable = false)
     private String buildingType;
 
     private String hostName;
 
-    private float hostRating;
+    private Integer hostReviewNum;
 
-    private int hostReviewNum;
-
+//    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
     private List<Reservation> reservations;
 
+//    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
     private List<Review> reviews;
 
+//    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
     private List<Bookmark> bookmarks;
 
