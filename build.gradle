@@ -6,13 +6,17 @@ plugins {
 }
 
 group = 'com.mip'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+}
+apply plugin: 'war'
+war {
+    baseName = 'test-sharebnb'
 }
 
 repositories {
@@ -31,7 +35,6 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compile "com.github.ulisesbocchio:jasypt-spring-boot-starter:1.17"
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
-    providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 }
 
 test {
