@@ -200,4 +200,5 @@ Temporary Items
 .apdisk
 
 ### datasource
+/src/main/resources/application.yml
 #/src/main/resources/datasource.yml
