@@ -1,5 +1,6 @@
 package com.mip.sharebnb.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -70,15 +71,15 @@ public class Accommodation {
 
     private Integer hostReviewNum;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
     private List<Reservation> reservations;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
     private List<Review> reviews;
 
-//    @JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
     private List<Bookmark> bookmarks;
 
