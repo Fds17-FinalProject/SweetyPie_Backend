@@ -42,6 +42,15 @@ class ReservationServiceTest {
         assertThat(reservations.get(0).getCheckInDate()).isEqualTo(checkInDate);
     }
 
+    @Test
+    void getReservationByMemberIdEmpty(){
+        when(reservationRepository.findReservationByMemberId(1L)).thenReturn(new ArrayList<>());
+
+        List<Reservation> reservations = reservationRepository.findReservationByMemberId(1L);
+
+        assertThat(reservations.isEmpty()).isTrue();
+    }
+
     private List<Reservation> mockReservation(){
         List<Reservation> reservations = new ArrayList<>();
 
