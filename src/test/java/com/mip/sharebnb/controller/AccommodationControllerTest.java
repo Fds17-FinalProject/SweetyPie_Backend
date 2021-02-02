@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,7 +39,10 @@ class AccommodationControllerTest {
     }
 
     @Test
-    void getAllAccommodations() {
+    void getAllAccommodations() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(200)));
     }
 
     @Test
