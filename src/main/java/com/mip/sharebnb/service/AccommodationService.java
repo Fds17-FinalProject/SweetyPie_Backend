@@ -2,7 +2,7 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
-import com.mip.sharebnb.repository.querydsl.QAccommodationRepository;
+import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccommodationService {
 
-    private final QAccommodationRepository qAccommodationRepository;
+    private final DynamicAccommodationRepository dynamicAccommodationRepository;
     private final AccommodationRepository accommodationRepository;
 
     public Page<Accommodation> findByCityContaining(String searchKeyword, int page) {
@@ -35,6 +35,6 @@ public class AccommodationService {
                                                               LocalDate checkIn, LocalDate checkout,
                                                               int page) {
 
-        return qAccommodationRepository.findAccommodationsByCheckInAndCheckout(checkIn, checkout, page);
+        return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, page);
     }
 }
