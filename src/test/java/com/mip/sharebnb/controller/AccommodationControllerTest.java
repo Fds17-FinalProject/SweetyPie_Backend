@@ -46,11 +46,17 @@ class AccommodationControllerTest {
     }
 
     @Test
-    void getAccommodationsByCity() {
+    void getAccommodationsByCity() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/city/서울?page=0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].city").value("서울특별시"));
     }
 
     @Test
-    void getAccommodationsBySearchKeyword() {
+    void getAccommodationsBySearchKeyword() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/search/서울?page=0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].city").value("서울특별시"));
     }
 
     @Test
