@@ -48,7 +48,7 @@ public class AccommodationController {
 
 
     @GetMapping("/accommodations/search")
-    public List<Accommodation> getAccommodationsByCheckIn(
+    public List<Accommodation> getAccommodationsBySearch(
             @RequestParam(required = false) String searchKeyword,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
