@@ -39,7 +39,7 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations/search")
-    public Page<Accommodation> getAccommodationsByAddress(@RequestParam String searchKeyword, @RequestParam int page) {
+    public Page<Accommodation> getAccommodationsBySearchKeyword(@RequestParam String searchKeyword, @RequestParam int page) {
 
         return accommodationService.findByCityContainingOrGuContaining(searchKeyword, page);
     }
