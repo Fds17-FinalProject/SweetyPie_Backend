@@ -11,4 +11,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("select r from Reservation as r where r.member.id = :member_id")
     List<Reservation> findReservationByMemberId(@Param("member_id") Long id);
+
 }
