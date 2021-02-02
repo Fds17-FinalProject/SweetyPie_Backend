@@ -2,6 +2,7 @@ package com.mip.sharebnb.repository;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mip.sharebnb.model.Accommodation;
+import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.Reservation;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
         + "classpath:application.yml,"
         + "classpath:datasource.yml")
 class ReservationRepositoryTest {
-
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -30,6 +31,7 @@ class ReservationRepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
+    private LocalDate bookedDate;
 
     @DisplayName("예약 내역 조회 리스트")
     @Test
@@ -46,6 +48,26 @@ class ReservationRepositoryTest {
         assertThat(reservationByMember.get(0).getTotalPrice()).isEqualTo(20000);
         assertThat(reservationByMember.get(0).getAccommodation().getAccommodationType()).isEqualTo("집전체");
         assertThat(reservationByMember.get(0).getAccommodation().getBuildingType()).isEqualTo("단독주택");
+
+    }
+
+    @DisplayName("중복된 체크인날짜인지 확인")
+    @Test
+    @Transactional
+    public void checkDuplicateCheckInDate(){
+        Optional<Reservation> findReservation = reservationRepository.findById(1L);
+
+        Reservation reservation = findReservation.get();
+        Long id = reservation.getAccommodation().getId();
+
+        Optional<Accommodation> findAccommodation = accommodationRepository.findById(id);
+        List<BookedDate> bookedDates = findAccommodation.get().getBookedDates();
+
+        LocalDate duplicateBookedDate = bookedDates.get(0).getDate();
+        LocalDate differentBookedDate = bookedDates.get(1).getDate();
+
+        assertThat(reservation.getCheckInDate().equals(duplicateBookedDate)).isTrue();
+        assertThat(reservation.getCheckInDate().equals(differentBookedDate)).isFalse();
 
     }
 
