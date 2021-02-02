@@ -28,6 +28,12 @@ public class AccommodationController {
         return accommodationRepository.findById(id).orElse(Accommodation.emptyObject());
     }
 
+    @GetMapping("/accommodation/desc/{id}")
+    public String getAccommodationDesc(@PathVariable Long id) {
+
+        return accommodationRepository.findById(id).orElse(Accommodation.emptyObject()).getAccommodationDesc();
+    }
+
     @GetMapping("/accommodations")
     public List<Accommodation> getAllAccommodations() {
 
