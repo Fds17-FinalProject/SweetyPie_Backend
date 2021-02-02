@@ -79,7 +79,6 @@ public class Accommodation {
     private Integer hostReviewNum;
 
     @JsonBackReference
-    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
     private List<Reservation> reservations;
 

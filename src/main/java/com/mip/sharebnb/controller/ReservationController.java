@@ -4,9 +4,7 @@ import com.mip.sharebnb.dto.ReservationDto;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.service.ReservationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,5 +21,10 @@ public class ReservationController {
             return new ArrayList<>();
         }
         return reservationService.getReservations(id);
+    }
+
+    @PatchMapping("/reservation/{id}")
+    public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto) {
+        return reservationService.updateReservation(id, reservationDto);
     }
 }
