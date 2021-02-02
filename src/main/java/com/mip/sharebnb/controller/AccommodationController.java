@@ -29,7 +29,7 @@ public class AccommodationController {
     @GetMapping("/accommodations")
     public List<Accommodation> getAllAccommodations() {
 
-        return (List<Accommodation>) accommodationRepository.findAll();
+        return accommodationRepository.findAll();
     }
 
     @GetMapping("/accommodations/city/{city}")
@@ -39,8 +39,8 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations/search")
-    public Page<Accommodation> getAccommodationsByAddress(@RequestParam String address, @RequestParam int page) {
+    public Page<Accommodation> getAccommodationsByAddress(@RequestParam String searchKeyword, @RequestParam int page) {
 
-        return accommodationService.findByCityContainingOrGuContaining(address, page);
+        return accommodationService.findByCityContainingOrGuContaining(searchKeyword, page);
     }
 }
