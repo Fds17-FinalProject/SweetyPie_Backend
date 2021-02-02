@@ -38,7 +38,13 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("검색어 없이 메인 검색 테스트")
     @Test
     void searchIfSearchKeywordIsEmpty() {
+        List<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2021, 5, 1), LocalDate.of(2021, 5, 5), 3, 2);
 
+        assertThat(accommodations.size()).isEqualTo(10);
+
+        for (Accommodation accommodation : accommodations) {
+            assertThat(accommodation.getCapacity()).isGreaterThanOrEqualTo(3);
+        }
     }
 
     @DisplayName("인원 수 없이 메인 검색 테스트")
