@@ -5,11 +5,13 @@ import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.service.AccommodationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -38,9 +40,20 @@ public class AccommodationController {
         return accommodationService.findByCityContaining(city, page);
     }
 
-    @GetMapping("/accommodations/search")
-    public Page<Accommodation> getAccommodationsBySearchKeyword(@RequestParam String searchKeyword, @RequestParam int page) {
+    @GetMapping("/accommodations/search/{searchKeyword}")
+    public Page<Accommodation> getAccommodationsBySearchKeyword(@PathVariable String searchKeyword, @RequestParam int page) {
 
         return accommodationService.findByCityContainingOrGuContaining(searchKeyword, page);
+    }
+
+
+    @GetMapping("/accommodations/search")
+    public List<Accommodation> getAccommodationsByCheckIn(
+            @RequestParam String searchKeyword,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
+            @RequestParam int page) {
+
+        return accommodationService.findAccommodationsByBookedDatesNotContaining(searchKeyword, checkIn, checkout, page);
     }
 }
