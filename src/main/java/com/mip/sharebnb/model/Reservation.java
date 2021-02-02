@@ -7,14 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.Where;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Builder
@@ -22,7 +21,7 @@ import java.time.LocalDate;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-//@Where(clause = "isCanceled = false")
+@Where(clause = "is_Canceled = false")
 public class Reservation {
 
     @Id
@@ -48,13 +47,14 @@ public class Reservation {
 
     private String reservationCode; // 우리가 만들어 줘야 함.
 
+//    @JsonManagedReference
     @JsonBackReference
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @JsonBackReference
+    @JsonManagedReference
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "ACCOMMODATION_ID")
