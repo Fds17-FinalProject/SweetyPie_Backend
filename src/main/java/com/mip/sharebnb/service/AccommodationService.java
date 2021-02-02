@@ -33,8 +33,8 @@ public class AccommodationService {
 
     public List<Accommodation> searchAccommodationsByQueryDsl(String searchKeyword,
                                                               LocalDate checkIn, LocalDate checkout,
-                                                              int page) {
+                                                              int guestNum, int page) {
 
-        return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, page);
+        return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
     }
 }

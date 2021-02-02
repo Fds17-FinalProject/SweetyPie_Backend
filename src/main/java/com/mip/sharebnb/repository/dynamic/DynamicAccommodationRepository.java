@@ -19,8 +19,10 @@ public class DynamicAccommodationRepository {
 
     QAccommodation ac = new QAccommodation("ac");
 
-    public List<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int page) {
+    public List<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, int page) {
         BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(ac.capacity.goe(guestNum));
 
         if (checkout != null && checkout.isBefore(LocalDate.now())) {
             checkout = null;
