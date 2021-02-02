@@ -52,7 +52,7 @@ public class AccommodationController {
             @RequestParam(required = false) String searchKeyword,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-            @RequestParam(defaultValue = "0") int guestNum, @RequestParam int page) {
+            @RequestParam(defaultValue = "0") int guestNum, @RequestParam(defaultValue = "0") int page) {
 
         return accommodationService.searchAccommodationsByQueryDsl(searchKeyword, checkIn, checkout, guestNum, page);
     }
