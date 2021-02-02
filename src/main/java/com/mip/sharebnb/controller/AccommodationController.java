@@ -49,11 +49,11 @@ public class AccommodationController {
 
     @GetMapping("/accommodations/search")
     public List<Accommodation> getAccommodationsByCheckIn(
-            @RequestParam String searchKeyword,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
             @RequestParam int page) {
 
-        return accommodationService.findAccommodationsByBookedDatesNotContaining(searchKeyword, checkIn, checkout, page);
+        return accommodationService.searchAccommodationsByQueryDsl(searchKeyword, checkIn, checkout, page);
     }
 }
