@@ -1,6 +1,7 @@
 package com.mip.sharebnb.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +30,7 @@ class AccommodationControllerTest {
                 .build();
     }
 
+    @DisplayName("id로 숙박 검색")
     @Test
     void getAccommodation() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/accommodation/1"))
@@ -38,6 +40,7 @@ class AccommodationControllerTest {
                 .andExpect(jsonPath("$.contact").value("010-1234-5678"));
     }
 
+    @DisplayName("모든 숙박 검색")
     @Test
     void getAllAccommodations() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/accommodations"))
@@ -45,6 +48,7 @@ class AccommodationControllerTest {
                 .andExpect(jsonPath("$", hasSize(200)));
     }
 
+    @DisplayName("도시명으로 숙박 검색")
     @Test
     void getAccommodationsByCity() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/city/서울?page=0"))
@@ -52,6 +56,7 @@ class AccommodationControllerTest {
                 .andExpect(jsonPath("$.content[0].city").value("서울특별시"));
     }
 
+    @DisplayName("검색어로 숙박 검색")
     @Test
     void getAccommodationsBySearchKeyword() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/search/서울?page=0"))
@@ -59,7 +64,12 @@ class AccommodationControllerTest {
                 .andExpect(jsonPath("$.content[0].city").value("서울특별시"));
     }
 
+    @DisplayName("메인 검색 기능 (검색어, 체크인, 체크아웃, 인원수)")
     @Test
-    void getAccommodationsByCheckIn() {
+    void getAccommodationsBySearch() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/search?searchKeyword=마포&checkIn=2021-02-03&checkout=2021-02-05&page=1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].city").value("서울특별시"))
+                .andExpect(jsonPath("$[0].gu").value("마포구"));
     }
 }
