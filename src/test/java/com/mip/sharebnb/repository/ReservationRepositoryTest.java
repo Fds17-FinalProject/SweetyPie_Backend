@@ -1,5 +1,6 @@
 package com.mip.sharebnb.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.Reservation;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(properties = "spring.config.location="
         + "classpath:application.yml,"
         + "classpath:datasource.yml")
-
 class ReservationRepositoryTest {
+
 
     @Autowired
     private ReservationRepository reservationRepository;
@@ -31,15 +33,19 @@ class ReservationRepositoryTest {
 
     @DisplayName("예약 내역 조회 리스트")
     @Test
-    public void getReservationByMemberId(){
+    @Transactional
+    public void getReservationByMemberId() throws JsonProcessingException {
 
         List<Reservation> reservationByMember = reservationRepository.findReservationByMemberId(1L);
-        System.out.println(reservationByMember.get(0));
+        System.out.println(">>>>>>" + reservationByMember);
+
+        Reservation result = reservationByMember.get(0);
+        System.out.println(result);
 
         assertThat(reservationByMember.size()).isEqualTo(2);
         assertThat(reservationByMember.get(0).getTotalPrice()).isEqualTo(20000);
         assertThat(reservationByMember.get(0).getAccommodation().getAccommodationType()).isEqualTo("집전체");
-        assertThat(reservationByMember.get(0).getAccommodation().getBuildingType()).isEqualTo("아파트");
+        assertThat(reservationByMember.get(0).getAccommodation().getBuildingType()).isEqualTo("단독주택");
 
     }
 
