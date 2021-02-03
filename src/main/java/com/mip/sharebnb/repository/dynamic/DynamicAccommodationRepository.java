@@ -58,7 +58,7 @@ public class DynamicAccommodationRepository {
                 builder.and(ac.city.contains(keyword).or(ac.gu.contains(keyword)));
             }
         }
-        System.out.println("builder: " + builder.toString());
+        
         return queryFactory
                 .select(ac)
                 .from(ac)
