@@ -6,13 +6,20 @@ import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
+import com.querydsl.core.types.EntityPath;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +28,10 @@ import java.util.Optional;
 public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final AccommodationRepository accommodationRepository;
+
+    @PersistenceContext
+    private EntityManager em;
+    private JPAQuery<BookedDate> jpaQuery;
 
     public List<Reservation> getReservations(Long memberId) {
         if (memberId == null){
@@ -38,48 +49,18 @@ public class ReservationService {
 
     @Transactional
     public Reservation updateReservation(Long id, ReservationDto reservationDto) {
-        Optional<Reservation> optionalReservation = Optional.of(reservationRepository.findById(id).orElse(new Reservation()));
 
-        Reservation findReservation = optionalReservation.get();
+        List<LocalDate> dates = setDate(reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
-        Long accommodationId = findReservation.getAccommodation().getId();
+        return null;
+    }
 
-        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(accommodationId).orElse(new Accommodation()));
-        System.out.println(">>>>>>>>>>>>>> " + optionalAccommodation.get().getBuildingType());
-        List<BookedDate> bookedDates = optionalAccommodation.get().getBookedDates();
-
-        int guestNum = Integer.parseInt(reservationDto.getGuestNum());
-        if (optionalAccommodation.get().getCapacity() < guestNum) {
-            // 예외처리
-            return new Reservation();
+    private List<LocalDate> setDate(LocalDate checkInDate, LocalDate checkoutDate){
+        List<LocalDate> dates = new ArrayList<>();
+        for (LocalDate date = checkInDate; date.isBefore(checkoutDate); date.plusDays(1)) {
+            dates.add(date);
         }
 
-        boolean flag = false;
-        for (BookedDate date : bookedDates) {
-            String bookedDate = String.valueOf(date.getDate());
-            if (reservationDto.getCheckInDate().equals(bookedDate)) {
-                flag = false;
-                break;
-            } else {
-                flag = true;
-            }
-        }
-        System.out.println("flag >>>>>>>> " + flag);
-
-        if (flag){
-            LocalDate updateCheckInDate =  LocalDate.parse(reservationDto.getCheckInDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            System.out.println("CheckInDate >>>>> " + updateCheckInDate);
-            LocalDate updateCheckoutDate =  LocalDate.parse(reservationDto.getCheckoutDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            findReservation.setCheckInDate(updateCheckInDate);
-            findReservation.setCheckoutDate(updateCheckoutDate);
-            findReservation.setGuestNum(Integer.parseInt(reservationDto.getGuestNum()));
-            findReservation.setTotalPrice(Integer.parseInt(reservationDto.getTotalPrice()));
-
-            return reservationRepository.save(findReservation);
-        } else {
-            // 예외 처리
-            return new Reservation();
-        }
-
+        return dates;
     }
 }
