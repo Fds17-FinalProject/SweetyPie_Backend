@@ -1,5 +1,6 @@
 package com.mip.sharebnb.controller;
 
+import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.service.AccommodationService;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class AccommodationController {
 
     private final AccommodationRepository accommodationRepository;
@@ -23,9 +26,15 @@ public class AccommodationController {
     private final AccommodationService accommodationService;
 
     @GetMapping("/accommodation/{id}")
-    public Accommodation getAccommodation(@PathVariable Long id) {
+    public AccommodationDto getAccommodation(@PathVariable Long id) {
+        Accommodation accommodation = accommodationRepository.findById(id).orElse(Accommodation.emptyObject());
 
-        return accommodationRepository.findById(id).orElse(Accommodation.emptyObject());
+        return new AccommodationDto(
+                accommodation,
+                accommodation.getReviews(),
+                accommodation.getBookedDates(),
+                accommodation.getAccommodationPictures()
+        );
     }
 
     @GetMapping("/accommodation/desc/{id}")
@@ -41,13 +50,19 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations/city/{city}")
-    public Page<Accommodation> getAccommodationsByCity(@PathVariable String city, @RequestParam int page) {
+    public Page<Accommodation> getAccommodationsByCity(@PathVariable String city, @RequestParam(defaultValue = "0") int page) {
 
         return accommodationService.findByCityContaining(city, page);
     }
 
+    @GetMapping("/accommodations/buildingType/{buildingType}")
+    public Page<Accommodation> getAccommodationsByBuildingType(@PathVariable String buildingType, @RequestParam(defaultValue = "0") int page) {
+
+        return accommodationService.findByBuildingTypeContaining(buildingType, page);
+    }
+
     @GetMapping("/accommodations/search/{searchKeyword}")
-    public Page<Accommodation> getAccommodationsBySearchKeyword(@PathVariable String searchKeyword, @RequestParam int page) {
+    public Page<Accommodation> getAccommodationsBySearchKeyword(@PathVariable String searchKeyword, @RequestParam(defaultValue = "0") int page) {
 
         return accommodationService.findByCityContainingOrGuContaining(searchKeyword, page);
     }

@@ -1,7 +1,6 @@
 package com.mip.sharebnb.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
@@ -10,7 +9,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,13 +45,15 @@ public class Member {
 
     private Long socialId;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
     private List<Review> reviews;
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
     private List<Reservation> reservations;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
     private List<Bookmark> bookmarks;
 }

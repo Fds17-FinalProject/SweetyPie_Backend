@@ -28,7 +28,7 @@ public class ReservationService {
         }
         List<Reservation> reservations = reservationRepository.findReservationByMemberId(memberId);
 
-        if (reservations.isEmpty()){
+        if (reservations.isEmpty()) {
             return new ArrayList<>();
         }
 

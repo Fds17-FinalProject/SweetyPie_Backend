@@ -123,7 +123,6 @@ class ReservationServiceTest {
 
     private Optional<Accommodation> mockFindAccommodation(){
         BookedDate bookedDate = new BookedDate();
-        bookedDate.setId(1L);
         bookedDate.setDate(LocalDate.of(2020,2,22));
 
         List<BookedDate> bookedDates = new ArrayList<>();
