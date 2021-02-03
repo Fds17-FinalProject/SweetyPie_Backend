@@ -64,18 +64,21 @@ class ReservationServiceTest {
         when(accommodationRepository.findById(1L)).thenReturn(mockFindAccommodation());
 
         ReservationDto dto = new ReservationDto();
-        dto.setCheckInDate("2020-02-20");
-        dto.setCheckoutDate("2020-02-24");
-        dto.setGuestNum("3");
-        dto.setTotalPrice("30000");
+        setReservationDto(dto);
 
         Reservation reservation = reservationService.updateReservation(1L, dto);
-
 
         verify(reservationRepository, times(1)).findById(1L);
         verify(accommodationRepository, times(1)).findById(1L);
         verify(reservationRepository, times(1)).save(any(Reservation.class));
 
+    }
+
+    private void setReservationDto(ReservationDto dto){
+        dto.setCheckInDate("2020-02-20");
+        dto.setCheckoutDate("2020-02-24");
+        dto.setGuestNum("3");
+        dto.setTotalPrice("30000");
     }
 
     private List<Reservation> mockReservation(){
@@ -123,7 +126,6 @@ class ReservationServiceTest {
 
     private Optional<Accommodation> mockFindAccommodation(){
         BookedDate bookedDate = new BookedDate();
-        bookedDate.setId(1L);
         bookedDate.setDate(LocalDate.of(2020,2,22));
 
         List<BookedDate> bookedDates = new ArrayList<>();
