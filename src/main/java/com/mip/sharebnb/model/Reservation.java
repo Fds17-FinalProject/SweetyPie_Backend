@@ -59,4 +59,8 @@ public class Reservation {
     @ManyToOne
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
+
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @ToString.Exclude
+    private BookedDate bookedDate;
 }
