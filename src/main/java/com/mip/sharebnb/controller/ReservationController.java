@@ -16,7 +16,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping("/reservation/{id}")
-    public List<Reservation> getReservations(@PathVariable Long id) {
+    public List<ReservationDto> getReservations(@PathVariable Long id) {
         if (id == null){
             return new ArrayList<>();
         }
