@@ -25,6 +25,12 @@ public class AccommodationService {
         return accommodationRepository.findByCityContaining(searchKeyword, pageable);
     }
 
+    public Page<Accommodation> findByBuildingTypeContaining(String buildingType, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+
+        return accommodationRepository.findByBuildingTypeContaining(buildingType, pageable);
+    }
+
     public Page<Accommodation> findByCityContainingOrGuContaining(String searchKeyword, int page) {
         Pageable pageable = PageRequest.of(page, 10);
 
