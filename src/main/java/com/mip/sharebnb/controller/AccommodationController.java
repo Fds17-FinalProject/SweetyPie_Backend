@@ -43,13 +43,19 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations/city/{city}")
-    public Page<Accommodation> getAccommodationsByCity(@PathVariable String city, @RequestParam int page) {
+    public Page<Accommodation> getAccommodationsByCity(@PathVariable String city, @RequestParam(defaultValue = "0") int page) {
 
         return accommodationService.findByCityContaining(city, page);
     }
 
+    @GetMapping("/accommodations/buildingType/{buildingType}")
+    public Page<Accommodation> getAccommodationsByBuildingType(@PathVariable String buildingType, @RequestParam(defaultValue = "0") int page) {
+
+        return accommodationService.findByBuildingTypeContaining(buildingType, page);
+    }
+
     @GetMapping("/accommodations/search/{searchKeyword}")
-    public Page<Accommodation> getAccommodationsBySearchKeyword(@PathVariable String searchKeyword, @RequestParam int page) {
+    public Page<Accommodation> getAccommodationsBySearchKeyword(@PathVariable String searchKeyword, @RequestParam(defaultValue = "0") int page) {
 
         return accommodationService.findByCityContainingOrGuContaining(searchKeyword, page);
     }
