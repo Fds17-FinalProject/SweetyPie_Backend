@@ -1,16 +1,12 @@
 package com.mip.sharebnb.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.mip.sharebnb.model.Bookmark;
-import com.mip.sharebnb.model.MemberRole;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.model.Review;
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
