@@ -1,5 +1,6 @@
 package com.mip.sharebnb.controller;
 
+import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.service.AccommodationService;
@@ -25,9 +26,15 @@ public class AccommodationController {
     private final AccommodationService accommodationService;
 
     @GetMapping("/accommodation/{id}")
-    public Accommodation getAccommodation(@PathVariable Long id) {
+    public AccommodationDto getAccommodation(@PathVariable Long id) {
+        Accommodation accommodation = accommodationRepository.findById(id).orElse(Accommodation.emptyObject());
 
-        return accommodationRepository.findById(id).orElse(Accommodation.emptyObject());
+        return new AccommodationDto(
+                accommodation,
+                accommodation.getReviews(),
+                accommodation.getBookedDates(),
+                accommodation.getAccommodationPictures()
+        );
     }
 
     @GetMapping("/accommodation/desc/{id}")
