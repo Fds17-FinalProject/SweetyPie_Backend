@@ -75,10 +75,10 @@ class ReservationServiceTest {
     }
 
     private void setReservationDto(ReservationDto dto){
-        dto.setCheckInDate("2020-02-20");
-        dto.setCheckoutDate("2020-02-24");
-        dto.setGuestNum("3");
-        dto.setTotalPrice("30000");
+        dto.setCheckInDate(LocalDate.of(2020,2,22));
+        dto.setCheckoutDate(LocalDate.of(2020, 2, 24));
+        dto.setGuestNum(3);
+        dto.setTotalPrice(30000);
     }
 
     private List<Reservation> mockReservation(){
