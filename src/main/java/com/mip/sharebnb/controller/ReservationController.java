@@ -27,4 +27,10 @@ public class ReservationController {
     public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto) {
         return reservationService.updateReservation(id, reservationDto);
     }
+
+    @DeleteMapping("/reservation/{id}")
+    public Reservation cancelReservation(@PathVariable Long id){
+
+        return null;
+    }
 }
