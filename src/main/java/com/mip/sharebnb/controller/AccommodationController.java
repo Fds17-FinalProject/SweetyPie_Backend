@@ -35,12 +35,6 @@ public class AccommodationController {
         return accommodationService.findById(id);
     }
 
-    @GetMapping("/accommodation/desc/{id}")
-    public String getAccommodationDesc(@PathVariable Long id) {
-
-        return accommodationRepository.findById(id).orElse(Accommodation.emptyObject()).getAccommodationDesc();
-    }
-
     @GetMapping("/accommodations")
     public Page<Accommodation> getAllAccommodations(@PageableDefault(page = 1) Pageable page) {
 
