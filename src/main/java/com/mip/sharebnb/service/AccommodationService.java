@@ -40,11 +40,17 @@ public class AccommodationService {
         return accommodationRepository.findByBuildingTypeContaining(buildingType, page);
     }
 
-    public Page<Accommodation> searchAccommodationsByQueryDsl(String searchKeyword,
-                                                              LocalDate checkIn, LocalDate checkout,
-                                                              int guestNum, Pageable page) {
+    public Page<Accommodation> findAccommodationsBySearch(String searchKeyword,
+                                                          LocalDate checkIn, LocalDate checkout,
+                                                          int guestNum, Pageable page) {
 
         return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
+    }
+
+    public Page<Accommodation> findAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
+                                                             Float minLongitude, Float maxLongitude, Pageable page) {
+
+        return dynamicAccommodationRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);
     }
 
     private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
