@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,16 +19,11 @@ public class AccommodationService {
     private final DynamicAccommodationRepository dynamicAccommodationRepository;
     private final AccommodationRepository accommodationRepository;
 
-    @Transactional
     public AccommodationDto findById(Long id) {
-        Accommodation accommodation = accommodationRepository.findById(id).orElse(Accommodation.emptyObject());
+        Accommodation accommodation = accommodationRepository.findById(id)
+                .orElse(Accommodation.emptyObject());
 
-        return new AccommodationDto(
-                accommodation,
-                accommodation.getReviews(),
-                accommodation.getBookedDates(),
-                accommodation.getAccommodationPictures()
-        );
+        return mappingAccommodationDto(accommodation);
     }
 
     public Page<Accommodation> findByCityContaining(String searchKeyword, Pageable page) {
@@ -47,5 +41,22 @@ public class AccommodationService {
                                                               int guestNum, Pageable page) {
 
         return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
+    }
+
+    private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
+
+        return new AccommodationDto(accommodation.getCity(),
+                accommodation.getGu(), accommodation.getTitle(),
+                accommodation.getBathroomNum(), accommodation.getBedroomNum(),
+                accommodation.getBedNum(), accommodation.getCapacity(),
+                accommodation.getPrice(), accommodation.getContact(),
+                accommodation.getLatitude(), accommodation.getLongitude(),
+                accommodation.getLocationDesc(), accommodation.getTransportationDesc(),
+                accommodation.getAccommodationDesc(), accommodation.getRating(),
+                accommodation.getReviewNum(), accommodation.getAccommodationType(),
+                accommodation.getBuildingType(), accommodation.getHostName(),
+                accommodation.getHostDesc(), accommodation.getHostReviewNum(),
+                accommodation.getReviews(), accommodation.getBookedDates(),
+                accommodation.getAccommodationPictures());
     }
 }
