@@ -15,10 +15,10 @@ public class LoginDto {
 
     @Email
     @NotNull
-    @Size(min =3, max = 50)
+    @Size(min =3, max = 30)
     private String email;
 
     @NotNull
-    @Size(min = 3, max = 30)
+    @Size(min = 3, max = 100)
     private String password;
 }
