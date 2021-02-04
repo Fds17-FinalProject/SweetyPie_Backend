@@ -19,6 +19,10 @@ public class ReservationDto {
     @NonNull
     private LocalDate checkoutDate;
 
+    private int guestNum;
+
+    private int totalPrice;
+
     private AccommodationDto accommodationDto;
 
 }
