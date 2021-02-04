@@ -1,12 +1,8 @@
 package com.mip.sharebnb.dto;
 
-import com.mip.sharebnb.model.Accommodation;
-import com.mip.sharebnb.model.AccommodationPicture;
-import com.mip.sharebnb.model.Reservation;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -14,9 +10,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservationDto {
 
+    private Long reservationId;
+
     @NonNull
-    private Reservation reservation;
+    private LocalDate checkInDate;
+    @NonNull
+    private LocalDate checkoutDate;
 
     private AccommodationDto accommodationDto;
-
 }
