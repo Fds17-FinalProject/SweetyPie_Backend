@@ -1,0 +1,26 @@
+###
+GET http://localhost:8080/api/accommodation/1
+
+###
+GET http://localhost:8080/api/accommodations
+
+### 도시별
+GET http://localhost:8080/api/accommodations/city/서울?page=3
+
+### 건물 유형별 검색
+GET http://localhost:8080/api/accommodations/buildingType/아파트?page=2
+
+### 메인 검색 (동적 쿼리)
+GET http://localhost:8080/api/accommodations/search?searchKeyword=강릉&checkIn=2021-02-05&checkout=2050-09-04&page=3
+
+### 메인 검색 (검색어 제외)
+GET http://localhost:8080/api/accommodations/search?checkIn=2021-02-05&checkout=2021-02-05&page=1
+
+### 메인 검색 (검색어, 체크인 제외)
+GET http://localhost:8080/api/accommodations/search?checkout=2021-02-05&page=1
+
+### 메인 검색 (검색어, 체크아웃 제외)
+GET http://localhost:8080/api/accommodations/search?checkIn=2021-02-05&page=1
+
+### 메인 검색 (체크인, 체크아웃 제외)
+GET http://localhost:8080/api/accommodations/search?saerchKeyword=서울&page=1

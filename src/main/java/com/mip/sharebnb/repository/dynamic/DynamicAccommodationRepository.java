@@ -6,9 +6,11 @@ import com.mip.sharebnb.model.QAccommodation;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Repository
@@ -19,7 +21,7 @@ public class DynamicAccommodationRepository {
 
     QAccommodation ac = new QAccommodation("ac");
 
-    public List<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, int page) {
+    public List<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(ac.capacity.goe(guestNum));
@@ -29,28 +31,24 @@ public class DynamicAccommodationRepository {
         }
 
         if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            checkIn = null;
+            checkIn = LocalDate.now();;
         }
 
+        if (checkIn == null) {
+            checkIn = LocalDate.now();
+        }
 
-        if (checkIn != null) {
-            if (checkout != null) {
-                for (LocalDate date = checkIn; !date.isEqual(checkout); date = date.plusDays(1)) {
-                    builder.andNot(ac.bookedDates.contains(new BookedDate(date)));
-                }
-                builder.andNot(ac.bookedDates.contains(new BookedDate(checkout)));
-            } else {
+        if (checkout != null) {
+            while (checkIn.isBefore(checkout)) {
                 builder.andNot(ac.bookedDates.contains(new BookedDate(checkIn)));
-            }
+                checkIn = checkIn.plusDays(1);
 
-        } else {
-            if (checkout != null) {
-                checkIn = LocalDate.now();
-                for (LocalDate date = checkIn; !date.isEqual(checkout); date = date.plusDays(1)) {
-                    builder.andNot(ac.bookedDates.contains(new BookedDate(date)));
+                if (ChronoUnit.DAYS.between(checkIn, checkout) > 730) {
+                    break;
                 }
-                builder.andNot(ac.bookedDates.contains(new BookedDate(checkout)));
             }
+        } else {
+            builder.andNot(ac.bookedDates.contains(new BookedDate(checkIn)));
         }
 
         if (searchKeyword != null && !searchKeyword.equals("")) {
@@ -58,13 +56,13 @@ public class DynamicAccommodationRepository {
                 builder.and(ac.city.contains(keyword).or(ac.gu.contains(keyword)));
             }
         }
-        System.out.println("builder: " + builder.toString());
+
         return queryFactory
                 .select(ac)
                 .from(ac)
                 .where(builder)
-                .offset(page * 10L)
-                .limit(10)
+                .offset(page.getOffset() - page.getPageSize())
+                .limit(page.getPageSize())
                 .fetch();
     }
 }
