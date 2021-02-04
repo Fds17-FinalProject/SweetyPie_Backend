@@ -31,7 +31,6 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("메인 검색 테스트")
     @Test
     void search() {
-
         for (int i = 0; i < 10; i++) {
             accommodationRepository.save(givenAccommodation());
         }
@@ -61,13 +60,20 @@ class DynamicAccommodationRepositoryTest {
         }
     }
 
-    @DisplayName("인원 수 없이 메인 검색 테스트")
+    @DisplayName("지도 범위(좌표 기준) 내 검색")
     @Test
-    void searchIfGuestNumIsEmpty() {
+    void searchByCoordinate() {
+        Page<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f, PageRequest.of(1, 10));
 
+        for (Accommodation accommodation : accommodations) {
+            assertThat(accommodation.getLatitude()).isGreaterThan(37f);
+            assertThat(accommodation.getLatitude()).isLessThan(37.5f);
+            assertThat(accommodation.getLongitude()).isGreaterThan(126f);
+            assertThat(accommodation.getLongitude()).isLessThan(127f);
+        }
     }
 
     private Accommodation givenAccommodation() {
-        return new Accommodation(null, "서울특별시", "마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", "36.141", "126.531", "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", "4.56", 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
+        return new Accommodation(null, "서울특별시", "마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
     }
 }
