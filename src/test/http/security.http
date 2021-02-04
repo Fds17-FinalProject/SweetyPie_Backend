@@ -2,7 +2,7 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email":"member@mail.com",
+  "email":"member6@mail.com",
   "password":"member"
 }
 
@@ -12,7 +12,7 @@ POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-  "email":"member@mail.com",
+  "email":"member6@mail.com",
   "password":"member",
   "name":"name",
   "birthDate": "2020-02-03",
@@ -22,5 +22,24 @@ Content-Type: application/json
 ###
 
 GET http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyNDI5NTEzfQ.f7ex5DUYm2ciJgT7QdfTFI2Sx3FkuoKxE8QoSFGeOpWEmD-HeS6mP00Vw-cSpJR0eld3MarTdz5EVmS-20ZT4g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyNDQ4ODgxfQ.WgDayJ5Iz9ptnI_nS9CE7sn1GHMTYcGPC578PH7Me2aG6hh3XL-eO96rXmBbnqudl1Dc4y4kcigHK-r4Ik2Xnw
+
 ###
+
+PUT http://localhost:8080/api/member/1
+Content-Type: application/json
+
+{
+  "email":"member1@mail.com"
+
+   }
+
+###
+
+PUT http://localhost:8080/api/member/6
+Content-Type: application/json
+
+{
+  "prePassword":"member",
+  "password": "member1"
+}

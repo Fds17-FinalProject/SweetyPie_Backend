@@ -4,13 +4,11 @@ import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.MemberRole;
 import com.mip.sharebnb.repository.MemberRepository;
-import com.mip.sharebnb.security.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
@@ -71,5 +69,21 @@ class MemberServiceTest {
         Member result = memberService.signup(memberDto);
 
         assertThat(result.getEmail()).isEqualTo("member@mail.com");
+    }
+
+
+    @Test
+    void updateMemberTest() {
+        LocalDate date = LocalDate.now();
+        when(memberRepository.findById(1L))
+                .thenReturn(Optional.of(new Member()));
+
+        MemberDto memberDto = MemberDto.builder()
+                .birthDate(date)
+                .build();
+
+        memberService.updateMember(1L, memberDto);
+
+        verify(memberRepository, times(1)).findById(1L);
     }
 }
