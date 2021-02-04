@@ -20,15 +20,21 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final MemberRepository memberRepository;
 
+    public static Long memberId;
+
     public CustomUserDetailsService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return memberRepository.findByEmail(email)
-                .map(member -> createUser(email, member))
+
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException(email + " -> 데이터베이스에서 찾을 수 없습니다"));
+
+        memberId = member.getId();
+
+        return createUser(member.getEmail(), member);
     }
 
     private User createUser(String email, Member member) {

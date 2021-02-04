@@ -1,5 +1,6 @@
 package com.mip.sharebnb.security.jwt;
 
+import com.mip.sharebnb.security.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -58,6 +59,7 @@ public class TokenProvider implements InitializingBean {
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .claim("memberId", CustomUserDetailsService.memberId)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .setExpiration(validity)
                 .compact();
