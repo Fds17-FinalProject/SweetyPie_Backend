@@ -1,10 +1,7 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.ReservationDto;
-import com.mip.sharebnb.model.Accommodation;
-import com.mip.sharebnb.model.BookedDate;
-import com.mip.sharebnb.model.Member;
-import com.mip.sharebnb.model.Reservation;
+import com.mip.sharebnb.model.*;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 import org.junit.jupiter.api.Test;
@@ -12,9 +9,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,20 +34,22 @@ class ReservationServiceTest {
     private AccommodationRepository accommodationRepository;
 
     @Test
-    void getReservationByMemberId(){
+    void getReservationByMemberId() {
         when(reservationRepository.findReservationByMemberId(1L)).thenReturn(mockReservation());
 
-        List<Reservation> reservations = reservationService.getReservations(1L);
+        List<ReservationDto> reservationDtoList = reservationService.getReservations(1L);
 
-        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
+        assertThat(reservationDtoList.size()).isEqualTo(1);
+        assertThat(reservationDtoList.get(0).getReservation().getCheckInDate()).isEqualTo("2020-02-22");
+        assertThat(reservationDtoList.get(0).getReservation().getCheckoutDate()).isEqualTo("2020-02-24");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodation().getAccommodationType()).isEqualTo("집전체");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodation().getBuildingType()).isEqualTo("아파트");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodationPictures().get(0).getUrl()).isEqualTo("picture");
 
-        assertThat(reservations.size()).isEqualTo(1);
-        assertThat(reservations.get(0).getMember().getId()).isEqualTo(1L);
-        assertThat(reservations.get(0).getCheckInDate()).isEqualTo(checkInDate);
     }
 
     @Test
-    void getReservationByMemberIdEmpty(){
+    void getReservationByMemberIdEmpty() {
         when(reservationRepository.findReservationByMemberId(1L)).thenReturn(new ArrayList<>());
 
         List<Reservation> reservations = reservationRepository.findReservationByMemberId(1L);
@@ -56,51 +57,42 @@ class ReservationServiceTest {
         assertThat(reservations.isEmpty()).isTrue();
     }
 
-    @Test
-    @Transactional
-    @Rollback
-    void updateReservation(){
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
-        when(accommodationRepository.findById(1L)).thenReturn(mockFindAccommodation());
 
-        ReservationDto dto = new ReservationDto();
-        dto.setCheckInDate("2020-02-20");
-        dto.setCheckoutDate("2020-02-24");
-        dto.setGuestNum("3");
-        dto.setTotalPrice("30000");
+    private List<Reservation> mockReservation() {
+        List<AccommodationPicture> accommodationPictures = new ArrayList<>();
+        AccommodationPicture firAccommodationPicture = new AccommodationPicture();
+        firAccommodationPicture.setUrl("picture");
 
-        Reservation reservation = reservationService.updateReservation(1L, dto);
+        accommodationPictures.add(firAccommodationPicture);
 
+        AccommodationPicture secAccommodationPicture = new AccommodationPicture();
+        secAccommodationPicture.setUrl("photo");
 
-        verify(reservationRepository, times(1)).findById(1L);
-        verify(accommodationRepository, times(1)).findById(1L);
-        verify(reservationRepository, times(1)).save(any(Reservation.class));
+        accommodationPictures.add(secAccommodationPicture);
 
-    }
-
-    private List<Reservation> mockReservation(){
         List<Reservation> reservations = new ArrayList<>();
+        Accommodation accommodation = new Accommodation();
+        accommodation.setAccommodationType("집전체");
+        accommodation.setBuildingType("아파트");
+        accommodation.setBathroomNum(4);
+        accommodation.setBedNum(8);
+        accommodation.setAccommodationPictures(accommodationPictures);
 
-        Member firMember = new Member();
-        firMember.setId(1L);
-        firMember.setEmail("test123@gmail.com");
-        firMember.setContact("01077777777");
+        Reservation reservation = new Reservation();
+        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
+        LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
+        reservation.setCheckInDate(checkInDate);
+        reservation.setCheckoutDate(checkoutDate);
+        reservation.setTotalPrice(50000);
+        reservation.setGuestNum(5);
+        reservation.setAccommodation(accommodation);
 
-        Reservation firReservation = new Reservation();
-        LocalDate checkInDate = LocalDate.of(2020,2, 22);
-        LocalDate checkoutDate = LocalDate.of(2020,2, 24);
-        firReservation.setCheckInDate(checkInDate);
-        firReservation.setCheckoutDate(checkoutDate);
-        firReservation.setTotalPrice(50000);
-        firReservation.setGuestNum(5);
-        firReservation.setMember(firMember);
-
-        reservations.add(firReservation);
+        reservations.add(reservation);
 
         return reservations;
     }
 
-    private Optional<Reservation> mockFindReservation(){
+    private Optional<Reservation> mockFindReservation() {
 
         Accommodation accommodation = new Accommodation();
         accommodation.setId(1L);
@@ -110,8 +102,8 @@ class ReservationServiceTest {
         accommodation.setBuildingType("아파트");
 
         Reservation reservation = new Reservation();
-        LocalDate checkInDate = LocalDate.of(2020,2, 22);
-        LocalDate checkoutDate = LocalDate.of(2020,2, 24);
+        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
+        LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
         reservation.setCheckInDate(checkInDate);
         reservation.setCheckoutDate(checkoutDate);
         reservation.setTotalPrice(50000);
@@ -121,9 +113,9 @@ class ReservationServiceTest {
         return Optional.of(reservation);
     }
 
-    private Optional<Accommodation> mockFindAccommodation(){
+    private Optional<Accommodation> mockFindAccommodation() {
         BookedDate bookedDate = new BookedDate();
-        bookedDate.setDate(LocalDate.of(2020,2,22));
+        bookedDate.setDate(LocalDate.of(2020, 2, 22));
 
         List<BookedDate> bookedDates = new ArrayList<>();
         bookedDates.add(bookedDate);
