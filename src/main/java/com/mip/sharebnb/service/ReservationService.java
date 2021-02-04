@@ -45,9 +45,8 @@ public class ReservationService {
 
     public AccommodationDto mappingAccommodationDto(Reservation reservation) {
         AccommodationDto accommodationDto = new AccommodationDto();
-//        accommodationDto.setCity(reservation.getAccommodation().getCity());
-//        accommodationDto.setGu(reservation.getAccommodation().getGu());
-        accommodationDto.setAccommodation(Hibernate.unproxy(reservation.getAccommodation(), Accommodation.class));
+        accommodationDto.setCity(reservation.getAccommodation().getCity());
+        accommodationDto.setGu(reservation.getAccommodation().getGu());
         accommodationDto.setAccommodationPictures(reservation.getAccommodation().getAccommodationPictures());
 
         return accommodationDto;
