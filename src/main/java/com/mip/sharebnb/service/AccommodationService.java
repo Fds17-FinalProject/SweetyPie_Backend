@@ -10,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +40,7 @@ public class AccommodationService {
         return accommodationRepository.findByBuildingTypeContaining(buildingType, page);
     }
 
-    public List<Accommodation> searchAccommodationsByQueryDsl(String searchKeyword,
+    public Page<Accommodation> searchAccommodationsByQueryDsl(String searchKeyword,
                                                               LocalDate checkIn, LocalDate checkout,
                                                               int guestNum, Pageable page) {
 
