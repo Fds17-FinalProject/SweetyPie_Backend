@@ -2,7 +2,6 @@ package com.mip.sharebnb.controller;
 
 import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.model.Accommodation;
-import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.service.AccommodationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,8 +21,6 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class AccommodationController {
-
-    private final AccommodationRepository accommodationRepository;
 
     private final AccommodationService accommodationService;
 
@@ -59,6 +56,14 @@ public class AccommodationController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
             @RequestParam(required = false, defaultValue = "0") int guestNum, @PageableDefault(page = 1) Pageable page) {
 
-        return accommodationService.searchAccommodationsByQueryDsl(searchKeyword, checkIn, checkout, guestNum, page);
+        return accommodationService.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
+    }
+
+    @GetMapping("/accommodations/mapSearch")
+    public Page<Accommodation> getAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
+                                                            Float minLongitude, Float maxLongitude,
+                                                            @PageableDefault(page = 1) Pageable page) {
+
+        return accommodationService.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);
     }
 }
