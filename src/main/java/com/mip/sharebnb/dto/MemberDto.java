@@ -1,8 +1,6 @@
 package com.mip.sharebnb.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mip.sharebnb.model.Bookmark;
-import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.model.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,8 +18,6 @@ import java.util.List;
 @Builder
 public class MemberDto {
 
-    @JsonIgnore
-    private Long id;
     @Email
     private String email;
 
