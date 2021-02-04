@@ -11,3 +11,16 @@ Content-Type: application/json
 }
 
 ###
+
+POST http://localhost:8080/api/member
+Content-Type: application/json
+
+{
+  "email":"member@mail.com",
+  "password":"member",
+  "name":"name",
+  "birthDate": "2020-02-03",
+  "contact":"010-9908-5511"
+   }
+
+###
