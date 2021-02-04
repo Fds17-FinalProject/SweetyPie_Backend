@@ -1,6 +1,7 @@
 package com.mip.sharebnb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Where;
@@ -19,6 +20,7 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
+@Builder
 @Where(clause = "is_Deleted = false")
 public class Member {
     @Id
@@ -31,6 +33,9 @@ public class Member {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
     private String contact;

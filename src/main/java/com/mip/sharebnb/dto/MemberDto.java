@@ -28,6 +28,9 @@ public class MemberDto {
     @Size(min = 3, max = 30)
     private String prePassword;
 
+    @Size(min = 3, max = 30)
+    private String name;
+
     @Size(min = 3, max = 20)
     private String contact;
 
