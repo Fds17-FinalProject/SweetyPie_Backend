@@ -4,10 +4,9 @@ import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.service.MemberService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -19,6 +18,20 @@ public class MemberController {
 
     public MemberController(MemberService memberService) {
         this.memberService = memberService;
+    }
+
+    @GetMapping("/member/{member_id}")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
+
+        Member member = memberService.getMember(member_id);
+        MemberDto result = MemberDto.builder()
+                .email(member.getEmail())
+                .name(member.getName())
+                .contact(member.getContact())
+                .build();
+
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/member")
