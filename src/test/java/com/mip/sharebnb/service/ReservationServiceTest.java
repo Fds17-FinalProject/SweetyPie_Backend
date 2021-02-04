@@ -40,8 +40,8 @@ class ReservationServiceTest {
         List<ReservationDto> reservationDtoList = reservationService.getReservations(1L);
 
         assertThat(reservationDtoList.size()).isEqualTo(1);
-        assertThat(reservationDtoList.get(0).getReservation().getCheckInDate()).isEqualTo("2020-02-22");
-        assertThat(reservationDtoList.get(0).getReservation().getCheckoutDate()).isEqualTo("2020-02-24");
+        assertThat(reservationDtoList.get(0).getCheckInDate()).isEqualTo("2020-02-22");
+        assertThat(reservationDtoList.get(0).getCheckoutDate()).isEqualTo("2020-02-24");
         assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodation().getAccommodationType()).isEqualTo("집전체");
         assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodation().getBuildingType()).isEqualTo("아파트");
         assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodationPictures().get(0).getUrl()).isEqualTo("picture");
