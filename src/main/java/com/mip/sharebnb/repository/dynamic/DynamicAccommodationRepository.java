@@ -6,12 +6,13 @@ import com.mip.sharebnb.model.QAccommodation;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,7 +22,7 @@ public class DynamicAccommodationRepository {
 
     QAccommodation ac = new QAccommodation("ac");
 
-    public List<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
+    public Page<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(ac.capacity.goe(guestNum));
@@ -57,12 +58,12 @@ public class DynamicAccommodationRepository {
             }
         }
 
-        return queryFactory
+        return new PageImpl<>(queryFactory
                 .select(ac)
                 .from(ac)
                 .where(builder)
                 .offset(page.getOffset() - page.getPageSize())
                 .limit(page.getPageSize())
-                .fetch();
+                .fetch(), page, page.getPageSize());
     }
 }
