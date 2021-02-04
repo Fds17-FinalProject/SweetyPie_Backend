@@ -6,12 +6,14 @@ import com.mip.sharebnb.model.QAccommodation;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class DynamicAccommodationRepository {
 
     QAccommodation ac = new QAccommodation("ac");
 
-    public List<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
+    public Page<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(ac.capacity.goe(guestNum));
@@ -31,7 +33,7 @@ public class DynamicAccommodationRepository {
         }
 
         if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            checkIn = LocalDate.now();;
+            checkIn = LocalDate.now();
         }
 
         if (checkIn == null) {
@@ -57,12 +59,35 @@ public class DynamicAccommodationRepository {
             }
         }
 
-        return queryFactory
+        return new PageImpl<>(queryFactory
                 .select(ac)
                 .from(ac)
                 .where(builder)
                 .offset(page.getOffset() - page.getPageSize())
                 .limit(page.getPageSize())
-                .fetch();
+                .fetch(), page, page.getPageSize());
+    }
+
+    public Page<Accommodation> findAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
+                                                             Float minLongitude, Float maxLongitude, @PageableDefault(page = 1) Pageable page) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (minLatitude == null || maxLatitude == null || minLongitude == null || maxLongitude == null) {
+            return null;
+        }
+
+        builder.and(ac.latitude.gt(minLatitude));
+        builder.and(ac.latitude.lt(maxLatitude));
+
+        builder.and(ac.longitude.gt(minLongitude));
+        builder.and(ac.longitude.lt(maxLongitude));
+
+        return new PageImpl<>(queryFactory
+                .select(ac)
+                .from(ac)
+                .where(builder)
+                .offset(page.getOffset() - page.getPageSize())
+                .limit(page.getPageSize())
+                .fetch(), page, page.getPageSize());
     }
 }
