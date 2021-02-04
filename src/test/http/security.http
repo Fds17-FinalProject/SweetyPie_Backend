@@ -6,7 +6,7 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email":"member3@mail.com",
+  "email":"member@mail.com",
   "password":"member"
 }
 
@@ -23,4 +23,8 @@ Content-Type: application/json
   "contact":"010-9908-5511"
    }
 
+###
+
+GET http://localhost:8080/api/member/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyNDI5NTEzfQ.f7ex5DUYm2ciJgT7QdfTFI2Sx3FkuoKxE8QoSFGeOpWEmD-HeS6mP00Vw-cSpJR0eld3MarTdz5EVmS-20ZT4g
 ###
