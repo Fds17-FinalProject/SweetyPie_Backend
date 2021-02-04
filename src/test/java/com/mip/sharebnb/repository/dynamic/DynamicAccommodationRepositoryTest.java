@@ -36,12 +36,16 @@ class DynamicAccommodationRepositoryTest {
             accommodationRepository.save(givenAccommodation());
         }
 
-        List<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch("서울", LocalDate.of(2021, 5, 1), LocalDate.of(2021, 5, 5), 3, PageRequest.of(1, 10));
+        List<Accommodation> accommodations = dynamicAccommodationRepository.
+                findAccommodationsBySearch("강릉",
+                        LocalDate.of(2021, 5, 1),
+                        LocalDate.of(2021, 5, 5), 3,
+                        PageRequest.of(1, 10));
 
         assertThat(accommodations.size()).isEqualTo(10);
 
         for (Accommodation accommodation : accommodations) {
-            assertThat(accommodation.getCity()).isEqualTo("서울특별시");
+            assertThat(accommodation.getCity()).isEqualTo("강릉시");
         }
     }
 
