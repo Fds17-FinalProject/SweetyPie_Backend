@@ -42,8 +42,8 @@ class ReservationServiceTest {
         assertThat(reservationDtoList.size()).isEqualTo(1);
         assertThat(reservationDtoList.get(0).getCheckInDate()).isEqualTo("2020-02-22");
         assertThat(reservationDtoList.get(0).getCheckoutDate()).isEqualTo("2020-02-24");
-        assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodation().getAccommodationType()).isEqualTo("집전체");
-        assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodation().getBuildingType()).isEqualTo("아파트");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getCity()).isEqualTo("서울시");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getGu()).isEqualTo("강남구");
         assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodationPictures().get(0).getUrl()).isEqualTo("picture");
 
     }
@@ -72,8 +72,8 @@ class ReservationServiceTest {
 
         List<Reservation> reservations = new ArrayList<>();
         Accommodation accommodation = new Accommodation();
-        accommodation.setAccommodationType("집전체");
-        accommodation.setBuildingType("아파트");
+        accommodation.setCity("서울시");
+        accommodation.setGu("강남구");
         accommodation.setBathroomNum(4);
         accommodation.setBedNum(8);
         accommodation.setAccommodationPictures(accommodationPictures);
