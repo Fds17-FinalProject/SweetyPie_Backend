@@ -32,9 +32,9 @@ class AccommodationServiceTest {
     @DisplayName("도시별 검색")
     @Test
     void findByCityContaining() {
-        when(accommodationRepository.findByCityContaining("서울", PageRequest.of(1,10))).thenReturn(((mockAccommodationPage())));
+        when(accommodationRepository.findByCityContaining("서울", PageRequest.of(1, 10))).thenReturn(((mockAccommodationPage())));
 
-        Page<Accommodation> accommodations = accommodationService.findByCityContaining("서울", PageRequest.of(1,10));
+        Page<Accommodation> accommodations = accommodationService.findByCityContaining("서울", PageRequest.of(1, 10));
 
         assertThat(accommodations.getSize()).isEqualTo(10);
         assertThat(accommodations.toList().get(0).getCity()).isEqualTo("서울특별시");
@@ -43,12 +43,14 @@ class AccommodationServiceTest {
     @DisplayName("건물 유형별 검색")
     @Test
     void findByBuildingTypeContaining() {
-        when(accommodationRepository.findByBuildingTypeContaining("원룸", PageRequest.of(1,10))).thenReturn(((mockAccommodationPage())));
+        when(accommodationRepository.findByBuildingTypeContaining("원룸", PageRequest.of(1, 10))).thenReturn(((mockAccommodationPage())));
 
-        Page<Accommodation> accommodations = accommodationService.findByBuildingTypeContaining("원룸", PageRequest.of(1,10));
+        Page<Accommodation> accommodations = accommodationService.findByBuildingTypeContaining("원룸", PageRequest.of(1, 10));
 
         assertThat(accommodations.getSize()).isEqualTo(10);
         assertThat(accommodations.toList().get(0).getBuildingType()).isEqualTo("원룸");
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
 
     }
 
@@ -63,19 +65,23 @@ class AccommodationServiceTest {
     }
 
     private AccommodationDto mockAccommodationDto() {
-        List<AccommodationPicture> accommodationPictures = new ArrayList<>();
-        accommodationPictures.add(new AccommodationPicture(1L, "https://sharebnb.co.kr/pictures/1.jpg"));
-        accommodationPictures.add(new AccommodationPicture(2L, "https://sharebnb.co.kr/pictures/2.jpg"));
-        accommodationPictures.add(new AccommodationPicture(3L, "https://sharebnb.co.kr/pictures/3.jpg"));
-        accommodationPictures.add(new AccommodationPicture(4L, "https://sharebnb.co.kr/pictures/4.jpg"));
-        accommodationPictures.add(new AccommodationPicture(5L, "https://sharebnb.co.kr/pictures/5.jpg"));
+        Accommodation accommodation = mockAccommodation(1L);
 
-        return new AccommodationDto(mockAccommodation(1L), null, null, accommodationPictures);
+        return new AccommodationDto(accommodation, null, null, accommodation.getAccommodationPictures());
     }
 
     private Accommodation mockAccommodation(Long id) {
+        Accommodation accommodation = new Accommodation(id, "서울특별시", "마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", "36.141", "126.531", "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", "4.56", 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
+        List<AccommodationPicture> accommodationPictures = new ArrayList<>();
 
-        return new Accommodation(id, "서울특별시", "마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", "36.141", "126.531", "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", "4.56", 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
+        accommodationPictures.add(new AccommodationPicture("https://sharebnb.co.kr/pictures/1.jpg"));
+        accommodationPictures.add(new AccommodationPicture("https://sharebnb.co.kr/pictures/2.jpg"));
+        accommodationPictures.add(new AccommodationPicture("https://sharebnb.co.kr/pictures/3.jpg"));
+        accommodationPictures.add(new AccommodationPicture("https://sharebnb.co.kr/pictures/4.jpg"));
+        accommodationPictures.add(new AccommodationPicture("https://sharebnb.co.kr/pictures/5.jpg"));
+        accommodation.setAccommodationPictures(accommodationPictures);
+
+        return accommodation;
     }
 
     private List<Accommodation> mockAccommodationList() {
