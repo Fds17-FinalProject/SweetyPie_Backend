@@ -37,12 +37,23 @@ public class MemberController {
         return ResponseEntity.ok(mapToMemberDto(member));
     }
 
+    @PutMapping("/member/{member_id}")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<MemberDto> updateMember(
+            @PathVariable Long member_id,
+            @Valid @RequestBody MemberDto memberDto) {
+
+        Member member = memberService.updateMember(member_id, memberDto);
+        return ResponseEntity.ok(mapToMemberDto(member));
+    }
+
     private MemberDto mapToMemberDto(Member member) {
 
         return   MemberDto.builder()
                 .email(member.getEmail())
                 .name(member.getName())
                 .contact(member.getContact())
+                .birthDate(member.getBirthDate())
                 .build();
     }
 }

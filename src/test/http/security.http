@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
   "email":"member6@mail.com",
-  "password":"member"
+  "password":"member1"
 }
 
 ###
@@ -37,9 +37,10 @@ Content-Type: application/json
 ###
 
 PUT http://localhost:8080/api/member/6
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXI2QG1haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjYsImV4cCI6MTYxMjQ1OTAxMH0.P7YGvup0vxTafTlIpHM6e9re2cEFCejDMafpGSBiZS-hUNBfktphlc85FLlQAbSNyrcNkAtujb6mRRMoFTWJiQ
 Content-Type: application/json
 
 {
-  "prePassword":"member",
-  "password": "member1"
+  "prePassword":"member1",
+  "password": "member2"
 }
