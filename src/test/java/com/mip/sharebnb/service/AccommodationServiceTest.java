@@ -4,6 +4,7 @@ import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.AccommodationPicture;
 import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,10 +30,13 @@ class AccommodationServiceTest {
     @Mock
     private AccommodationRepository accommodationRepository;
 
+    @Mock
+    private DynamicAccommodationRepository dynamicAccommodationRepository;
+
     @DisplayName("도시별 검색")
     @Test
     void findByCityContaining() {
-        when(accommodationRepository.findByCityContaining("서울", PageRequest.of(1, 10))).thenReturn(((mockAccommodationPage())));
+        when(accommodationRepository.findByCityContaining("서울", PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
 
         Page<Accommodation> accommodations = accommodationService.findByCityContaining("서울", PageRequest.of(1, 10));
 
@@ -43,7 +47,7 @@ class AccommodationServiceTest {
     @DisplayName("건물 유형별 검색")
     @Test
     void findByBuildingTypeContaining() {
-        when(accommodationRepository.findByBuildingTypeContaining("원룸", PageRequest.of(1, 10))).thenReturn(((mockAccommodationPage())));
+        when(accommodationRepository.findByBuildingTypeContaining("원룸", PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
 
         Page<Accommodation> accommodations = accommodationService.findByBuildingTypeContaining("원룸", PageRequest.of(1, 10));
 
@@ -54,14 +58,17 @@ class AccommodationServiceTest {
 
     }
 
-    @DisplayName("")
-    @Test
-    void findByCityContainingOrGuContaining() {
-    }
-
-    @DisplayName("")
+    @DisplayName("메인 검색")
     @Test
     void searchAccommodationsByQueryDsl() {
+        when(dynamicAccommodationRepository.findAccommodationsBySearch("원룸", null, null, 1, PageRequest.of(1, 10))).thenReturn(mockAccommodationList());
+
+        List<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl("원룸", null, null, 1, PageRequest.of(1, 10));
+
+        assertThat(accommodations.size()).isEqualTo(10);
+        assertThat(accommodations.get(0).getBuildingType()).isEqualTo("원룸");
+        assertThat(accommodations.get(0).getAccommodationPictures().size()).isEqualTo(5);
+        assertThat(accommodations.get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
     }
 
     private AccommodationDto mockAccommodationDto() {
