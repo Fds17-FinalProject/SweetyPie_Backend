@@ -28,8 +28,8 @@ dependencies {
     runtimeOnly 'mysql:mysql-connector-java'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     compile "com.github.ulisesbocchio:jasypt-spring-boot-starter:1.17"
     compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
     compile 'javax.validation:validation-api:2.0.1.Final'
