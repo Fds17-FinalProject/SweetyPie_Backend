@@ -62,50 +62,50 @@ class AccommodationServiceTest {
     @DisplayName("메인 검색 (지역, 인원)")
     @Test
     void searchAccommodationsByQueryDsl1() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch("원룸", null, null, 1, PageRequest.of(1, 10))).thenReturn(mockAccommodationList());
+        when(dynamicAccommodationRepository.findAccommodationsBySearch("원룸", null, null, 1, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
 
-        List<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl("원룸", null, null, 1, PageRequest.of(1, 10));
+        Page<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl("원룸", null, null, 1, PageRequest.of(1, 10));
 
-        assertThat(accommodations.size()).isEqualTo(10);
-        assertThat(accommodations.get(0).getBuildingType()).isEqualTo("원룸");
-        assertThat(accommodations.get(0).getAccommodationPictures().size()).isEqualTo(5);
-        assertThat(accommodations.get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
+        assertThat(accommodations.toList().size()).isEqualTo(10);
+        assertThat(accommodations.toList().get(0).getBuildingType()).isEqualTo("원룸");
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
     }
 
     @DisplayName("메인 검색 (체크인, 체크아웃)")
     @Test
     void searchAccommodationsByQueryDsl2() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, null, null, 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationList());
+        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, null, null, 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
 
-        List<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl(null, null, null, 0, PageRequest.of(1, 10));
+        Page<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl(null, null, null, 0, PageRequest.of(1, 10));
 
-        assertThat(accommodations.size()).isEqualTo(10);
-        assertThat(accommodations.get(0).getAccommodationPictures().size()).isEqualTo(5);
-        assertThat(accommodations.get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
+        assertThat(accommodations.toList().size()).isEqualTo(10);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
     }
 
     @DisplayName("메인 검색 (체크인이 체크아웃 보다 나중일 경우)")
     @Test
     void searchAccommodationsByQueryDsl3() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), LocalDate.of(2022, 4, 25), 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationList());
+        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), LocalDate.of(2022, 4, 25), 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
 
-        List<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl(null, LocalDate.of(2022, 5, 1), LocalDate.of(2022, 4, 25), 0, PageRequest.of(1, 10));
+        Page<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl(null, LocalDate.of(2022, 5, 1), LocalDate.of(2022, 4, 25), 0, PageRequest.of(1, 10));
 
-        assertThat(accommodations.size()).isEqualTo(10);
-        assertThat(accommodations.get(0).getAccommodationPictures().size()).isEqualTo(5);
-        assertThat(accommodations.get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
+        assertThat(accommodations.toList().size()).isEqualTo(10);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
     }
 
     @DisplayName("메인 검색 (체크인만)")
     @Test
     void searchAccommodationsByQueryDsl4() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), null, 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationList());
+        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), null, 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
 
-        List<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl(null, LocalDate.of(2022, 5, 1), null, 0, PageRequest.of(1, 10));
+        Page<Accommodation> accommodations = accommodationService.searchAccommodationsByQueryDsl(null, LocalDate.of(2022, 5, 1), null, 0, PageRequest.of(1, 10));
 
-        assertThat(accommodations.size()).isEqualTo(10);
-        assertThat(accommodations.get(0).getAccommodationPictures().size()).isEqualTo(5);
-        assertThat(accommodations.get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
+        assertThat(accommodations.toList().size()).isEqualTo(10);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
+        assertThat(accommodations.toList().get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
     }
 
     private AccommodationDto mockAccommodationDto() {
