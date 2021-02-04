@@ -42,7 +42,7 @@ public class AccommodationDto {
 
     private String accommodationDesc;
 
-    private String rating;
+    private Float rating;
 
     private Integer reviewNum;
 
