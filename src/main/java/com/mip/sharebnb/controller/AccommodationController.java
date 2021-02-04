@@ -57,19 +57,12 @@ public class AccommodationController {
         return accommodationService.findByBuildingTypeContaining(buildingType, page);
     }
 
-    @GetMapping("/accommodations/search/{searchKeyword}")
-    public Page<Accommodation> getAccommodationsBySearchKeyword(@PathVariable String searchKeyword, @PageableDefault(page = 1) Pageable page) {
-
-        return accommodationService.findByCityContainingOrGuContaining(searchKeyword, page);
-    }
-
-
     @GetMapping("/accommodations/search")
     public List<Accommodation> getAccommodationsBySearch(
             @RequestParam(required = false) String searchKeyword,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-            @RequestParam(defaultValue = "0") int guestNum, @PageableDefault(page = 1) Pageable page) {
+            @RequestParam(required = false, defaultValue = "0") int guestNum, @PageableDefault(page = 1) Pageable page) {
 
         return accommodationService.searchAccommodationsByQueryDsl(searchKeyword, checkIn, checkout, guestNum, page);
     }
