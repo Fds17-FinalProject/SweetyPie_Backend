@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +20,7 @@ public class AccommodationService {
     private final DynamicAccommodationRepository dynamicAccommodationRepository;
     private final AccommodationRepository accommodationRepository;
 
+    @Transactional
     public AccommodationDto findById(Long id) {
         Accommodation accommodation = accommodationRepository.findById(id).orElse(Accommodation.emptyObject());
 
@@ -38,11 +40,6 @@ public class AccommodationService {
     public Page<Accommodation> findByBuildingTypeContaining(String buildingType, Pageable page) {
 
         return accommodationRepository.findByBuildingTypeContaining(buildingType, page);
-    }
-
-    public Page<Accommodation> findByCityContainingOrGuContaining(String searchKeyword, Pageable page) {
-
-        return accommodationRepository.findByCityContainingOrGuContaining(searchKeyword, searchKeyword, page);
     }
 
     public List<Accommodation> searchAccommodationsByQueryDsl(String searchKeyword,
