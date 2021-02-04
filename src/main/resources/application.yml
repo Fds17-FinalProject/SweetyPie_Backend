@@ -17,6 +17,8 @@ logging:
         type:
           descriptor:
             sql: trace
+      springframework:
+        web: DEBUG
 
 jasypt:
   encryptor:
