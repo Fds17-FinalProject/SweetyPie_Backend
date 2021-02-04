@@ -6,12 +6,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,13 +36,13 @@ class DynamicAccommodationRepositoryTest {
             accommodationRepository.save(givenAccommodation());
         }
 
-        List<Accommodation> accommodations = dynamicAccommodationRepository.
+        Page<Accommodation> accommodations = dynamicAccommodationRepository.
                 findAccommodationsBySearch("강릉",
                         LocalDate.of(2021, 5, 1),
                         LocalDate.of(2021, 5, 5), 3,
                         PageRequest.of(1, 10));
 
-        assertThat(accommodations.size()).isEqualTo(10);
+        assertThat(accommodations.toList().size()).isEqualTo(10);
 
         for (Accommodation accommodation : accommodations) {
             assertThat(accommodation.getCity()).isEqualTo("강릉시");
@@ -52,9 +52,9 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("검색어 없이 메인 검색 테스트")
     @Test
     void searchIfSearchKeywordIsEmpty() {
-        List<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2021, 5, 1), LocalDate.of(2021, 5, 5), 3, PageRequest.of(1, 10));
+        Page<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2021, 5, 1), LocalDate.of(2021, 5, 5), 3, PageRequest.of(1, 10));
 
-        assertThat(accommodations.size()).isEqualTo(10);
+        assertThat(accommodations.toList().size()).isEqualTo(10);
 
         for (Accommodation accommodation : accommodations) {
             assertThat(accommodation.getCapacity()).isGreaterThanOrEqualTo(3);
