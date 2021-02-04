@@ -14,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import javax.validation.constraints.NotNull;
+
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,12 +47,12 @@ class ReservationControllerTest {
     void getReservations() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/reservation/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(5)))
-                .andExpect(jsonPath("$.[1].checkInDate").value("2020-01-12"))
-                .andExpect(jsonPath("$.[1].checkoutDate").value("2020-01-14"))
-                .andExpect(jsonPath("$.[1].accommodationDto.accommodation.accommodationType").value("집전체"))
-                .andExpect(jsonPath("$.[1].accommodationDto.accommodation.buildingType").value("아파트"))
-                .andExpect(jsonPath("$.[1].accommodationDto.accommodationPictures.[0].url").value("picture"));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$.[0].checkInDate").value("2020-01-18"))
+                .andExpect(jsonPath("$.[0].checkoutDate").value("2020-01-20"))
+                .andExpect(jsonPath("$.[0].accommodationDto.city").value("서울시"))
+                .andExpect(jsonPath("$.[0].accommodationDto.gu").value("강남구"))
+                .andExpect(jsonPath("$.[0].accommodationDto.accommodationPictures.[0].url").value("picture"));
 
     }
 
