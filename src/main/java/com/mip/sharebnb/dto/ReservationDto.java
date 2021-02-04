@@ -2,26 +2,20 @@ package com.mip.sharebnb.dto;
 
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class ReservationDto {
 
-    private String memberId;
+    private Long reservationId;
 
-    private String accommodationId;
+    @NonNull
+    private LocalDate checkInDate;
+    @NonNull
+    private LocalDate checkoutDate;
 
-    @NotEmpty
-    private String checkInDate;
-
-    @NotEmpty
-    private String checkoutDate;
-
-    @NotEmpty
-    private String guestNum;
-
-    @NotEmpty
-    private String totalPrice;
+    private AccommodationDto accommodationDto;
 }

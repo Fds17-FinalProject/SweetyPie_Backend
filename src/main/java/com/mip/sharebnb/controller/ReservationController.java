@@ -16,15 +16,10 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping("/reservation/{id}")
-    public List<Reservation> getReservations(@PathVariable Long id) {
+    public List<ReservationDto> getReservations(@PathVariable Long id) {
         if (id == null){
             return new ArrayList<>();
         }
         return reservationService.getReservations(id);
-    }
-
-    @PatchMapping("/reservation/{id}")
-    public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto) {
-        return reservationService.updateReservation(id, reservationDto);
     }
 }
