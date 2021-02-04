@@ -40,9 +40,16 @@ class AccommodationServiceTest {
         assertThat(accommodations.toList().get(0).getCity()).isEqualTo("서울특별시");
     }
 
-    @DisplayName("")
+    @DisplayName("건물 유형별 검색")
     @Test
     void findByBuildingTypeContaining() {
+        when(accommodationRepository.findByBuildingTypeContaining("원룸", PageRequest.of(1,10))).thenReturn(((mockAccommodationPage())));
+
+        Page<Accommodation> accommodations = accommodationService.findByBuildingTypeContaining("원룸", PageRequest.of(1,10));
+
+        assertThat(accommodations.getSize()).isEqualTo(10);
+        assertThat(accommodations.toList().get(0).getBuildingType()).isEqualTo("원룸");
+
     }
 
     @DisplayName("")
