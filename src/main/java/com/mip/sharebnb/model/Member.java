@@ -1,9 +1,10 @@
 package com.mip.sharebnb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,6 +20,8 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Where(clause = "is_Deleted = false")
 public class Member {
     @Id
@@ -33,11 +36,15 @@ public class Member {
     private String password;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String contact;
 
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @ColumnDefault("false")
     private boolean isDeleted;
 
     @Enumerated(EnumType.STRING)
@@ -48,10 +55,6 @@ public class Member {
     @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Review> reviews;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "member")
-    private List<Reservation> reservations;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
