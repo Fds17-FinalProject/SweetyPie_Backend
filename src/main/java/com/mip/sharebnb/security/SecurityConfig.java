@@ -53,10 +53,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/api/**").permitAll() // 개발용 설정, 이후에 개별적으로 주소 추가하기
-                .antMatchers("/api/hello").permitAll() // api hello는 인증없이 접근허용
-                .antMatchers("/api/login").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/api/**").permitAll() // 개발용 설정, 이후에 개별적으로 주소 추가하기
+//                .antMatchers("/api/login").permitAll()
+//                .antMatchers("/api/member/**").permitAll()
+//                .anyRequest().authenticated()
 
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
