@@ -110,6 +110,7 @@ class AccommodationServiceTest {
 
     private AccommodationDto mockAccommodationDto() {
         Accommodation accommodation = mockAccommodation(1L);
+
         return mappingAccommodationDto(accommodation);
     }
 
@@ -142,6 +143,7 @@ class AccommodationServiceTest {
     }
 
     private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
+
         return new AccommodationDto(accommodation.getCity(),
                 accommodation.getGu(), accommodation.getTitle(),
                 accommodation.getBathroomNum(), accommodation.getBedroomNum(),

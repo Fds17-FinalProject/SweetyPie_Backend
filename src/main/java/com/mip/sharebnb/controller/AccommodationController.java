@@ -31,7 +31,7 @@ public class AccommodationController {
     @Transactional
     @GetMapping("/accommodation/{id}")
     public AccommodationDto getAccommodation(@PathVariable Long id) {
-        System.out.println("333333333333333333");
+
         return accommodationService.findById(id);
     }
 
