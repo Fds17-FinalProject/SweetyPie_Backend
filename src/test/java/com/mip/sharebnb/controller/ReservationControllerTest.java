@@ -47,25 +47,12 @@ class ReservationControllerTest {
     void getReservations() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/reservation/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$.[0].checkInDate").value("2020-01-14"))
-                .andExpect(jsonPath("$.[0].guestNum").value(8))
-                .andExpect(jsonPath("$.[0].accommodation.accommodationType").value("집전체"));
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$.[1].reservation.checkInDate").value("2020-01-12"))
+                .andExpect(jsonPath("$.[1].reservation.guestNum").value(8))
+                .andExpect(jsonPath("$.[1].accommodationDto.accommodation.accommodationType").value("집전체"))
+                .andExpect(jsonPath("$.[1].accommodationDto.accommodationPictures.[0].url").value("picture"));
 
     }
 
-    @Test
-    void updateReservation() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/reservation/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(new ReservationDto("1L", "1L", "2020-02-10", "2020-02-12", "5", "10000"))))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.checkInDate").value("2020-02-10"))
-                .andExpect(jsonPath("$.checkoutDate").value("2020-02-12"))
-                .andExpect(jsonPath("$.guestNum").value("5"))
-                .andExpect(jsonPath("$.totalPrice").value("10000"))
-                .andReturn();
-
-        logger.info(result::toString);
-    }
 }
