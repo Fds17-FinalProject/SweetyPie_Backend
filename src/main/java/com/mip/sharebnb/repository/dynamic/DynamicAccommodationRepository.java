@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -32,7 +33,7 @@ public class DynamicAccommodationRepository {
         }
 
         if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            checkIn = LocalDate.now();;
+            checkIn = LocalDate.now();
         }
 
         if (checkIn == null) {
@@ -57,6 +58,29 @@ public class DynamicAccommodationRepository {
                 builder.and(ac.city.contains(keyword).or(ac.gu.contains(keyword)));
             }
         }
+
+        return new PageImpl<>(queryFactory
+                .select(ac)
+                .from(ac)
+                .where(builder)
+                .offset(page.getOffset() - page.getPageSize())
+                .limit(page.getPageSize())
+                .fetch(), page, page.getPageSize());
+    }
+
+    public Page<Accommodation> findAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
+                                                             Float minLongitude, Float maxLongitude, @PageableDefault(page = 1) Pageable page) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (minLatitude == null || maxLatitude == null || minLongitude == null || maxLongitude == null) {
+            return null;
+        }
+
+        builder.and(ac.latitude.gt(minLatitude));
+        builder.and(ac.latitude.lt(maxLatitude));
+
+        builder.and(ac.longitude.gt(minLongitude));
+        builder.and(ac.longitude.lt(maxLongitude));
 
         return new PageImpl<>(queryFactory
                 .select(ac)
