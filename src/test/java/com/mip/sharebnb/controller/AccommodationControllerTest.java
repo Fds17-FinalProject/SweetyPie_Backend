@@ -35,11 +35,11 @@ class AccommodationControllerTest {
     void getAccommodation() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodation/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.accommodation.city").value("서울특별시"))
-                .andExpect(jsonPath("$.accommodation.gu").value("마포구"))
-                .andExpect(jsonPath("$.accommodation.contact").value("010-1234-5678"))
+                .andExpect(jsonPath("$.city").value("강릉시"))
+                .andExpect(jsonPath("$.gu").value("주문진읍"))
+                .andExpect(jsonPath("$.contact").value("010-1234-5678"))
                 .andExpect(jsonPath("$.accommodationPictures", hasSize(5)))
-                .andExpect(jsonPath("$.accommodationPictures[0].url").value("https://a0.muscache.com/pictures/1b25e83c-c0b6-41ba-82a2-efa15f7ce542.jpg"));
+                .andExpect(jsonPath("$.accommodationPictures[0].url").value("https://a0.muscache.com/pictures/7586ebad-aaf5-4aa6-b966-8660d4820b51.jpg"));
 
     }
 
@@ -61,9 +61,9 @@ class AccommodationControllerTest {
     @DisplayName("메인 검색 기능 (검색어, 체크인, 체크아웃, 인원수)")
     @Test
     void getAccommodationsBySearch() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations/search?searchKeyword=마포&checkIn=2021-02-03&checkout=2021-02-05&page=1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations/search?searchKeyword=강릉&checkIn=2021-02-03&checkout=2021-02-05&page=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].city").value("서울특별시"))
-                .andExpect(jsonPath("$[0].gu").value("마포구"));
+                .andExpect(jsonPath("$.content[0].city").value("강릉시"))
+                .andExpect(jsonPath("$.content[0].gu").value("주문진읍"));
     }
 }
