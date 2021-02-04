@@ -12,9 +12,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AccommodationServiceTest {
@@ -28,6 +32,12 @@ class AccommodationServiceTest {
     @DisplayName("도시별 검색")
     @Test
     void findByCityContaining() {
+        when(accommodationRepository.findByCityContaining("서울", PageRequest.of(1,10))).thenReturn(((mockAccommodationPage())));
+
+        Page<Accommodation> accommodations = accommodationService.findByCityContaining("서울", PageRequest.of(1,10));
+
+        assertThat(accommodations.getSize()).isEqualTo(10);
+        assertThat(accommodations.toList().get(0).getCity()).isEqualTo("서울특별시");
     }
 
     @DisplayName("")
