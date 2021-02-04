@@ -26,6 +26,11 @@ public class AccommodationService {
         return mappingAccommodationDto(accommodation);
     }
 
+    public Page<Accommodation> findAccommodations(Pageable pageable) {
+
+        return accommodationRepository.findAccommodationsBy(pageable);
+    }
+
     public Page<Accommodation> findByCityContaining(String searchKeyword, Pageable page) {
 
         return accommodationRepository.findByCityContaining(searchKeyword, page);

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccommodationRepository extends JpaRepository<Accommodation, Long> {
 
+    Page<Accommodation> findAccommodationsBy(Pageable pageable);
+
     Page<Accommodation> findByCityContaining(String city, Pageable pageable);
 
     Page<Accommodation> findByCityContainingOrGuContaining(String city, String gu, Pageable pageable);

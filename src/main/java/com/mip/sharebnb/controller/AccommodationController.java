@@ -42,9 +42,9 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations")
-    public List<Accommodation> getAllAccommodations() {
+    public Page<Accommodation> getAllAccommodations(@PageableDefault(page = 1) Pageable page) {
 
-        return accommodationRepository.findAll();
+        return accommodationService.findAccommodations(page);
     }
 
     @GetMapping("/accommodations/city/{city}")
