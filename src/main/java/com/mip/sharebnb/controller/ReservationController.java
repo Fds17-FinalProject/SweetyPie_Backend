@@ -4,9 +4,7 @@ import com.mip.sharebnb.dto.ReservationDto;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.service.ReservationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @GetMapping("/reservation/{id}")
-    public List<Reservation> getReservations(@PathVariable Long id) {
+    public List<ReservationDto> getReservations(@PathVariable Long id) {
         if (id == null){
             return new ArrayList<>();
         }

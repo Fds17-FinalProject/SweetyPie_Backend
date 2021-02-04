@@ -68,7 +68,7 @@ public class Accommodation {
     private String hostName;
 
     private Integer hostReviewNum;
-
+    
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation")
     private List<Reservation> reservations;

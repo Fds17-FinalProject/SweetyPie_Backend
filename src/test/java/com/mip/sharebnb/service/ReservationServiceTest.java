@@ -1,10 +1,8 @@
 package com.mip.sharebnb.service;
 
-import com.mip.sharebnb.model.Accommodation;
-import com.mip.sharebnb.model.Member;
-import com.mip.sharebnb.model.Reservation;
+import com.mip.sharebnb.dto.ReservationDto;
+import com.mip.sharebnb.model.*;
 import com.mip.sharebnb.repository.AccommodationRepository;
-import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,14 +10,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
@@ -29,21 +30,26 @@ class ReservationServiceTest {
     @Mock
     private ReservationRepository reservationRepository;
 
+    @Mock
+    private AccommodationRepository accommodationRepository;
+
     @Test
-    void getReservationByMemberId(){
+    void getReservationByMemberId() {
         when(reservationRepository.findReservationByMemberId(1L)).thenReturn(mockReservation());
 
-        List<Reservation> reservations = reservationService.getReservations(1L);
+        List<ReservationDto> reservationDtoList = reservationService.getReservations(1L);
 
-        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
+        assertThat(reservationDtoList.size()).isEqualTo(1);
+        assertThat(reservationDtoList.get(0).getCheckInDate()).isEqualTo("2020-02-22");
+        assertThat(reservationDtoList.get(0).getCheckoutDate()).isEqualTo("2020-02-24");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getCity()).isEqualTo("서울시");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getGu()).isEqualTo("강남구");
+        assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodationPictures().get(0).getUrl()).isEqualTo("picture");
 
-        assertThat(reservations.size()).isEqualTo(1);
-        assertThat(reservations.get(0).getMember().getId()).isEqualTo(1L);
-        assertThat(reservations.get(0).getCheckInDate()).isEqualTo(checkInDate);
     }
 
     @Test
-    void getReservationByMemberIdEmpty(){
+    void getReservationByMemberIdEmpty() {
         when(reservationRepository.findReservationByMemberId(1L)).thenReturn(new ArrayList<>());
 
         List<Reservation> reservations = reservationRepository.findReservationByMemberId(1L);
@@ -51,26 +57,78 @@ class ReservationServiceTest {
         assertThat(reservations.isEmpty()).isTrue();
     }
 
-    private List<Reservation> mockReservation(){
+
+    private List<Reservation> mockReservation() {
+        List<AccommodationPicture> accommodationPictures = new ArrayList<>();
+        AccommodationPicture firAccommodationPicture = new AccommodationPicture();
+        firAccommodationPicture.setUrl("picture");
+
+        accommodationPictures.add(firAccommodationPicture);
+
+        AccommodationPicture secAccommodationPicture = new AccommodationPicture();
+        secAccommodationPicture.setUrl("photo");
+
+        accommodationPictures.add(secAccommodationPicture);
+
         List<Reservation> reservations = new ArrayList<>();
+        Accommodation accommodation = new Accommodation();
+        accommodation.setCity("서울시");
+        accommodation.setGu("강남구");
+        accommodation.setBathroomNum(4);
+        accommodation.setBedNum(8);
+        accommodation.setAccommodationPictures(accommodationPictures);
 
-        Member firMember = new Member();
-        firMember.setId(1L);
-        firMember.setEmail("test123@gmail.com");
-        firMember.setContact("01077777777");
+        Reservation reservation = new Reservation();
+        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
+        LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
+        reservation.setCheckInDate(checkInDate);
+        reservation.setCheckoutDate(checkoutDate);
+        reservation.setTotalPrice(50000);
+        reservation.setGuestNum(5);
+        reservation.setAccommodation(accommodation);
 
-        Reservation firReservation = new Reservation();
-        LocalDate checkInDate = LocalDate.of(2020,2, 22);
-        LocalDate checkoutDate = LocalDate.of(2020,2, 24);
-        firReservation.setCheckInDate(checkInDate);
-        firReservation.setCheckoutDate(checkoutDate);
-        firReservation.setTotalPrice(50000);
-        firReservation.setGuestNum(5);
-        firReservation.setMember(firMember);
-
-        reservations.add(firReservation);
+        reservations.add(reservation);
 
         return reservations;
     }
 
+    private Optional<Reservation> mockFindReservation() {
+
+        Accommodation accommodation = new Accommodation();
+        accommodation.setId(1L);
+        accommodation.setBathroomNum(2);
+        accommodation.setBedroomNum(2);
+        accommodation.setAccommodationType("집전체");
+        accommodation.setBuildingType("아파트");
+
+        Reservation reservation = new Reservation();
+        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
+        LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
+        reservation.setCheckInDate(checkInDate);
+        reservation.setCheckoutDate(checkoutDate);
+        reservation.setTotalPrice(50000);
+        reservation.setGuestNum(5);
+        reservation.setAccommodation(accommodation);
+
+        return Optional.of(reservation);
+    }
+
+    private Optional<Accommodation> mockFindAccommodation() {
+        BookedDate bookedDate = new BookedDate();
+        bookedDate.setDate(LocalDate.of(2020, 2, 22));
+
+        List<BookedDate> bookedDates = new ArrayList<>();
+        bookedDates.add(bookedDate);
+
+        Accommodation accommodation = new Accommodation();
+        accommodation.setId(1L);
+        accommodation.setBathroomNum(2);
+        accommodation.setBedroomNum(2);
+        accommodation.setAccommodationType("집전체");
+        accommodation.setBuildingType("게스트하우스");
+        accommodation.setBookedDates(bookedDates);
+        accommodation.setCapacity(4);
+
+        return Optional.of(accommodation);
+    }
 }
