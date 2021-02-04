@@ -19,7 +19,6 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final AccommodationRepository accommodationRepository;
 
-
     public List<ReservationDto> getReservations(Long memberId) {
         if (memberId == null){
             return new ArrayList<>();
@@ -32,7 +31,9 @@ public class ReservationService {
 
             ReservationDto reservationDto = new ReservationDto();
 
-            reservationDto.setReservation(reservation);
+            reservationDto.setReservationId(reservation.getId());
+            reservationDto.setCheckInDate(reservation.getCheckInDate());
+            reservationDto.setCheckoutDate(reservation.getCheckoutDate());
             reservationDto.setAccommodationDto(mappingAccommodationDto(reservation));
 
             reservationDtoList.add(reservationDto);
@@ -41,8 +42,11 @@ public class ReservationService {
 
     }
 
+
     public AccommodationDto mappingAccommodationDto(Reservation reservation) {
         AccommodationDto accommodationDto = new AccommodationDto();
+//        accommodationDto.setCity(reservation.getAccommodation().getCity());
+//        accommodationDto.setGu(reservation.getAccommodation().getGu());
         accommodationDto.setAccommodation(Hibernate.unproxy(reservation.getAccommodation(), Accommodation.class));
         accommodationDto.setAccommodationPictures(reservation.getAccommodation().getAccommodationPictures());
 
