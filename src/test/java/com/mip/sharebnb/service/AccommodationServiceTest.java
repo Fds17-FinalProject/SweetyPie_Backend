@@ -111,7 +111,7 @@ class AccommodationServiceTest {
     private AccommodationDto mockAccommodationDto() {
         Accommodation accommodation = mockAccommodation(1L);
 
-        return new AccommodationDto(accommodation, null, null, accommodation.getAccommodationPictures());
+        return mappingAccommodationDto(accommodation);
     }
 
     private Accommodation mockAccommodation(Long id) {
@@ -140,5 +140,22 @@ class AccommodationServiceTest {
     private Page<Accommodation> mockAccommodationPage() {
 
         return new PageImpl<>(mockAccommodationList());
+    }
+
+    private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
+
+        return new AccommodationDto(accommodation.getCity(),
+                accommodation.getGu(), accommodation.getTitle(),
+                accommodation.getBathroomNum(), accommodation.getBedroomNum(),
+                accommodation.getBedNum(), accommodation.getCapacity(),
+                accommodation.getPrice(), accommodation.getContact(),
+                accommodation.getLatitude(), accommodation.getLongitude(),
+                accommodation.getLocationDesc(), accommodation.getTransportationDesc(),
+                accommodation.getAccommodationDesc(), accommodation.getRating(),
+                accommodation.getReviewNum(), accommodation.getAccommodationType(),
+                accommodation.getBuildingType(), accommodation.getHostName(),
+                accommodation.getHostDesc(), accommodation.getHostReviewNum(),
+                accommodation.getReviews(), accommodation.getBookedDates(),
+                accommodation.getAccommodationPictures());
     }
 }
