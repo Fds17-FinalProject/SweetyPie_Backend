@@ -59,6 +59,7 @@ public class Accommodation {
     @Column(columnDefinition = "TEXT")
     private String hostDesc;
 
+    @Column(columnDefinition = "DECIMAL(5,3)")
     private Float rating;
 
     private Integer reviewNum;

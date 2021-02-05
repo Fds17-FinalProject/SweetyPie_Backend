@@ -1,19 +1,31 @@
 package com.mip.sharebnb.controller;
 
-import com.mip.sharebnb.dto.BookedDateDto;
 import com.mip.sharebnb.model.BookedDate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.mip.sharebnb.repository.BookedDateRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class BookedDateController {
 
-    @PostMapping("/bookedDate")
-    public BookedDate getBookedDates(@RequestBody BookedDateDto bookedDateDto) {
+    private final BookedDateRepository bookedDateRepository;
 
-        return new BookedDate(bookedDateDto.getDate());
+    @GetMapping("/bookDate/{id}")
+    public BookedDate findById(@PathVariable Long id) {
+
+        return bookedDateRepository.findById(id).get();
+    }
+
+    @GetMapping("/bookDates/{accommodationId}")
+    public List<BookedDate> findBookedDatesByAccommodation_Id(@PathVariable Long accommodationId) {
+
+        return bookedDateRepository.findBookedDatesByAccommodation_Id(accommodationId);
     }
 }
