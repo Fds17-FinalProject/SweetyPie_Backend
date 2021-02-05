@@ -47,8 +47,8 @@ public class AccommodationService {
         return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
     }
 
-    public Page<Accommodation> findAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
-                                                             Float minLongitude, Float maxLongitude, Pageable page) {
+    public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
+                                                             float minLongitude, float maxLongitude, Pageable page) {
 
         return dynamicAccommodationRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);
     }

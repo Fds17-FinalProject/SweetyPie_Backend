@@ -70,13 +70,9 @@ public class DynamicAccommodationRepository {
                 .fetch(), page, page.getPageSize());
     }
 
-    public Page<Accommodation> findAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
-                                                             Float minLongitude, Float maxLongitude, @PageableDefault(page = 1) Pageable page) {
+    public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
+                                                             float minLongitude, float maxLongitude, @PageableDefault(page = 1) Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
-
-        if (minLatitude == null || maxLatitude == null || minLongitude == null || maxLongitude == null) {
-            return null;
-        }
 
         builder.and(ac.latitude.gt(minLatitude));
         builder.and(ac.latitude.lt(maxLatitude));

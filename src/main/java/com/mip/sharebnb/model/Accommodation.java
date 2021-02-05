@@ -29,23 +29,23 @@ public class Accommodation {
 
     private String title;
 
-    private Integer bathroomNum;
+    private int bathroomNum;
 
-    private Integer bedroomNum;
+    private int bedroomNum;
 
-    private Integer bedNum;
+    private int bedNum;
 
-    private Integer price;
+    private int price;
 
-    private Integer capacity;
+    private int capacity;
 
     private String contact;
 
     @Column(columnDefinition = "DECIMAL(11,7)")
-    private Float latitude;
+    private float latitude;
 
     @Column(columnDefinition = "DECIMAL(11,7)")
-    private Float longitude;
+    private float longitude;
 
     @Column(columnDefinition = "TEXT")
     private String locationDesc;
@@ -60,9 +60,9 @@ public class Accommodation {
     private String hostDesc;
 
     @Column(columnDefinition = "DECIMAL(5,3)")
-    private Float rating;
+    private float rating;
 
-    private Integer reviewNum;
+    private int reviewNum;
 
     private String accommodationType;
 
@@ -70,7 +70,7 @@ public class Accommodation {
 
     private String hostName;
 
-    private Integer hostReviewNum;
+    private int hostReviewNum;
     
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation")

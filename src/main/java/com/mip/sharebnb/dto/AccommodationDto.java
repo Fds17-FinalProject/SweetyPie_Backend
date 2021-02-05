@@ -20,21 +20,21 @@ public class AccommodationDto {
 
     private String title;
 
-    private Integer bathroomNum;
+    private int bathroomNum;
 
-    private Integer bedroomNum;
+    private int bedroomNum;
 
-    private Integer bedNum;
+    private int bedNum;
 
-    private Integer capacity;
+    private int capacity;
 
-    private Integer price;
+    private int price;
 
     private String contact;
 
-    private Float latitude;
+    private float latitude;
 
-    private Float longitude;
+    private float longitude;
 
     private String locationDesc;
 
@@ -42,9 +42,9 @@ public class AccommodationDto {
 
     private String accommodationDesc;
 
-    private Float rating;
+    private float rating;
 
-    private Integer reviewNum;
+    private int reviewNum;
 
     private String accommodationType;
 
@@ -54,7 +54,7 @@ public class AccommodationDto {
 
     private String hostDesc;
 
-    private Integer hostReviewNum;
+    private int hostReviewNum;
 
     private List<Review> reviews;
 
