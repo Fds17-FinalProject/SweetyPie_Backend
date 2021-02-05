@@ -24,6 +24,11 @@ public class ReservationController {
         return reservationService.getReservations(id);
     }
 
+    @PostMapping("/reservation")
+    public void makeAReservation(@RequestBody ReservationDto reservationDto){
+        
+    }
+
     @PatchMapping("/reservation/{id}")
     public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto){
         return reservationService.updateReservation(id, reservationDto);
