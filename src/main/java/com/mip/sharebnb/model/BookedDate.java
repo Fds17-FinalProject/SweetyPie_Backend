@@ -8,9 +8,10 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -23,10 +24,13 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class BookedDate {
     @Id
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+
     @NonNull
     private LocalDate date;
 
+    @NonNull
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
