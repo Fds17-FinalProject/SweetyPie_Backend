@@ -62,9 +62,10 @@ class ReservationServiceTest {
     @DisplayName("update 성공")
     @Test
     void updateReservationSuccess(){
+        when(bookedDateRepository.findBookedDatesByReservationId(1L)).thenReturn(mockBookedDate());
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(setReservation());
-        when(dynamicReservationRepository.findByReservationIdAndDate(1L,1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
+        when(dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
 
         ReservationDto dto = new ReservationDto();
         dto.setCheckInDate(LocalDate.of(2020,3,20));
@@ -86,7 +87,7 @@ class ReservationServiceTest {
     void updateReservationFail(){
         when(bookedDateRepository.findBookedDatesByReservationId(1L)).thenReturn(mockBookedDate());
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
-        when(dynamicReservationRepository.findByReservationIdAndDate(1L,1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22))).thenReturn(mockBookedDate());
+        when(dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22))).thenReturn(mockBookedDate());
 
         ReservationDto dto = new ReservationDto();
         dto.setCheckInDate(LocalDate.of(2020,2,20));
