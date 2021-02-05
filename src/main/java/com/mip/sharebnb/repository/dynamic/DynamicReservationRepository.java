@@ -38,7 +38,7 @@ public class DynamicReservationRepository {
         }
 
         if (checkIn != null && checkout != null) {
-            builder.and(qb.date.between(checkIn, checkout));
+            builder.and(qb.date.between(checkIn, checkout.minusDays(1)));
         }
 
         return queryFactory.selectFrom(qb)
