@@ -39,9 +39,22 @@ class MemberControllerTest {
 
     @Test
     void getMemberTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                MemberDto.builder()
+                                        .email("getmembertest@mail.com")
+                                        .birthDate(LocalDate.now())
+                                        .contact("011-111-1234")
+                                        .name("tester")
+                                        .password("password")
+                                        .build()
+                        )
+                ));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/member/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("member1@mail.com"));
+                .andExpect(jsonPath("$.email").value("getmembertest@mail.com"));
     }
 
     @Test
@@ -61,5 +74,33 @@ class MemberControllerTest {
                 ))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void updateMember() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                MemberDto.builder()
+                                        .email("updatetest@mail.com")
+                                        .birthDate(LocalDate.now())
+                                        .contact("011-111-1234")
+                                        .name("tester")
+                                        .password("password")
+                                        .build()
+                        )
+                ));
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/member/1")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                MemberDto.builder()
+                                        .email("updatetest2@mail.com")
+                                        .build()
+                        )
+                ))
+                .andExpect(status().isOk());
+    }
+
 
 }
