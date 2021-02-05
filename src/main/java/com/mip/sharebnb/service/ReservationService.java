@@ -4,6 +4,7 @@ import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.dto.ReservationDto;
 import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Reservation;
+import com.mip.sharebnb.repository.BookedDateRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 
 import com.mip.sharebnb.repository.dynamic.DynamicReservationRepository;
@@ -23,6 +24,8 @@ public class ReservationService {
     private final DynamicReservationRepository dynamicReservationRepository;
 
     private final ReservationRepository reservationRepository;
+
+    private final BookedDateRepository bookedDateRepository;
 
     public List<ReservationDto> getReservations(Long memberId) {
         if (memberId == null) {
@@ -58,16 +61,17 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation updateReservation(Long id, ReservationDto reservationDto) {
+    public Reservation updateReservation(Long reservationId, ReservationDto reservationDto) {
 
-        Optional<Reservation> findReservation = Optional.of(reservationRepository.findById(id).orElse(new Reservation()));
+        List<BookedDate> findBookedDates = bookedDateRepository.findBookedDatesByReservationId(reservationId);
+
+        bookedDateRepository.deleteBookedDateByReservationId(reservationId);
+
+        Optional<Reservation> findReservation = Optional.of(reservationRepository.findById(reservationId).orElse(new Reservation()));
 
         Reservation reservation = findReservation.get();
 
-        System.out.println("reservation >>>" + reservation.toString());
-
-        // accommodation의 날짜를 비교해야 함
-        List<BookedDate> reservations = dynamicReservationRepository.findByReservationIdAndDate(id, reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
+        List<BookedDate> reservations = dynamicReservationRepository.findByReservationIdAndDate(reservationId, reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
         if (reservations.isEmpty()) {
             reservation.setCheckInDate(reservationDto.getCheckInDate());
@@ -75,10 +79,15 @@ public class ReservationService {
             reservation.setGuestNum(reservationDto.getGuestNum());
             reservation.setTotalPrice(reservationDto.getTotalPrice());
 
-            Reservation result = reservationRepository.save(reservation);
-            return result;
-        }
+            return reservationRepository.save(reservation);
 
-        return new Reservation();
+        } else {
+
+            for (BookedDate findBookedDate : findBookedDates) {
+                bookedDateRepository.save(findBookedDate);
+            }
+
+            return new Reservation();
+        }
     }
 }
