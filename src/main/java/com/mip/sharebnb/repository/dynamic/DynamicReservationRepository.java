@@ -25,13 +25,9 @@ public class DynamicReservationRepository {
 
     QBookedDate qb = new QBookedDate("qb");
 
-    public List<BookedDate> findByReservationIdAndDate(Long reservationId, Long accommodationId, LocalDate checkIn, LocalDate checkout) {
+    public List<BookedDate> findByReservationIdAndDate(Long accommodationId, LocalDate checkIn, LocalDate checkout) {
 
         BooleanBuilder builder = new BooleanBuilder();
-
-        if (reservationId != null) {
-            builder.and(qb.reservation.id.eq(reservationId));
-        }
 
         if (accommodationId != null){
             builder.and(qb.accommodation.id.eq(accommodationId));
@@ -45,21 +41,5 @@ public class DynamicReservationRepository {
         .where(builder)
         .fetch();
     }
-
-    private BooleanExpression idEq(Long reservationId){
-
-        return reservationId != null ? qb.reservation.id.eq(reservationId) : null;
-
-    }
-
-    private List<BookedDate> findByBookedDate(Long reservationId){
-
-        return queryFactory.selectFrom(qb)
-                .where(qb.reservation.id.eq(reservationId))
-                .fetch();
-    }
-    
-    
-
 
 }
