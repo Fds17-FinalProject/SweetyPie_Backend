@@ -41,9 +41,11 @@ public class Accommodation {
 
     private String contact;
 
-    private String latitude;
+    @Column(columnDefinition = "DECIMAL(11,7)")
+    private Float latitude;
 
-    private String longitude;
+    @Column(columnDefinition = "DECIMAL(11,7)")
+    private Float longitude;
 
     @Column(columnDefinition = "TEXT")
     private String locationDesc;
@@ -57,7 +59,7 @@ public class Accommodation {
     @Column(columnDefinition = "TEXT")
     private String hostDesc;
 
-    private String rating;
+    private Float rating;
 
     private Integer reviewNum;
 

@@ -32,9 +32,9 @@ public class AccommodationDto {
 
     private String contact;
 
-    private String latitude;
+    private Float latitude;
 
-    private String longitude;
+    private Float longitude;
 
     private String locationDesc;
 
@@ -42,7 +42,7 @@ public class AccommodationDto {
 
     private String accommodationDesc;
 
-    private String rating;
+    private Float rating;
 
     private Integer reviewNum;
 
