@@ -47,6 +47,14 @@ public class MemberController {
         return ResponseEntity.ok(mapToMemberDto(member));
     }
 
+    @DeleteMapping("/member/{member_id}")
+    @PreAuthorize("hasRole('MEMBER')")
+    public ResponseEntity<Boolean> updateMember(@PathVariable Long member_id) {
+
+        Member member = memberService.withdrawal(member_id);
+        return ResponseEntity.ok(member.isDeleted());
+    }
+
     private MemberDto mapToMemberDto(Member member) {
 
         return   MemberDto.builder()
