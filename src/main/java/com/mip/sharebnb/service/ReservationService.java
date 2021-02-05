@@ -2,8 +2,12 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.dto.ReservationDto;
+import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.BookedDate;
+import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.Reservation;
+import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 
 import com.mip.sharebnb.repository.dynamic.DynamicReservationRepository;
@@ -21,8 +25,9 @@ import java.util.Optional;
 public class ReservationService {
 
     private final DynamicReservationRepository dynamicReservationRepository;
-
     private final ReservationRepository reservationRepository;
+    private final MemberRepository memberRepository;
+    private final AccommodationRepository accommodationRepository;
 
     public List<ReservationDto> getReservations(Long memberId) {
         if (memberId == null) {
@@ -46,15 +51,22 @@ public class ReservationService {
         return reservationDtoList;
     }
 
-    public AccommodationDto mappingAccommodationDto(Reservation reservation) {
+    public Reservation insertReservation(ReservationDto reservationDto) {
 
-        AccommodationDto accommodationDto = new AccommodationDto();
+        Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElse(new Member()));
+        Member member = optionalMember.get();
 
-        accommodationDto.setCity(reservation.getAccommodation().getCity());
-        accommodationDto.setGu(reservation.getAccommodation().getGu());
-        accommodationDto.setAccommodationPictures(reservation.getAccommodation().getAccommodationPictures());
+        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(reservationDto.getAccommodationId()).orElse(new Accommodation()));
 
-        return accommodationDto;
+        Accommodation accommodation = optionalAccommodation.get();
+
+        List<BookedDate> checkDuplicateDate = dynamicReservationRepository.findByReservationIdAndDate(reservationDto.getReservationId(), reservationDto.getAccommodationId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
+
+        Reservation reservation = new Reservation();
+//        if (checkDuplicateDate.isEmpty()) {
+//        }
+
+        return new Reservation();
     }
 
     @Transactional
@@ -80,5 +92,17 @@ public class ReservationService {
         }
 
         return new Reservation();
+    }
+
+
+    public AccommodationDto mappingAccommodationDto(Reservation reservation) {
+
+        AccommodationDto accommodationDto = new AccommodationDto();
+
+        accommodationDto.setCity(reservation.getAccommodation().getCity());
+        accommodationDto.setGu(reservation.getAccommodation().getGu());
+        accommodationDto.setAccommodationPictures(reservation.getAccommodation().getAccommodationPictures());
+
+        return accommodationDto;
     }
 }
