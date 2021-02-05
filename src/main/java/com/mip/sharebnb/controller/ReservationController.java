@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class ReservationController {
 
     private final ReservationService reservationService;
@@ -27,5 +28,5 @@ public class ReservationController {
     public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto){
         return reservationService.updateReservation(id, reservationDto);
     }
-    
+
 }
