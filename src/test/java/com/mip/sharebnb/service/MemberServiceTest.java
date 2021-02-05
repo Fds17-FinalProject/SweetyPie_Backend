@@ -86,4 +86,21 @@ class MemberServiceTest {
 
         verify(memberRepository, times(1)).findById(1L);
     }
+
+    @Test
+    void withdrawalTest() {
+        Member member = Member.builder()
+                .email("test@mail.com")
+                .build();
+
+        when(memberRepository.findById(1L))
+                .thenReturn(Optional.of(member));
+
+        when(memberRepository.save(member))
+                .thenReturn(member);
+
+        Member result = memberService.withdrawal(1L);
+
+        assertThat(result.isDeleted()).isEqualTo(true);
+    }
 }
