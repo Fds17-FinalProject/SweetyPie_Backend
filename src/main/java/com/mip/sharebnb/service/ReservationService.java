@@ -65,13 +65,18 @@ public class ReservationService {
 
         List<BookedDate> findBookedDates = bookedDateRepository.findBookedDatesByReservationId(reservationId);
 
+        if (findBookedDates.isEmpty()) {
+            // 예외처리
+            return new Reservation();
+        }
+
         bookedDateRepository.deleteBookedDateByReservationId(reservationId);
 
         Optional<Reservation> findReservation = Optional.of(reservationRepository.findById(reservationId).orElse(new Reservation()));
 
         Reservation reservation = findReservation.get();
 
-        List<BookedDate> reservations = dynamicReservationRepository.findByReservationIdAndDate(reservationId, reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
+        List<BookedDate> reservations = dynamicReservationRepository.findByReservationIdAndDate(reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
         if (reservations.isEmpty()) {
             reservation.setCheckInDate(reservationDto.getCheckInDate());
