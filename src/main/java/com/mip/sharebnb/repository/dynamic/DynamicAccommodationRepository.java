@@ -34,26 +34,12 @@ public class DynamicAccommodationRepository {
             }
         }
 
-        if (checkout != null && checkout.isBefore(LocalDate.now())) {
-            checkout = null;
-        }
-
-        if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            checkIn = LocalDate.now();
-        }
-
-        if (checkIn == null) {
-            checkIn = LocalDate.now();
-        }
-
         acBuilder.and(ac.capacity.goe(guestNum));
 
-        bdBuilder
-                .and(bd.date.goe(checkIn));
+        bdBuilder.and(bd.date.goe(checkIn));
 
         if (checkout != null) {
-            bdBuilder
-                    .and(bd.date.before(checkout));
+            bdBuilder.and(bd.date.before(checkout));
         }
 
         acBuilder.andNot(ac.id.in(JPAExpressions
