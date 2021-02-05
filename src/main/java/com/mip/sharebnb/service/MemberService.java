@@ -36,6 +36,22 @@ public class MemberService {
     }
 
     @Transactional
+    public Member signup(MemberDto memberDto) {
+        checkDuplicateEmail(memberDto);
+
+        Member member = Member.builder()
+                .email(memberDto.getEmail())
+                .password(passwordEncoder.encode(memberDto.getPassword()))
+                .name(memberDto.getName())
+                .birthDate(memberDto.getBirthDate())
+                .contact(memberDto.getContact())
+                .role(MemberRole.MEMBER)
+                .build();
+
+        return memberRepository.save(member);
+    }
+
+    @Transactional
     public Member getMember(Long id) {
         return memberRepository
                 .findById(id)
@@ -69,18 +85,12 @@ public class MemberService {
     }
 
     @Transactional
-    public Member signup(MemberDto memberDto) {
-        checkDuplicateEmail(memberDto);
+    public Member withdrawal(Long id) {
+        Member member = memberRepository
+                .findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("찾는 멤버가 없습니다"));
 
-        Member member = Member.builder()
-                .email(memberDto.getEmail())
-                .password(passwordEncoder.encode(memberDto.getPassword()))
-                .name(memberDto.getName())
-                .birthDate(memberDto.getBirthDate())
-                .contact(memberDto.getContact())
-                .role(MemberRole.MEMBER)
-                .build();
-
+        member.setDeleted(true);
         return memberRepository.save(member);
     }
 
