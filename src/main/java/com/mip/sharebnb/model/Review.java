@@ -23,13 +23,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Review {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(columnDefinition = "DECIMAL(5,3)")
     private float rating;
 
-    @Column(nullable = false)
     private String content;
 
     @CreationTimestamp
