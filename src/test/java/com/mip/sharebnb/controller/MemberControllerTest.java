@@ -16,8 +16,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.time.LocalDate;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(properties = "spring.config.location="
         + "classpath:application.yml,"
@@ -76,7 +75,7 @@ class MemberControllerTest {
     }
 
     @Test
-    void updateMember() throws Exception {
+    void updateMemberTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
@@ -100,6 +99,26 @@ class MemberControllerTest {
                         )
                 ))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void withdrawalTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                MemberDto.builder()
+                                        .email("deletetest@mail.com")
+                                        .birthDate(LocalDate.now())
+                                        .contact("011-111-1234")
+                                        .name("tester")
+                                        .password("password")
+                                        .build()
+                        )
+                ));
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/member/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
     }
 
 

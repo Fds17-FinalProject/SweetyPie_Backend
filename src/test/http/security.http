@@ -2,8 +2,8 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email":"member6@mail.com",
-  "password":"member1"
+  "email":"member@mail.com",
+  "password":"member"
 }
 
 ###
@@ -12,7 +12,7 @@ POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-  "email":"member6@mail.com",
+  "email":"member@mail.com",
   "password":"member",
   "name":"name",
   "birthDate": "2020-02-03",
@@ -44,3 +44,7 @@ Content-Type: application/json
   "prePassword":"member1",
   "password": "member2"
 }
+
+###
+DELETE http://localhost:8080/api/member/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyNTAzNjE4fQ.mvw3-uosQ1TZQsjQGaelrFOIbXmdyQK9JzLYEsaXfbdlmbJmN2_0Q3b9sWJYL7dDwRyipPKF42usRu0fsCPhtw
