@@ -23,3 +23,8 @@ logging:
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
+
+jwt:
+  header: Authorization
+  secret: c3ByaW5nLWJvb3QtcHJvamVjdC1haXJibmItY2xvbi1wcm9qZWN0LXNoYXJlYm5iLXN3ZWV0eXBpZS1mb3JudC1iYWNrZW5kLWNoZWVydXAtd2h5LXRoaXMtbmVlZC1zby1sb25nLXdoeQ==
+  token-validity-in-seconds: 3600
