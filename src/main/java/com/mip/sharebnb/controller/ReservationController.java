@@ -18,7 +18,9 @@ public class ReservationController {
 
     @GetMapping("/reservation/{id}")
     public List<ReservationDto> getReservations(@PathVariable Long id) {
+
         if (id == null){
+            //  예외처리
             return new ArrayList<>();
         }
         return reservationService.getReservations(id);
@@ -31,6 +33,11 @@ public class ReservationController {
 
     @PatchMapping("/reservation/{id}")
     public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto){
+
+        if (id == null){
+            //  예외처리
+            return new Reservation();
+        }
         return reservationService.updateReservation(id, reservationDto);
     }
 
