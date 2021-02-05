@@ -1,6 +1,7 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.AccommodationDto;
+import com.mip.sharebnb.exception.CheckoutBeforeCheckInException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
@@ -43,6 +44,10 @@ public class AccommodationService {
     public Page<Accommodation> findAccommodationsBySearch(String searchKeyword,
                                                           LocalDate checkIn, LocalDate checkout,
                                                           int guestNum, Pageable page) {
+
+        if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
+            throw new CheckoutBeforeCheckInException();
+        }
 
         return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
     }
