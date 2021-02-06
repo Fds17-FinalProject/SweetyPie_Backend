@@ -3,7 +3,8 @@ package com.mip.sharebnb.controller;
 import com.mip.sharebnb.dto.LoginDto;
 import com.mip.sharebnb.dto.TokenDto;
 import com.mip.sharebnb.security.jwt.JwtFilter;
-import com.mip.sharebnb.service.MemberService;
+import com.mip.sharebnb.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,18 +17,15 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class AuthController {
 
-    private final MemberService memberService;
-
-    public AuthController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginDto) {
 
-        String jwt = memberService.authorize(loginDto);
+        String jwt = authService.login(loginDto);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + jwt);
