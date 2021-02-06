@@ -34,26 +34,12 @@ public class DynamicAccommodationRepository {
             }
         }
 
-        if (checkout != null && checkout.isBefore(LocalDate.now())) {
-            checkout = null;
-        }
-
-        if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            checkIn = LocalDate.now();
-        }
-
-        if (checkIn == null) {
-            checkIn = LocalDate.now();
-        }
-
         acBuilder.and(ac.capacity.goe(guestNum));
 
-        bdBuilder
-                .and(bd.date.goe(checkIn));
+        bdBuilder.and(bd.date.goe(checkIn));
 
         if (checkout != null) {
-            bdBuilder
-                    .and(bd.date.before(checkout));
+            bdBuilder.and(bd.date.before(checkout));
         }
 
         acBuilder.andNot(ac.id.in(JPAExpressions
@@ -70,13 +56,9 @@ public class DynamicAccommodationRepository {
                 .fetch(), page, page.getPageSize());
     }
 
-    public Page<Accommodation> findAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
-                                                             Float minLongitude, Float maxLongitude, @PageableDefault(page = 1) Pageable page) {
+    public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
+                                                             float minLongitude, float maxLongitude, @PageableDefault(page = 1) Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
-
-        if (minLatitude == null || maxLatitude == null || minLongitude == null || maxLongitude == null) {
-            return null;
-        }
 
         builder.and(ac.latitude.gt(minLatitude));
         builder.and(ac.latitude.lt(maxLatitude));

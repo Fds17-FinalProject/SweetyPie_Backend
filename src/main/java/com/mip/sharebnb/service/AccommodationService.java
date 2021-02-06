@@ -1,6 +1,7 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.AccommodationDto;
+import com.mip.sharebnb.exception.CheckoutCheckInException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
@@ -44,11 +45,27 @@ public class AccommodationService {
                                                           LocalDate checkIn, LocalDate checkout,
                                                           int guestNum, Pageable page) {
 
+        if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
+            throw new CheckoutCheckInException("checkout 이 check-in 보다 빠릅니다.");
+        }
+
+        if (checkout != null && checkout.isBefore(LocalDate.now())) {
+            throw new CheckoutCheckInException("checkout 이 이미 지난 시간입니다.");
+        }
+
+        if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
+            throw new CheckoutCheckInException("check-in 이 이미 지난 시간입니다.");
+        }
+
+        if (checkIn == null) {
+            checkIn = LocalDate.now();
+        }
+
         return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
     }
 
-    public Page<Accommodation> findAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
-                                                             Float minLongitude, Float maxLongitude, Pageable page) {
+    public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
+                                                             float minLongitude, float maxLongitude, Pageable page) {
 
         return dynamicAccommodationRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);
     }
