@@ -31,10 +31,8 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDate checkoutDate;
 
-    @Column(nullable = false)
     private int guestNum;
 
-    @Column(nullable = false)
     private int totalPrice;
 
     private boolean isCanceled;
@@ -44,15 +42,12 @@ public class Reservation {
 
     private String reservationCode; // 우리가 만들어 줘야 함.
 
-//    @JsonManagedReference
-//    @JsonBackReference
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-//    @JsonManagedReference
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
