@@ -2,6 +2,7 @@ package com.mip.sharebnb.dto;
 
 import lombok.*;
 
+
 import java.time.LocalDate;
 
 @Data
@@ -14,8 +15,14 @@ public class ReservationDto {
 
     @NonNull
     private LocalDate checkInDate;
+
     @NonNull
     private LocalDate checkoutDate;
 
+    private int guestNum;
+
+    private int totalPrice;
+
     private AccommodationDto accommodationDto;
+
 }

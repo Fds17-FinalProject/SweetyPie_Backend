@@ -25,9 +25,10 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class BookedDate {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
+    @Column(nullable = false)
     @NonNull
     @Column(nullable = false)
     private LocalDate date;
@@ -39,6 +40,12 @@ public class BookedDate {
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
 
+    @ToString.Exclude
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "RESERVATION_ID")
+    private Reservation reservation;
+  
     public static BookedDate emptyObject() {
         return new BookedDate();
     }
