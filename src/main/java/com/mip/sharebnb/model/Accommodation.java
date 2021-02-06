@@ -29,6 +29,8 @@ public class Accommodation {
 
     private String gu;
 
+    private String address;
+
     private String title;
 
     private int bathroomNum;

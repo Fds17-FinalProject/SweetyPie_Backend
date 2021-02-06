@@ -73,7 +73,7 @@ public class AccommodationService {
     private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
 
         return new AccommodationDto(accommodation.getCity(),
-                accommodation.getGu(), accommodation.getTitle(),
+                accommodation.getGu(), accommodation.getAddress(), accommodation.getTitle(),
                 accommodation.getBathroomNum(), accommodation.getBedroomNum(),
                 accommodation.getBedNum(), accommodation.getCapacity(),
                 accommodation.getPrice(), accommodation.getContact(),
