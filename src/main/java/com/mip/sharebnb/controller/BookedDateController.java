@@ -20,7 +20,7 @@ public class BookedDateController {
     @GetMapping("/bookDate/{id}")
     public BookedDate findById(@PathVariable Long id) {
 
-        return bookedDateRepository.findById(id).get();
+        return bookedDateRepository.findById(id).orElse(BookedDate.emptyObject());
     }
 
     @GetMapping("/bookDates/{accommodationId}")

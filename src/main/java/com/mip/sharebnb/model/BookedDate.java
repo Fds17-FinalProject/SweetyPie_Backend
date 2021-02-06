@@ -8,7 +8,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -30,6 +30,7 @@ public class BookedDate {
 
     @Column(nullable = false)
     @NonNull
+    @Column(nullable = false)
     private LocalDate date;
 
     @NonNull
@@ -44,4 +45,8 @@ public class BookedDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RESERVATION_ID")
     private Reservation reservation;
+  
+    public static BookedDate emptyObject() {
+        return new BookedDate();
+    }
 }
