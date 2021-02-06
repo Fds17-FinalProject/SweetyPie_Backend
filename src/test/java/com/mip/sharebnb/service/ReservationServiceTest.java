@@ -2,7 +2,9 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.ReservationDto;
 import com.mip.sharebnb.model.*;
+import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.BookedDateRepository;
+import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicReservationRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,11 +29,17 @@ class ReservationServiceTest {
     @InjectMocks
     private ReservationService reservationService;
 
-    @Mock
+    @Mock(name = "reservationRepository")
     private ReservationRepository reservationRepository;
 
-    @Mock
+    @Mock(name = "bookedDateRepository")
     private BookedDateRepository bookedDateRepository;
+
+    @Mock(name = "accommodationRepository")
+    private AccommodationRepository accommodationRepository;
+
+    @Mock(name = "memberRepository")
+    private MemberRepository memberRepository;
 
     @Mock
     private DynamicReservationRepository dynamicReservationRepository;
@@ -59,6 +68,33 @@ class ReservationServiceTest {
         assertThat(reservations.isEmpty()).isTrue();
     }
 
+    @Test
+    void insertReservation(){
+        ReservationDto reservationDto = ReservationDto.builder()
+                .memberId(1L)
+                .accommodationId(1L)
+                .checkInDate(LocalDate.of(2020, 3, 20))
+                .checkoutDate(LocalDate.of(2020, 3, 22))
+                .build();
+
+        lenient().when(memberRepository.findById(reservationDto.getMemberId())).thenReturn(mockMember());
+        lenient().when(accommodationRepository.findById(reservationDto.getAccommodationId())).thenReturn(mockFindAccommodation());
+        lenient().when(dynamicReservationRepository.findByReservationIdAndDate(reservationDto.getAccommodationId(), LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
+        lenient().when(reservationRepository.save(any(Reservation.class))).thenReturn(setReservation());
+
+        ReservationDto dto = setReservationDto();
+
+        Reservation reservation = reservationService.insertReservation(dto);
+
+        assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2020, 2, 20));
+        assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2020, 2, 22));
+        assertThat(reservation.getGuestNum()).isEqualTo(3);
+        assertThat(reservation.getTotalPrice()).isEqualTo(30000);
+        assertThat(reservation.getReservationCode()).isEqualTo("Num20210206100000001");
+
+        verify(reservationRepository, times(1)).save(any(Reservation.class));
+    }
+
     @DisplayName("update 성공")
     @Test
     void updateReservationSuccess(){
@@ -67,11 +103,7 @@ class ReservationServiceTest {
         when(reservationRepository.save(any(Reservation.class))).thenReturn(setReservation());
         when(dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
 
-        ReservationDto dto = new ReservationDto();
-        dto.setCheckInDate(LocalDate.of(2020,3,20));
-        dto.setCheckoutDate(LocalDate.of(2020,3,22));
-        dto.setGuestNum(3);
-        dto.setTotalPrice(30000);
+        ReservationDto dto = setReservationDto();
 
         Reservation reservation = reservationService.updateReservation(1L, dto);
 
@@ -89,11 +121,7 @@ class ReservationServiceTest {
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
         when(dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22))).thenReturn(mockBookedDate());
 
-        ReservationDto dto = new ReservationDto();
-        dto.setCheckInDate(LocalDate.of(2020,2,20));
-        dto.setCheckoutDate(LocalDate.of(2020,2,22));
-        dto.setGuestNum(3);
-        dto.setTotalPrice(30000);
+        ReservationDto dto = setReservationDto();
 
         Reservation reservation = reservationService.updateReservation(1L, dto);
 
@@ -104,12 +132,49 @@ class ReservationServiceTest {
         verify(bookedDateRepository, times(3)).save(any(BookedDate.class));
     }
 
+    private ReservationDto setReservationDto() {
+        ReservationDto dto = new ReservationDto();
+        dto.setMemberId(1L);
+        dto.setAccommodationId(1L);
+        dto.setCheckInDate(LocalDate.of(2020, 3, 20));
+        dto.setCheckoutDate(LocalDate.of(2020, 3, 22));
+        dto.setGuestNum(3);
+        dto.setTotalPrice(30000);
+
+        return dto;
+    }
+
     private Reservation setReservation(){
         return Reservation.builder().checkInDate(LocalDate.of(2020, 2, 20))
                 .checkoutDate(LocalDate.of(2020, 2, 22))
                 .guestNum(3)
                 .totalPrice(30000)
+                .reservationCode("Num20210206100000001")
                 .build();
+    }
+
+    private Optional<Member> mockMember(){
+        Member member = Member.builder()
+                .id(1L)
+                .email("test1@gmail.com")
+                .password("1234")
+                .birthDate(LocalDate.of(2020, 2, 11))
+                .contact("01022223333")
+                .name("tester")
+                .role(MemberRole.MEMBER)
+                .build();
+
+//        Member member = new Member();
+//        member.setId(1L);
+//        member.setEmail("test1@gmail.com");
+//        member.setPassword("1234");
+//        member.setBirthDate(LocalDate.of(2020, 2, 11));
+//        member.setContact("01022223333");
+//        member.setName("tester");
+//        member.setRole(MemberRole.MEMBER);
+
+
+        return Optional.of(member);
     }
 
     private List<Reservation> mockReservation() {
