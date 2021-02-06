@@ -6,9 +6,11 @@ import com.mip.sharebnb.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -24,6 +26,11 @@ public class ReservationController {
             return new ArrayList<>();
         }
         return reservationService.getReservations(id);
+    }
+
+    @PostMapping("/reservation")
+    public Reservation makeAReservation(@Valid @RequestBody ReservationDto reservationDto){
+       return reservationService.insertReservation(reservationDto);
     }
 
     @PatchMapping("/reservation/{id}")
