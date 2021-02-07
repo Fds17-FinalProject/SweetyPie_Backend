@@ -55,6 +55,6 @@ public class Reservation {
     private Accommodation accommodation;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "reservation")
+    @OneToMany
     private List<BookedDate> bookedDates;
 }
