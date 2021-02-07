@@ -89,10 +89,9 @@ class ReservationServiceTest {
         assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2020, 2, 22));
         assertThat(reservation.getGuestNum()).isEqualTo(3);
         assertThat(reservation.getTotalPrice()).isEqualTo(30000);
-        assertThat(reservation.getReservationCode()).isEqualTo("Num20210206100000001");
+        assertThat(reservation.getReservationCode()).isEqualTo("202102070000100001");
 
         verify(reservationRepository, times(1)).save(any(Reservation.class));
-        verify(bookedDateRepository, times(2)).save(any(BookedDate.class));
 
     }
 
@@ -130,6 +129,15 @@ class ReservationServiceTest {
         verify(bookedDateRepository, times(3)).save(any(BookedDate.class));
     }
 
+    @Test
+    void deleteReservation(){
+
+        reservationService.deleteReservation(1L);
+
+        verify(reservationRepository, times(1)).deleteById(1L);
+
+    }
+
     private ReservationDto setReservationDto() {
         ReservationDto dto = new ReservationDto();
         dto.setMemberId(1L);
@@ -147,7 +155,7 @@ class ReservationServiceTest {
                 .checkoutDate(LocalDate.of(2020, 2, 22))
                 .guestNum(3)
                 .totalPrice(30000)
-                .reservationCode("Num20210206100000001")
+                .reservationCode("202102070000100001")
                 .build();
     }
 
