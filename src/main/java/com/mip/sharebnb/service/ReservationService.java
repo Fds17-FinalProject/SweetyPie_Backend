@@ -138,7 +138,24 @@ public class ReservationService {
         }
     }
 
+    @Transactional
     public void deleteReservation(Long reservationId){
+        Optional<Reservation> optionalReservation = Optional.of(reservationRepository.findById(reservationId).orElseThrow(RuntimeException::new));
+        Reservation reservation = optionalReservation.get();
+
+        Long accommodationId = reservation.getAccommodation().getId();
+
+        reservationRepository.deleteById(reservationId);
+
+        List<BookedDate> bookedDates = reservation.getBookedDates();
+
+        List<LocalDate> dates = new ArrayList<>();
+
+        for (BookedDate bookedDate: bookedDates) {
+            dates.add(bookedDate.getDate());
+        }
+
+        bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(accommodationId, dates);
 
     }
 
