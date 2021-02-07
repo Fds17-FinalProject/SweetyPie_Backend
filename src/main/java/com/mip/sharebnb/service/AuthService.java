@@ -5,10 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.mip.sharebnb.dto.GoogleMemberDto;
-import com.mip.sharebnb.dto.GoogleTokenRequestDto;
-import com.mip.sharebnb.dto.GoogleTokenResponseDto;
-import com.mip.sharebnb.dto.LoginDto;
+import com.mip.sharebnb.dto.*;
+import com.mip.sharebnb.exception.MemberAlreadySignupException;
+import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -96,6 +96,21 @@ public class AuthService {
                 .name(userInfo.get("name"))
                 .socialId(userInfo.get("sub"))
                 .build();
+    }
+
+    private boolean isLoginPossible(GoogleMemberDto memberDto) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(memberDto.getEmail());
+
+        if (!optionalMember.isPresent()) {
+            return false;
+        } else {
+            Member member = optionalMember.get();
+            if (member.isSocialMember()) {
+                return true;
+            } else {
+                throw new MemberAlreadySignupException("이미 가입된 회원입니다");
+            }
+        }
     }
 
 }
