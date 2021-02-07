@@ -34,12 +34,6 @@ public class BookedDate {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
-
-    @ToString.Exclude
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RESERVATION_ID")
-    private Reservation reservation;
   
     public static BookedDate emptyObject() {
         return new BookedDate();

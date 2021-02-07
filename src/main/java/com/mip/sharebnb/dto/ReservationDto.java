@@ -19,11 +19,9 @@ public class ReservationDto {
     private Long reservationId;
 
     @NonNull
-    @DateTimeFormat // 형태 지정하는것 다시 보기
     private LocalDate checkInDate;
 
     @NonNull
-    @DateTimeFormat
     private LocalDate checkoutDate;
 
     private int guestNum;
