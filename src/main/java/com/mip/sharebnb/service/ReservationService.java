@@ -35,7 +35,7 @@ public class ReservationService {
     private final BookedDateRepository bookedDateRepository;
 
     private Long code = 100000000L;
-    private LocalDate saveDate;
+    private LocalDate saveDate = LocalDate.now();
 
     public List<ReservationDto> getReservations(Long memberId) {
         if (memberId == null) {
@@ -62,22 +62,22 @@ public class ReservationService {
     @Transactional
     public Reservation insertReservation(ReservationDto reservationDto) {
         System.out.println("memeberId " + reservationDto.getMemberId() + " accommodationId" + reservationDto.getAccommodationId());
-        Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElse(new Member()));
+        Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElseThrow(RuntimeException::new));
         Member member = optionalMember.get();
 
-        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(reservationDto.getAccommodationId()).orElse(new Accommodation()));
+        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(RuntimeException::new));
         Accommodation accommodation = optionalAccommodation.get();
 
         List<BookedDate> bookedDates = new ArrayList<>();
 
-        for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
-            bookedDates.add(saveBookedDate(date, accommodation));
-        }
-
-        List<BookedDate> checkDuplicateDate = dynamicReservationRepository.findByReservationIdAndDate(reservationDto.getAccommodationId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
-        System.out.println(" >>> " + checkDuplicateDate.isEmpty());
+        List<BookedDate> checkDuplicateDate = dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
+        System.out.println(" >>> checkduplicatddate " + checkDuplicateDate.isEmpty());
 
         if (checkDuplicateDate.isEmpty()) {
+            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
+                bookedDates.add(saveBookedDate(date, accommodation));
+            }
+
             Reservation buildReservation = Reservation.builder()
                     .checkInDate(reservationDto.getCheckInDate())
                     .checkoutDate(reservationDto.getCheckoutDate())
@@ -100,22 +100,27 @@ public class ReservationService {
 
     @Transactional
     public Reservation updateReservation(Long reservationId, ReservationDto reservationDto) {
-
-        List<BookedDate> findBookedDates = bookedDateRepository.findBookedDatesByReservationId(reservationId);
-
-        if (findBookedDates.isEmpty()) {
-            // 예외처리
-            return new Reservation();
-        }
-
-        bookedDateRepository.deleteBookedDateByReservationId(reservationId);
-
-        Optional<Reservation> findReservation = Optional.of(reservationRepository.findById(reservationId).orElse(new Reservation()));
-
+        
+        Optional<Reservation> findReservation = Optional.of(reservationRepository.findById(reservationId).orElseThrow(RuntimeException::new));
         Reservation reservation = findReservation.get();
+        
+        List<BookedDate> reservationBookedDates = reservation.getBookedDates();
+        List<LocalDate> dates = new ArrayList<>();
 
-        List<BookedDate> reservations = dynamicReservationRepository.findByReservationIdAndDate(reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
+        for (BookedDate reservationBookedDate : reservationBookedDates) {
+            dates.add(reservationBookedDate.getDate());
+        }
+        
+        // 이미 Reservation에 bookedDate를 가지고 있으니 삭제를 넣어주면 됨
+        Long accommodationId = reservation.getAccommodation().getId();
+        LocalDate checkInDate = reservation.getCheckInDate();
+        LocalDate checkoutDate = reservation.getCheckoutDate();
 
+        bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(accommodationId, dates);
+
+        List<BookedDate> reservations = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
+        
+        // 예약하려고 날짜가 기존에 저장되어있던 날짜가 아닐때 예약을 할 수 있게  리스트가 비어있을 때 저장 
         if (reservations.isEmpty()) {
             reservation.setCheckInDate(reservationDto.getCheckInDate());
             reservation.setCheckoutDate(reservationDto.getCheckoutDate());
@@ -126,14 +131,14 @@ public class ReservationService {
 
         } else {
 
-            for (BookedDate findBookedDate : findBookedDates) {
+            // 중복된 예약날짜면 다시 삭제했던 원래 날짜들을 넣어줘야 함.
+            for (BookedDate findBookedDate : reservationBookedDates) {
                 bookedDateRepository.save(findBookedDate);
             }
 
             return new Reservation();
         }
     }
-
 
     private AccommodationDto mappingAccommodationDto(Reservation reservation) {
 
@@ -147,13 +152,13 @@ public class ReservationService {
     }
 
     private BookedDate saveBookedDate(LocalDate date, Accommodation accommodation) {
+
         BookedDate bookedDate = BookedDate.builder()
                 .date(date)
                 .accommodation(accommodation)
                 .build();
-        bookedDateRepository.save(bookedDate);
+        return bookedDateRepository.save(bookedDate);
 
-        return bookedDate;
     }
 
     private String setReservationCode(){
@@ -166,7 +171,7 @@ public class ReservationService {
             code = 10000000L;
         }
 
-        String nowDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String nowDate = saveDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         StringBuilder sb = new StringBuilder();
         sb.append("Num").append(nowDate).append(String.valueOf(code));
 
