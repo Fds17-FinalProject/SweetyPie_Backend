@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,16 +30,24 @@ public class Accommodation {
 
     private String gu;
 
+    private String address;
+
     private String title;
 
+    @ColumnDefault("0")
     private int bathroomNum;
 
+    @ColumnDefault("0")
     private int bedroomNum;
+
+    @ColumnDefault("0")
 
     private int bedNum;
 
+    @ColumnDefault("0")
     private int price;
 
+    @ColumnDefault("0")
     private int capacity;
 
     private String contact;
@@ -49,21 +58,26 @@ public class Accommodation {
     @Column(columnDefinition = "DECIMAL(11,7)")
     private float longitude;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String locationDesc;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String transportationDesc;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String accommodationDesc;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String hostDesc;
 
     @Column(columnDefinition = "DECIMAL(5,3)")
     private float rating;
 
+    @ColumnDefault("0")
     private int reviewNum;
 
     private String accommodationType;
@@ -72,6 +86,8 @@ public class Accommodation {
 
     private String hostName;
 
+    @JsonIgnore
+    @ColumnDefault("0")
     private int hostReviewNum;
     
     @JsonIgnore
@@ -81,10 +97,6 @@ public class Accommodation {
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation")
     private List<Review> reviews;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "accommodation")
-    private List<Bookmark> bookmarks;
 
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation")
