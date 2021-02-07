@@ -20,6 +20,6 @@ public class BookmarkService {
 
     public void deleteBookmarkById(long id) {
 
-        bookmarkRepository.deleteById(id);
+        bookmarkRepository.findById(id).ifPresent(bookmark -> bookmarkRepository.deleteById(id));
     }
 }
