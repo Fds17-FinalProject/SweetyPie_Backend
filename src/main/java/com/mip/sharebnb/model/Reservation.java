@@ -11,6 +11,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -22,7 +23,7 @@ import java.util.List;
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -54,7 +55,8 @@ public class Reservation {
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
 
+    @ToString.Exclude
     @JsonIgnore
-    @OneToMany
-    private List<BookedDate> bookedDates;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<BookedDate> bookedDates = new ArrayList<>();
 }
