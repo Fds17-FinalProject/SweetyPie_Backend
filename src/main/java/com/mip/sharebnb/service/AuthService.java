@@ -32,6 +32,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
     final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
 
@@ -76,7 +77,16 @@ public class AuthService {
 
     }
 
-    public Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
+    public String signupBeforeGoogleLogin(GoogleMemberDto memberDto) {
+
+        memberService.signupGoogleMember(memberDto);
+        LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
+        return login(loginDto);
+
+    }
+
+
+    private Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
 
         //HTTP Request를 위한 RestTemplate
         RestTemplate restTemplate = new RestTemplate();
