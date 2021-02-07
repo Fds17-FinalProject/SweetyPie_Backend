@@ -30,8 +30,10 @@ class ReservationRepositoryTest {
     private AccommodationRepository accommodationRepository;
 
     @Autowired
+    private BookedDateRepository bookedDateRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
-    private LocalDate bookedDate;
 
     @DisplayName("예약 내역 조회 리스트")
     @Test
@@ -68,6 +70,57 @@ class ReservationRepositoryTest {
 
         assertThat(reservation.getCheckInDate().equals(duplicateBookedDate)).isTrue();
         assertThat(reservation.getCheckInDate().equals(differentBookedDate)).isFalse();
+
+    }
+
+    @Test
+    void insert(){
+        List<Reservation> reservations = new ArrayList<>();
+
+        Member member = new Member();
+        LocalDate birtDate = LocalDate.of(2020,1,14);
+        member.setEmail("test777@gmail.com");
+        member.setPassword("1234");
+        member.setName("tester");
+        member.setBirthDate(birtDate);
+        member.setContact("01022223333");
+
+        Member saveMember = memberRepository.save(member);
+
+        Accommodation accommodation = new Accommodation();
+        accommodation.setBathroomNum(2);
+        accommodation.setBedroomNum(2);
+        accommodation.setAccommodationType("집전체");
+        accommodation.setBuildingType("아파트");
+        Accommodation findAccommodation1 = accommodationRepository.save(accommodation);
+
+        List<BookedDate> bookedDates = new ArrayList<>();
+        for (LocalDate date = LocalDate.of(2020,2,20); date.isBefore(LocalDate.of(2020,2,22)); date = date.plusDays(1)) {
+            bookedDates.add(saveBookedDate(date, accommodation));
+        }
+
+        Reservation reservation1 = new Reservation();
+        LocalDate checkIn = LocalDate.of(2020,1,12);
+        LocalDate checkout = LocalDate.of(2020,1,14);
+        reservation1.setCheckInDate(checkIn);
+        reservation1.setCheckoutDate(checkout);
+        reservation1.setGuestNum(3);
+        reservation1.setTotalPrice(20000);
+        reservation1.setPaymentDate(LocalDate.now());
+        reservation1.setAccommodation(findAccommodation1);
+        reservation1.setMember(saveMember);
+        reservation1.setBookedDates(bookedDates);
+
+        reservationRepository.save(reservation1);
+    }
+
+    private BookedDate saveBookedDate(LocalDate date, Accommodation accommodation) {
+
+        BookedDate bookedDate = BookedDate.builder()
+                .date(date)
+                .accommodation(accommodation)
+                .build();
+        return bookedDateRepository.save(bookedDate);
 
     }
 
