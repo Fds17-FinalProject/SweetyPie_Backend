@@ -32,9 +32,10 @@ class BookmarkRepositoryTest {
     @DisplayName("북마크 리스트 조회")
     @Test
     void findBookmarksByMember_Id() {
-        givenBookmarks();
+        Member member = givenMember();
+        givenBookmarks(member);
 
-        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(1);
+        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(member.getId());
 
         assertThat(bookmarks.size()).isEqualTo(2);
 
@@ -42,9 +43,27 @@ class BookmarkRepositoryTest {
         assertThat(bookmarks.get(1).getAccommodation().getGu()).isEqualTo("서대문구");
     }
 
-    private void givenBookmarks() {
+    @DisplayName("북마크 제거")
+    @Test
+    void deleteBookmark() {
         Member member = givenMember();
-        memberRepository.save(member);
+        givenBookmarks(member);
+
+        // 삭제 전
+        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(member.getId());
+
+            assertThat(bookmarks.size()).isEqualTo(2);
+
+            bookmarkRepository.deleteById(bookmarks.get(0).getId());
+            bookmarkRepository.deleteById(bookmarks.get(1).getId());
+
+            // 삭제 후
+            bookmarks = bookmarkRepository.findBookmarksByMember_Id(1);
+
+            assertThat(bookmarks.size()).isEqualTo(0);
+    }
+
+    private void givenBookmarks(Member member) {
 
         Accommodation accommodation = new Accommodation(null, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
         Accommodation accommodation2 = new Accommodation(null, "서울특별시", "서대문구", "서울특별시 서대문구", "아파트", 2, 2, 2, 100000, 4, "010-1234-5678", 36.141f, 126.531f, "서대문구", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
@@ -70,6 +89,8 @@ class BookmarkRepositoryTest {
         member.setPassword("1234");
         member.setContact("12378");
         member.setBirthDate(LocalDate.of(1993, 5, 1));
+
+        memberRepository.save(member);
 
         return member;
     }
