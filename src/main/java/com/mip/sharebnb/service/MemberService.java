@@ -1,6 +1,6 @@
 package com.mip.sharebnb.service;
 
-import com.mip.sharebnb.dto.LoginDto;
+import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.exception.PrePasswordNotMatchedException;
 import com.mip.sharebnb.model.Member;
@@ -27,6 +27,21 @@ public class MemberService {
         Member member = Member.builder()
                 .email(memberDto.getEmail())
                 .password(passwordEncoder.encode(memberDto.getPassword()))
+                .name(memberDto.getName())
+                .birthDate(memberDto.getBirthDate())
+                .contact(memberDto.getContact())
+                .role(MemberRole.MEMBER)
+                .build();
+
+        return memberRepository.save(member);
+    }
+
+    @Transactional
+    public Member signupGoogleMember(GoogleMemberDto memberDto) {
+
+        Member member = Member.builder()
+                .email(memberDto.getEmail())
+                .password(passwordEncoder.encode(memberDto.getSocialId()))
                 .name(memberDto.getName())
                 .birthDate(memberDto.getBirthDate())
                 .contact(memberDto.getContact())
