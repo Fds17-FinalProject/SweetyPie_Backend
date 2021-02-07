@@ -5,6 +5,7 @@ import com.mip.sharebnb.exception.CheckoutCheckInException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +20,9 @@ public class AccommodationService {
     private final DynamicAccommodationRepository dynamicAccommodationRepository;
     private final AccommodationRepository accommodationRepository;
 
-    public AccommodationDto findById(Long id) {
+    public AccommodationDto findById(Long id) throws NotFoundException {
         Accommodation accommodation = accommodationRepository.findById(id)
-                .orElse(Accommodation.emptyObject());
+                .orElseThrow(() -> new NotFoundException("Not Found Accommodation"));
 
         return mappingAccommodationDto(accommodation);
     }
@@ -46,15 +47,15 @@ public class AccommodationService {
                                                           int guestNum, Pageable page) {
 
         if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
-            throw new CheckoutCheckInException("checkout 이 check-in 보다 빠릅니다.");
+            throw new CheckoutCheckInException("Checkout time is before check-in time");
         }
 
         if (checkout != null && checkout.isBefore(LocalDate.now())) {
-            throw new CheckoutCheckInException("checkout 이 이미 지난 시간입니다.");
+            throw new CheckoutCheckInException("Check out time has passed");
         }
 
         if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            throw new CheckoutCheckInException("check-in 이 이미 지난 시간입니다.");
+            throw new CheckoutCheckInException("Check-in time has passed");
         }
 
         if (checkIn == null) {
