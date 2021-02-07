@@ -21,7 +21,7 @@ import javax.persistence.ManyToOne;
 public class Bookmark {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ToString.Exclude
