@@ -118,10 +118,10 @@ public class ReservationService {
 
         bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(accommodationId, dates);
 
-        List<BookedDate> reservations = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
+        List<BookedDate> bookedDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
         
         // 예약하려고 날짜가 기존에 저장되어있던 날짜가 아닐때 예약을 할 수 있게  리스트가 비어있을 때 저장 
-        if (reservations.isEmpty()) {
+        if (bookedDates.isEmpty()) {
             reservation.setCheckInDate(reservationDto.getCheckInDate());
             reservation.setCheckoutDate(reservationDto.getCheckoutDate());
             reservation.setGuestNum(reservationDto.getGuestNum());
