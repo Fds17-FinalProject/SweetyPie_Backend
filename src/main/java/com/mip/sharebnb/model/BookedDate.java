@@ -24,7 +24,6 @@ public class BookedDate {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
     @NonNull
     @Column(nullable = false)
     private LocalDate date;
