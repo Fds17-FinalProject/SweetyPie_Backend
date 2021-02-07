@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,6 +49,31 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return tokenProvider.createToken(authentication);
+    }
+
+    public Map<String, String> googleLogin(String authCode) throws JsonProcessingException {
+
+        Map<String, String> googleUserInfo = getGoogleUserInfo(authCode);
+
+        GoogleMemberDto memberDto = pareUserInfoToGoogleMemberDto(googleUserInfo);
+
+        // 로그인이 가능할 때 로그인을 해서 JWT 토큰을 리턴한다
+        if (isLoginPossible(memberDto)) {
+            LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
+            Map<String, String> map = new HashMap<>();
+            map.put("token", login(loginDto));
+
+            return map;
+        // 로그인이 불가능 할 때 회원가입 가능하게 memberDto 를 리턴한다
+        } else {
+            Map<String, String> map = new HashMap<>();
+            map.put("email", memberDto.getEmail());
+            map.put("name", memberDto.getName());
+            map.put("socialId", memberDto.getEmail());
+
+            return map;
+        }
+
     }
 
     public Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
@@ -107,6 +133,7 @@ public class AuthService {
             Member member = optionalMember.get();
             if (member.isSocialMember()) {
                 return true;
+            // google 메일이 이미 가입되어 있을때 에러를 내보낸다
             } else {
                 throw new MemberAlreadySignupException("이미 가입된 회원입니다");
             }
