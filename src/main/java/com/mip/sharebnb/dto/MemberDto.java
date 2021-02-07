@@ -35,8 +35,6 @@ public class MemberDto {
 
     private LocalDate birthDate;
 
-    private Long socialId;
-
     private List<Review> reviews;
 
     private List<Bookmark> bookmarks;
