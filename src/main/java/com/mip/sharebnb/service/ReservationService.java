@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.spec.PSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class ReservationService {
 
     @Transactional
     public Reservation insertReservation(ReservationDto reservationDto) {
-        System.out.println("memeberId " + reservationDto.getMemberId() + " accommodationId" + reservationDto.getAccommodationId());
+
         Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElseThrow(RuntimeException::new));
         Member member = optionalMember.get();
 
@@ -69,13 +68,8 @@ public class ReservationService {
         List<BookedDate> bookedDates = new ArrayList<>();
 
         List<BookedDate> checkDuplicateDate = dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
-        System.out.println(" >>> checkduplicatddate " + checkDuplicateDate.isEmpty());
 
         if (checkDuplicateDate.isEmpty()) {
-            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
-                bookedDates.add(saveBookedDate(date, accommodation));
-            }
-
             Reservation buildReservation = Reservation.builder()
                     .checkInDate(reservationDto.getCheckInDate())
                     .checkoutDate(reservationDto.getCheckoutDate())
@@ -85,9 +79,12 @@ public class ReservationService {
                     .paymentDate(LocalDate.now())
                     .member(member)
                     .accommodation(accommodation)
-                    .bookedDates(bookedDates)
                     .reservationCode(setReservationCode(accommodation.getId(), member.getId()))
                     .build();
+
+            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
+                bookedDates.add(setBookedDate(date, accommodation, buildReservation));
+            }
 
             System.out.println(setReservationCode(accommodation.getId(), member.getId()));
             return reservationRepository.save(buildReservation);
@@ -98,17 +95,17 @@ public class ReservationService {
 
     @Transactional
     public Reservation updateReservation(Long reservationId, ReservationDto reservationDto) {
-        
+
         Optional<Reservation> findReservation = Optional.of(reservationRepository.findById(reservationId).orElseThrow(RuntimeException::new));
         Reservation reservation = findReservation.get();
-        
+
         List<BookedDate> reservationBookedDates = reservation.getBookedDates();
         List<LocalDate> dates = new ArrayList<>();
 
         for (BookedDate reservationBookedDate : reservationBookedDates) {
             dates.add(reservationBookedDate.getDate());
         }
-        
+
         // 이미 Reservation에 bookedDate를 가지고 있으니 삭제를 넣어주면 됨
         Long accommodationId = reservation.getAccommodation().getId();
         LocalDate checkInDate = reservation.getCheckInDate();
@@ -117,7 +114,7 @@ public class ReservationService {
         bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(accommodationId, dates);
 
         List<BookedDate> bookedDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
-        
+
         // 예약하려고 날짜가 기존에 저장되어있던 날짜가 아닐때 예약을 할 수 있게  리스트가 비어있을 때 저장 
         if (bookedDates.isEmpty()) {
             reservation.setCheckInDate(reservationDto.getCheckInDate());
@@ -139,23 +136,9 @@ public class ReservationService {
     }
 
     @Transactional
-    public void deleteReservation(Long reservationId){
-        Optional<Reservation> optionalReservation = Optional.of(reservationRepository.findById(reservationId).orElseThrow(RuntimeException::new));
-        Reservation reservation = optionalReservation.get();
-
-        Long accommodationId = reservation.getAccommodation().getId();
+    public void deleteReservation(Long reservationId) {
 
         reservationRepository.deleteById(reservationId);
-
-        List<BookedDate> bookedDates = reservation.getBookedDates();
-
-        List<LocalDate> dates = new ArrayList<>();
-
-        for (BookedDate bookedDate: bookedDates) {
-            dates.add(bookedDate.getDate());
-        }
-
-        bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(accommodationId, dates);
 
     }
 
@@ -170,17 +153,17 @@ public class ReservationService {
         return accommodationDto;
     }
 
-    private BookedDate saveBookedDate(LocalDate date, Accommodation accommodation) {
+    private BookedDate setBookedDate(LocalDate date, Accommodation accommodation, Reservation reservation) {
 
-        BookedDate bookedDate = BookedDate.builder()
+        return BookedDate.builder()
                 .date(date)
                 .accommodation(accommodation)
+                .reservation(reservation)
                 .build();
-        return bookedDateRepository.save(bookedDate);
 
     }
 
-    private String setReservationCode(Long accommodationId, Long memberId){
+    private String setReservationCode(Long accommodationId, Long memberId) {
 
         String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
