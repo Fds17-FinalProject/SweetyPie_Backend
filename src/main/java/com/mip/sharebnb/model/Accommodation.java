@@ -91,10 +91,6 @@ public class Accommodation {
 
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation")
-    private List<Bookmark> bookmarks;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "accommodation")
     private List<BookedDate> bookedDates;
 
     @JsonIgnore
