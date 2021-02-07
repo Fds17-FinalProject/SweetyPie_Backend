@@ -65,3 +65,15 @@ Content-Type: application/json
   "birthDate": "2020-02-03",
   "contact":"010-9908-5511"
 }
+
+### 회원가입 후 로그인
+POST http://localhost:8080/api/login/google
+Content-Type: application/json
+
+{
+  "email":"fovena@gmail.com",
+  "socialId":"1234124123",
+  "name":"name",
+  "birthDate": "2020-02-03",
+  "contact":"010-9908-5511"
+}
