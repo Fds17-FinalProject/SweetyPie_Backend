@@ -43,4 +43,11 @@ public class ReservationController {
         return reservationService.updateReservation(id, reservationDto);
     }
 
+    @DeleteMapping("/reservation/{id}")
+    public void cancelReservation(@PathVariable Long id){
+        if (id == null){
+            // 예외처리
+        }
+        reservationService.deleteReservation(id);
+    }
 }

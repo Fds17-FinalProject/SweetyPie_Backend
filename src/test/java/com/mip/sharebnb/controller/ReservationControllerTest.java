@@ -111,4 +111,10 @@ class ReservationControllerTest {
 
     }
 
+    @Test
+    void deleteReservation() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/reservation/1"))
+                .andExpect(status().isOk());
+    }
+
 }
