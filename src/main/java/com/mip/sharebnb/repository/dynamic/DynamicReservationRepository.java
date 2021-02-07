@@ -25,7 +25,7 @@ public class DynamicReservationRepository {
 
     QBookedDate qb = new QBookedDate("qb");
 
-    public List<BookedDate> findByReservationIdAndDate(Long accommodationId, LocalDate checkIn, LocalDate checkout) {
+    public List<BookedDate> findByAccommodationIdAndDate(Long accommodationId, LocalDate checkIn, LocalDate checkout) {
 
         BooleanBuilder builder = new BooleanBuilder();
 
