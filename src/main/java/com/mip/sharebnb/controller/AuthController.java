@@ -1,5 +1,6 @@
 package com.mip.sharebnb.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mip.sharebnb.dto.LoginDto;
 import com.mip.sharebnb.dto.TokenDto;
 import com.mip.sharebnb.security.jwt.JwtFilter;
@@ -8,12 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -31,5 +30,13 @@ public class AuthController {
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + jwt);
 
         return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+    }
+
+    @GetMapping("login/google")
+    public ResponseEntity<Map<String, String>> googleLogin(@RequestParam(value = "code") String authCode) throws JsonProcessingException {
+
+        Map<String, String> userInfo = authService.getGoogleUserInfo(authCode);
+
+        return new ResponseEntity<>(userInfo, HttpStatus.OK);
     }
 }
