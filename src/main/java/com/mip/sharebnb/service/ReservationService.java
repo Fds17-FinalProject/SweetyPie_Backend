@@ -138,6 +138,10 @@ public class ReservationService {
         }
     }
 
+    public void deleteReservation(Long reservationId){
+
+    }
+
     private AccommodationDto mappingAccommodationDto(Reservation reservation) {
 
         AccommodationDto accommodationDto = new AccommodationDto();
@@ -166,10 +170,7 @@ public class ReservationService {
         String strAccommodationId = String.format("%05d", accommodationId);
         String strMemberId = String.format("%05d", memberId);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(today).append(strAccommodationId).append(strMemberId);
-
-        return sb.toString();
+        return today + strAccommodationId + strMemberId;
 
     }
 }
