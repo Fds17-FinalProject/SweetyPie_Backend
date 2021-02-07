@@ -34,8 +34,6 @@ public class ReservationService {
     private final AccommodationRepository accommodationRepository;
     private final BookedDateRepository bookedDateRepository;
 
-    private Long code = 100000000L;
-    private LocalDate saveDate = LocalDate.now();
 
     public List<ReservationDto> getReservations(Long memberId) {
         if (memberId == null) {
@@ -88,10 +86,10 @@ public class ReservationService {
                     .member(member)
                     .accommodation(accommodation)
                     .bookedDates(bookedDates)
-                    .reservationCode(setReservationCode())
+                    .reservationCode(setReservationCode(accommodation.getId(), member.getId()))
                     .build();
 
-            System.out.println(setReservationCode());
+            System.out.println(setReservationCode(accommodation.getId(), member.getId()));
             return reservationRepository.save(buildReservation);
         }
 
@@ -118,10 +116,10 @@ public class ReservationService {
 
         bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(accommodationId, dates);
 
-        List<BookedDate> reservations = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
+        List<BookedDate> bookedDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
         
         // 예약하려고 날짜가 기존에 저장되어있던 날짜가 아닐때 예약을 할 수 있게  리스트가 비어있을 때 저장 
-        if (reservations.isEmpty()) {
+        if (bookedDates.isEmpty()) {
             reservation.setCheckInDate(reservationDto.getCheckInDate());
             reservation.setCheckoutDate(reservationDto.getCheckoutDate());
             reservation.setGuestNum(reservationDto.getGuestNum());
@@ -161,19 +159,15 @@ public class ReservationService {
 
     }
 
-    private String setReservationCode(){
-        LocalDate today = LocalDate.now();
+    private String setReservationCode(Long accommodationId, Long memberId){
 
-        if (saveDate.equals(today)){
-            code += 1;
-        } else {
-            saveDate = today;
-            code = 10000000L;
-        }
+        String today = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-        String nowDate = saveDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String strAccommodationId = String.format("%05d", accommodationId);
+        String strMemberId = String.format("%05d", memberId);
+
         StringBuilder sb = new StringBuilder();
-        sb.append("Num").append(nowDate).append(String.valueOf(code));
+        sb.append(today).append(strAccommodationId).append(strMemberId);
 
         return sb.toString();
 
