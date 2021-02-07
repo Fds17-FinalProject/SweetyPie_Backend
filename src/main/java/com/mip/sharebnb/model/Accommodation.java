@@ -29,6 +29,8 @@ public class Accommodation {
 
     private String gu;
 
+    private String address;
+
     private String title;
 
     private int bathroomNum;
@@ -49,15 +51,19 @@ public class Accommodation {
     @Column(columnDefinition = "DECIMAL(11,7)")
     private float longitude;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String locationDesc;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String transportationDesc;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String accommodationDesc;
 
+    @JsonIgnore
     @Column(columnDefinition = "TEXT")
     private String hostDesc;
 
@@ -72,6 +78,7 @@ public class Accommodation {
 
     private String hostName;
 
+    @JsonIgnore
     private int hostReviewNum;
     
     @JsonIgnore
