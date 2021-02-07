@@ -3,7 +3,7 @@ package com.mip.sharebnb.dto;
 import lombok.Data;
 
 @Data
-public class GoogleLoginResponseDto {
+public class GoogleTokenResponseDto {
 
     private String accessToken;
 

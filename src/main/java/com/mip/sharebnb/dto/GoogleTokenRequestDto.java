@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class GoogleLoginRequestDto {
+public class GoogleTokenRequestDto {
 
     private String redirectUri;
     private String clientId;
