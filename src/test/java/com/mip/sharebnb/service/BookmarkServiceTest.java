@@ -16,7 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +32,7 @@ class BookmarkServiceTest {
     @DisplayName("북마크 리스트 조회")
     @Test
     void findBookmarks() {
-        when(bookmarkService.findBookmarks(1L)).thenReturn(mockBookmark());
+        when(bookmarkRepository.findBookmarksByMember_Id(1L)).thenReturn(mockBookmark());
 
         List<Bookmark> bookmarks = bookmarkService.findBookmarks(1L);
 
@@ -47,6 +48,9 @@ class BookmarkServiceTest {
     @DisplayName("북마크 제거")
     @Test
     void deleteBookmarkById() {
+        bookmarkService.deleteBookmarkById(1L);
+
+        verify(bookmarkRepository, times(1)).deleteById(1L);
     }
 
     private List<Bookmark> mockBookmark() {
