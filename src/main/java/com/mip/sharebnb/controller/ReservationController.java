@@ -44,8 +44,10 @@ public class ReservationController {
     }
 
     @DeleteMapping("/reservation/{id}")
-    public Reservation cancelReservation(@PathVariable Long id){
-
-        return null;
+    public void cancelReservation(@PathVariable Long id){
+        if (id == null){
+            // 예외처리
+        }
+        reservationService.deleteReservation(id);
     }
 }
