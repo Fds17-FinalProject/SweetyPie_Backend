@@ -126,11 +126,11 @@ class DynamicAccommodationRepositoryTest {
 
     private List<BookedDate> givenBookDates(Accommodation accommodation) {
         List<BookedDate> bookedDates = new ArrayList<>();
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 4), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 5), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 6), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 7), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 8), accommodation, null));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 4), accommodation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 5), accommodation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 6), accommodation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 7), accommodation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 8), accommodation));
 
         return bookedDates;
     }
