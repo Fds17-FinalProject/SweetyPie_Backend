@@ -1,16 +1,15 @@
 package com.mip.sharebnb.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +20,8 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Where(clause = "is_Deleted = false")
 public class Member {
     @Id
@@ -35,11 +36,15 @@ public class Member {
     private String password;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String contact;
 
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @ColumnDefault("false")
     private boolean isDeleted;
 
     @Enumerated(EnumType.STRING)
@@ -47,13 +52,11 @@ public class Member {
 
     private Long socialId;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
     private List<Review> reviews;
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
-    private List<Reservation> reservations;
-
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
     private List<Bookmark> bookmarks;
 }

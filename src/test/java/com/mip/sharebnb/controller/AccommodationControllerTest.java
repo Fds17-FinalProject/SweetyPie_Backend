@@ -33,43 +33,37 @@ class AccommodationControllerTest {
     @DisplayName("id로 숙박 검색")
     @Test
     void getAccommodation() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accommodation/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodation/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.city").value("서울특별시"))
-                .andExpect(jsonPath("$.gu").value("마포구"))
-                .andExpect(jsonPath("$.contact").value("010-1234-5678"));
+                .andExpect(jsonPath("$.city").value("강릉시"))
+                .andExpect(jsonPath("$.gu").value("주문진읍"))
+                .andExpect(jsonPath("$.contact").value("010-1234-5678"))
+                .andExpect(jsonPath("$.accommodationPictures", hasSize(5)))
+                .andExpect(jsonPath("$.accommodationPictures[0].url").value("https://a0.muscache.com/pictures/7586ebad-aaf5-4aa6-b966-8660d4820b51.jpg"));
+
     }
 
     @DisplayName("모든 숙박 검색")
     @Test
     void getAllAccommodations() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(200)));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations"))
+                .andExpect(status().isOk());
     }
 
-    @DisplayName("도시명으로 숙박 검색")
+    @DisplayName("도시 명으로 숙박 검색")
     @Test
     void getAccommodationsByCity() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/city/서울?page=0"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations/city/강릉?page=0"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].city").value("서울특별시"));
-    }
-
-    @DisplayName("검색어로 숙박 검색")
-    @Test
-    void getAccommodationsBySearchKeyword() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/search/서울?page=0"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].city").value("서울특별시"));
+                .andExpect(jsonPath("$.content", hasSize(10)));
     }
 
     @DisplayName("메인 검색 기능 (검색어, 체크인, 체크아웃, 인원수)")
     @Test
     void getAccommodationsBySearch() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/accommodations/search?searchKeyword=마포&checkIn=2021-02-03&checkout=2021-02-05&page=1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations/search?searchKeyword=강릉&checkIn=2021-02-03&checkout=2021-02-05&page=1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].city").value("서울특별시"))
-                .andExpect(jsonPath("$[0].gu").value("마포구"));
+                .andExpect(jsonPath("$.content[0].city").value("강릉시"))
+                .andExpect(jsonPath("$.content[0].gu").value("주문진읍"));
     }
 }

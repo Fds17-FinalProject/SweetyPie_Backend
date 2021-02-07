@@ -1,20 +1,17 @@
 package com.mip.sharebnb.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Builder
 @Data
@@ -34,10 +31,8 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDate checkoutDate;
 
-    @Column(nullable = false)
     private int guestNum;
 
-    @Column(nullable = false)
     private int totalPrice;
 
     private boolean isCanceled;
@@ -47,20 +42,19 @@ public class Reservation {
 
     private String reservationCode; // 우리가 만들어 줘야 함.
 
-//    @JsonManagedReference
-    @JsonBackReference
     @ToString.Exclude
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @JsonManagedReference
     @ToString.Exclude
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @ToString.Exclude
-    private BookedDate bookedDate;
+    @JsonIgnore
+    @OneToMany
+    private List<BookedDate> bookedDates;
 }

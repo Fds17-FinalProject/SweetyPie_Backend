@@ -1,27 +1,33 @@
 package com.mip.sharebnb.dto;
 
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 
+@Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@RequiredArgsConstructor
 public class ReservationDto {
 
-    private String memberId;
+    private Long memberId;
 
-    private String accommodationId;
+    private Long accommodationId;
 
-    @NotEmpty
-    private String checkInDate;
+    private Long reservationId;
 
-    @NotEmpty
-    private String checkoutDate;
+    @NonNull
+    private LocalDate checkInDate;
 
-    @NotEmpty
-    private String guestNum;
+    @NonNull
+    private LocalDate checkoutDate;
 
-    @NotEmpty
-    private String totalPrice;
+    private int guestNum;
+
+    private int totalPrice;
+
+    private AccommodationDto accommodationDto;
+
 }

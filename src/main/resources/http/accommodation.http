@@ -1,5 +1,0 @@
-###
-GET http://localhost:8080/accommodation/1
-
-###
-GET http://localhost:8080/accommodations

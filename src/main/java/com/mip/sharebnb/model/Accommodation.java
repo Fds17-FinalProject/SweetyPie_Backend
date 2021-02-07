@@ -1,27 +1,20 @@
 package com.mip.sharebnb.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import java.util.List;
 
+@Builder
 @Data
 @Entity
 @NoArgsConstructor
@@ -38,21 +31,23 @@ public class Accommodation {
 
     private String title;
 
-    private Integer bathroomNum;
+    private int bathroomNum;
 
-    private Integer bedroomNum;
+    private int bedroomNum;
 
     private Integer bedNum;
 
-    private Integer price;
+    private int price;
 
-    private Integer capacity;
+    private int capacity;
 
     private String contact;
 
-    private String latitude;
+    @Column(columnDefinition = "DECIMAL(11,7)")
+    private float latitude;
 
-    private String longitude;
+    @Column(columnDefinition = "DECIMAL(11,7)")
+    private float longitude;
 
     @Column(columnDefinition = "TEXT")
     private String locationDesc;
@@ -66,9 +61,10 @@ public class Accommodation {
     @Column(columnDefinition = "TEXT")
     private String hostDesc;
 
-    private String rating;
+    @Column(columnDefinition = "DECIMAL(5,3)")
+    private float rating;
 
-    private Integer reviewNum;
+    private int reviewNum;
 
     private String accommodationType;
 
@@ -76,26 +72,26 @@ public class Accommodation {
 
     private String hostName;
 
-    private Integer hostReviewNum;
-
-    @JsonBackReference
-    @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
+    private int hostReviewNum;
+    
+    @JsonIgnore
+    @OneToMany(mappedBy = "accommodation")
     private List<Reservation> reservations;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "accommodation")
     private List<Review> reviews;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "accommodation", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "accommodation")
     private List<Bookmark> bookmarks;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOMMODATION_ID")
+    @JsonIgnore
+    @OneToMany(mappedBy = "accommodation")
     private List<BookedDate> bookedDates;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOMMODATION_ID")
+    @JsonIgnore
+    @OneToMany(mappedBy = "accommodation")
     private List<AccommodationPicture> accommodationPictures;
 
     public static Accommodation emptyObject() {
