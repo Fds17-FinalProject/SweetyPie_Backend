@@ -18,13 +18,8 @@ public class ReviewController {
 
     @GetMapping("/review")
     public Review getWrittenReview(@RequestParam long memberId, @RequestParam long accommodationId) throws NotFoundException {
-        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(accommodationId, memberId);
 
-        if (review == null) {
-            throw new NotFoundException("Not Found Review");
-        }
-
-        return review;
+        return reviewService.findReviewByAccommodation_IdAndMember_Id(accommodationId, memberId).orElseThrow(() -> new NotFoundException("Not Found Review"));
     }
 
 
