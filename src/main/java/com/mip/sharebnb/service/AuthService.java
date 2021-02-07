@@ -5,9 +5,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.mip.sharebnb.dto.GoogleLoginRequestDto;
-import com.mip.sharebnb.dto.GoogleLoginResponseDto;
+import com.mip.sharebnb.dto.GoogleMemberDto;
+import com.mip.sharebnb.dto.GoogleTokenRequestDto;
+import com.mip.sharebnb.dto.GoogleTokenResponseDto;
 import com.mip.sharebnb.dto.LoginDto;
+import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +30,7 @@ public class AuthService {
 
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final MemberRepository memberRepository;
 
     final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
 
@@ -53,7 +56,7 @@ public class AuthService {
         RestTemplate restTemplate = new RestTemplate();
 
         //Google OAuth Access Token 요청을 위한 파라미터 세팅
-        GoogleLoginRequestDto googleOAuthRequestParam = GoogleLoginRequestDto
+        GoogleTokenRequestDto googleOAuthRequestParam = GoogleTokenRequestDto
                 .builder()
                 .clientId(clientId)
                 .clientSecret(clientSecret)
@@ -71,7 +74,7 @@ public class AuthService {
         ResponseEntity<String> resultEntity = restTemplate.postForEntity(GOOGLE_TOKEN_BASE_URL, googleOAuthRequestParam, String.class);
 
         //Token Request
-        GoogleLoginResponseDto result = mapper.readValue(resultEntity.getBody(), new TypeReference<GoogleLoginResponseDto>() {
+        GoogleTokenResponseDto result = mapper.readValue(resultEntity.getBody(), new TypeReference<GoogleTokenResponseDto>() {
         });
 
         System.out.println(resultEntity.getBody());
@@ -84,6 +87,15 @@ public class AuthService {
         String resultJson = restTemplate.getForObject(requestUrl, String.class);
 
         return mapper.readValue(resultJson, new TypeReference<Map<String, String>>(){});
+    }
+
+    private GoogleMemberDto pareUserInfoToGoogleMemberDto (Map<String, String> userInfo) {
+
+        return  GoogleMemberDto.builder()
+                .email(userInfo.get("email"))
+                .name(userInfo.get("name"))
+                .socialId(userInfo.get("sub"))
+                .build();
     }
 
 }
