@@ -29,8 +29,8 @@ public class ReservationController {
     }
 
     @PostMapping("/reservation")
-    public Reservation makeAReservation(@Valid @RequestBody ReservationDto reservationDto){
-       return reservationService.insertReservation(reservationDto);
+    public Reservation makeAReservation(@Valid @RequestBody ReservationDto reservationDto) {
+        return reservationService.insertReservation(reservationDto);
     }
 
     @PatchMapping("/reservation/{id}")
