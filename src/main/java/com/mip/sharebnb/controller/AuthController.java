@@ -1,6 +1,7 @@
 package com.mip.sharebnb.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.LoginDto;
 import com.mip.sharebnb.dto.TokenDto;
 import com.mip.sharebnb.exception.MemberAlreadySignupException;
@@ -53,4 +54,13 @@ public class AuthController {
             return new ResponseEntity<>(map, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
+
+    @PostMapping ("login/google")
+    public ResponseEntity<TokenDto> signupBeforeGoogleLogin(@Valid @RequestBody GoogleMemberDto memberDto) {
+
+        String token = authService.signupBeforeGoogleLogin(memberDto);
+
+        return ResponseEntity.ok(new TokenDto(token));
+    }
+
 }
