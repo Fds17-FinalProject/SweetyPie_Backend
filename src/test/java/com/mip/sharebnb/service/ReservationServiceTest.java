@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -77,10 +76,10 @@ class ReservationServiceTest {
                 .checkoutDate(LocalDate.of(2020, 3, 22))
                 .build();
 
-        lenient().when(memberRepository.findById(reservationDto.getMemberId())).thenReturn(mockMember());
-        lenient().when(accommodationRepository.findById(reservationDto.getAccommodationId())).thenReturn(mockFindAccommodation());
-        lenient().when(dynamicReservationRepository.findByReservationIdAndDate(reservationDto.getAccommodationId(), LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
-        lenient().when(reservationRepository.save(any(Reservation.class))).thenReturn(setReservation());
+        when(memberRepository.findById(reservationDto.getMemberId())).thenReturn(mockMember());
+        when(accommodationRepository.findById(reservationDto.getAccommodationId())).thenReturn(mockFindAccommodation());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
+        when(reservationRepository.save(any(Reservation.class))).thenReturn(setReservation());
 
         ReservationDto dto = setReservationDto();
 
@@ -93,23 +92,24 @@ class ReservationServiceTest {
         assertThat(reservation.getReservationCode()).isEqualTo("Num20210206100000001");
 
         verify(reservationRepository, times(1)).save(any(Reservation.class));
+        verify(bookedDateRepository, times(2)).save(any(BookedDate.class));
+
     }
 
     @DisplayName("update 성공")
     @Test
     void updateReservationSuccess(){
-        when(bookedDateRepository.findBookedDatesByReservationId(1L)).thenReturn(mockBookedDate());
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22)));
         when(reservationRepository.save(any(Reservation.class))).thenReturn(setReservation());
-        when(dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
 
         ReservationDto dto = setReservationDto();
 
         Reservation reservation = reservationService.updateReservation(1L, dto);
 
-        verify(bookedDateRepository, times(1)).findBookedDatesByReservationId(1L);
-        verify(bookedDateRepository, times(1)).deleteBookedDateByReservationId(1L);
         verify(reservationRepository, times(1)).findById(1L);
+        verify(bookedDateRepository, times(1)).deleteBookedDateByAccommodationIdAndDateIn(1L, mockDates());
+        verify(dynamicReservationRepository, times(1)).findByAccommodationIdAndDate(1L, dto.getCheckInDate(), dto.getCheckoutDate());
         verify(reservationRepository, times(1)).save(any(Reservation.class));
         verify(bookedDateRepository, times(0)).save(any(BookedDate.class));
     }
@@ -117,18 +117,16 @@ class ReservationServiceTest {
     @DisplayName("예약 날짜 중복으로 update 실패")
     @Test
     void updateReservationFail(){
-        when(bookedDateRepository.findBookedDatesByReservationId(1L)).thenReturn(mockBookedDate());
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
-        when(dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22))).thenReturn(mockBookedDate());
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22)));
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22))).thenReturn(mockBookedDate());
 
         ReservationDto dto = setReservationDto();
 
         Reservation reservation = reservationService.updateReservation(1L, dto);
 
-        verify(bookedDateRepository, times(1)).findBookedDatesByReservationId(1L);
-        verify(bookedDateRepository, times(1)).deleteBookedDateByReservationId(1L);
         verify(reservationRepository, times(1)).findById(1L);
-        verify(reservationRepository, times(0)).save(any(Reservation.class));
+        verify(bookedDateRepository, times(1)).deleteBookedDateByAccommodationIdAndDateIn(1L, mockDates());
+        verify(dynamicReservationRepository, times(1)).findByAccommodationIdAndDate(1L, LocalDate.of(2020,2,20), LocalDate.of(2020,2,22));
         verify(bookedDateRepository, times(3)).save(any(BookedDate.class));
     }
 
@@ -164,17 +162,18 @@ class ReservationServiceTest {
                 .role(MemberRole.MEMBER)
                 .build();
 
-//        Member member = new Member();
-//        member.setId(1L);
-//        member.setEmail("test1@gmail.com");
-//        member.setPassword("1234");
-//        member.setBirthDate(LocalDate.of(2020, 2, 11));
-//        member.setContact("01022223333");
-//        member.setName("tester");
-//        member.setRole(MemberRole.MEMBER);
-
-
         return Optional.of(member);
+    }
+
+    private List<LocalDate> mockDates() {
+
+        List<LocalDate> localDates = new ArrayList<>();
+        localDates.add(LocalDate.of(2020, 2, 20));
+        localDates.add(LocalDate.of(2020, 2, 21));
+        localDates.add(LocalDate.of(2020, 2, 22));
+
+        return localDates;
+
     }
 
     private List<Reservation> mockReservation() {
@@ -188,6 +187,7 @@ class ReservationServiceTest {
         secAccommodationPicture.setUrl("photo");
 
         accommodationPictures.add(secAccommodationPicture);
+
 
         List<Reservation> reservations = new ArrayList<>();
         Accommodation accommodation = new Accommodation();
@@ -211,7 +211,7 @@ class ReservationServiceTest {
         return reservations;
     }
 
-    private Optional<Reservation> mockFindReservation() {
+    private Optional<Reservation> mockFindReservation(LocalDate checkInDate, LocalDate checkoutDate) {
 
         Accommodation accommodation = new Accommodation();
         accommodation.setId(1L);
@@ -221,14 +221,14 @@ class ReservationServiceTest {
         accommodation.setBuildingType("아파트");
 
         Reservation reservation = new Reservation();
-        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
-        LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
+
         reservation.setId(1L);
         reservation.setCheckInDate(checkInDate);
         reservation.setCheckoutDate(checkoutDate);
         reservation.setTotalPrice(50000);
         reservation.setGuestNum(5);
         reservation.setAccommodation(accommodation);
+        reservation.setBookedDates(mockBookedDate());
 
         return Optional.of(reservation);
     }
@@ -265,7 +265,6 @@ class ReservationServiceTest {
         BookedDate bookedDate1 = new BookedDate();
         bookedDate1.setId(1L);
         bookedDate1.setDate(LocalDate.of(2020, 2, 20));
-        bookedDate1.setReservation(reservation);
         bookedDate1.setAccommodation(accommodation);
 
         bookedDates.add(bookedDate1);
@@ -273,7 +272,6 @@ class ReservationServiceTest {
         BookedDate bookedDate2 = new BookedDate();
         bookedDate2.setId(2L);
         bookedDate2.setDate(LocalDate.of(2020, 2, 21));
-        bookedDate2.setReservation(reservation);
         bookedDate2.setAccommodation(accommodation);
 
         bookedDates.add(bookedDate2);
@@ -281,7 +279,6 @@ class ReservationServiceTest {
         BookedDate bookedDate3 = new BookedDate();
         bookedDate3.setDate(LocalDate.of(2020, 2, 22));
         bookedDate3.setId(3L);
-        bookedDate3.setReservation(reservation);
         bookedDate3.setAccommodation(accommodation);
 
         bookedDates.add(bookedDate3);
