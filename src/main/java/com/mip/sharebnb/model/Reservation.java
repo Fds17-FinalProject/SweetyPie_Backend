@@ -11,6 +11,7 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -22,7 +23,7 @@ import java.util.List;
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -31,10 +32,8 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDate checkoutDate;
 
-    @Column(nullable = false)
     private int guestNum;
 
-    @Column(nullable = false)
     private int totalPrice;
 
     private boolean isCanceled;
@@ -44,22 +43,20 @@ public class Reservation {
 
     private String reservationCode; // 우리가 만들어 줘야 함.
 
-//    @JsonManagedReference
-//    @JsonBackReference
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-//    @JsonManagedReference
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
 
+    @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "reservation")
-    private List<BookedDate> bookedDates;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<BookedDate> bookedDates = new ArrayList<>();
 }

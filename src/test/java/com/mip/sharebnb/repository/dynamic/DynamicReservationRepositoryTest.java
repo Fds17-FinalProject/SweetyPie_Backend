@@ -28,7 +28,7 @@ class DynamicReservationRepositoryTest {
     @Test
     void duplicateReservationDate(){
 
-        List<BookedDate> findBookedDate = dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22));
+        List<BookedDate> findBookedDate = dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22));
 
         assertThat(findBookedDate.size()).isEqualTo(3);
         assertThat(findBookedDate.get(0).getDate()).isEqualTo("2020-02-20");
@@ -39,7 +39,7 @@ class DynamicReservationRepositoryTest {
     @Test
     void nonDuplicateReservationDate(){
 
-        List<BookedDate> findBookedDate = dynamicReservationRepository.findByReservationIdAndDate(1L, LocalDate.of(2020, 5, 20), LocalDate.of(2020, 5, 22));
+        List<BookedDate> findBookedDate = dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 5, 20), LocalDate.of(2020, 5, 22));
 
         assertThat(findBookedDate.size()).isEqualTo(0);
     }
@@ -53,6 +53,7 @@ class DynamicReservationRepositoryTest {
 
         return accommodation;
     }
+
 
     private Reservation setReservation(){
         Reservation reservation = Reservation.builder().checkInDate(LocalDate.of(2020, 2, 20)).checkoutDate(LocalDate.of(2020, 2, 22))

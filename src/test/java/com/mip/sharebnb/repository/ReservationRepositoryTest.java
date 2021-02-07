@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 
 @SpringBootTest(properties = "spring.config.location="
         + "classpath:application.yml,"
@@ -30,8 +31,10 @@ class ReservationRepositoryTest {
     private AccommodationRepository accommodationRepository;
 
     @Autowired
+    private BookedDateRepository bookedDateRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
-    private LocalDate bookedDate;
 
     @DisplayName("예약 내역 조회 리스트")
     @Test
@@ -39,10 +42,8 @@ class ReservationRepositoryTest {
     public void getReservationByMemberId() throws JsonProcessingException {
 
         List<Reservation> reservationByMember = reservationRepository.findReservationByMemberId(1L);
-        System.out.println(">>>>>>" + reservationByMember);
 
         Reservation result = reservationByMember.get(0);
-        System.out.println(result);
 
         assertThat(reservationByMember.size()).isEqualTo(2);
         assertThat(reservationByMember.get(0).getTotalPrice()).isEqualTo(20000);
@@ -71,11 +72,120 @@ class ReservationRepositoryTest {
 
     }
 
+    @Test
+    void insert(){
+        List<Reservation> reservations = new ArrayList<>();
+
+        Member member = new Member();
+        LocalDate birtDate = LocalDate.of(2020,1,14);
+        member.setId(1L);
+        member.setEmail("test777@gmail.com");
+        member.setPassword("1234");
+        member.setName("tester");
+        member.setBirthDate(birtDate);
+        member.setContact("01022223333");
+
+        Member saveMember = memberRepository.save(member);
+
+        Accommodation accommodation = new Accommodation();
+        accommodation.setId(1L);
+        accommodation.setBathroomNum(2);
+        accommodation.setBedroomNum(2);
+        accommodation.setAccommodationType("집전체");
+        accommodation.setBuildingType("아파트");
+        Accommodation findAccommodation1 = accommodationRepository.save(accommodation);
+
+
+        Reservation reservation1 = new Reservation();
+        List<BookedDate> bookedDates = new ArrayList<>();
+
+        LocalDate checkIn = LocalDate.of(2020,2,20);
+        LocalDate checkout = LocalDate.of(2020,2,22);
+        reservation1.setCheckInDate(checkIn);
+        reservation1.setCheckoutDate(checkout);
+        reservation1.setGuestNum(3);
+        reservation1.setTotalPrice(20000);
+        reservation1.setPaymentDate(LocalDate.now());
+        reservation1.setAccommodation(findAccommodation1);
+        reservation1.setMember(saveMember);
+
+        for (LocalDate date = LocalDate.of(2020,2,25); date.isBefore(LocalDate.of(2020,2,28)); date = date.plusDays(1)) {
+            bookedDates.add(saveBookedDate(date, accommodation ,reservation1));
+        }
+
+
+        reservationRepository.save(reservation1);
+
+    }
+
+    @Test
+    void delete(){
+
+        reservationRepository.deleteById(1L);
+    }
+
+    private List<LocalDate> mockDates() {
+
+        List<LocalDate> localDates = new ArrayList<>();
+        localDates.add(LocalDate.of(2020, 2, 20));
+        localDates.add(LocalDate.of(2020, 2, 21));
+
+        return localDates;
+
+    }
+
+    private BookedDate saveBookedDate(LocalDate date, Accommodation accommodation, Reservation reservation) {
+
+        BookedDate bookedDate = BookedDate.builder()
+                .date(date)
+                .accommodation(accommodation)
+                .build();
+
+        bookedDate.setReservation(reservation);
+        return bookedDate;
+
+    }
+
+    private List<BookedDate> mockBookedDate(){
+
+        Reservation reservation = Reservation.builder().id(1L).build();
+
+        Accommodation accommodation = Accommodation.builder().id(1L).build();
+
+        List<BookedDate> bookedDates = new ArrayList<>();
+
+        BookedDate bookedDate1 = new BookedDate();
+        bookedDate1.setId(1L);
+        bookedDate1.setDate(LocalDate.of(2020, 2, 20));
+        bookedDate1.setAccommodation(accommodation);
+        bookedDate1.setReservation(reservation);
+
+        bookedDates.add(bookedDate1);
+
+        BookedDate bookedDate2 = new BookedDate();
+        bookedDate2.setId(2L);
+        bookedDate2.setDate(LocalDate.of(2020, 2, 21));
+        bookedDate2.setAccommodation(accommodation);
+        bookedDate2.setReservation(reservation);
+        bookedDates.add(bookedDate2);
+
+        BookedDate bookedDate3 = new BookedDate();
+        bookedDate3.setDate(LocalDate.of(2020, 2, 22));
+        bookedDate3.setId(3L);
+        bookedDate3.setAccommodation(accommodation);
+        bookedDate3.setReservation(reservation);
+        bookedDates.add(bookedDate3);
+
+        return bookedDates;
+
+    }
+
     private void setReservations(){
         List<Reservation> reservations = new ArrayList<>();
 
         Member member = new Member();
         LocalDate birtDate = LocalDate.of(2020,1,14);
+        member.setId(1L);
         member.setEmail("test123@gmail.com");
         member.setPassword("1234");
         member.setBirthDate(birtDate);
@@ -100,6 +210,7 @@ class ReservationRepositoryTest {
         reservation1.setPaymentDate(LocalDate.now());
         reservation1.setAccommodation(findAccommodation1);
         reservation1.setMember(saveMember);
+        reservation1.setBookedDates(mockBookedDate());
 
         reservationRepository.save(reservation1);
 
@@ -123,6 +234,7 @@ class ReservationRepositoryTest {
         reservation2.setPaymentDate(LocalDate.now());
         reservation2.setAccommodation(findAccommodation2);
         reservation2.setMember(saveMember);
+        reservation2.setBookedDates(mockBookedDate());
 
         reservationRepository.save(reservation2);
         reservations.add(reservation2);

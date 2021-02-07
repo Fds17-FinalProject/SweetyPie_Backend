@@ -2,6 +2,7 @@ package com.mip.sharebnb.repository.dynamic;
 
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.BookedDate;
+import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.BookedDateRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -119,18 +120,20 @@ class DynamicAccommodationRepositoryTest {
     }
 
     private Accommodation givenAccommodation() {
-        Accommodation accommodation = new Accommodation(null, "대구광역시", "수성구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
+        Accommodation accommodation = new Accommodation(null, "대구광역시", "수성구", "대구광역시 수성구 xx로", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
 
         return accommodation;
     }
 
     private List<BookedDate> givenBookDates(Accommodation accommodation) {
+        Reservation reservation = new Reservation();
+
         List<BookedDate> bookedDates = new ArrayList<>();
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 4), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 5), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 6), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 7), accommodation, null));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 8), accommodation, null));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 4), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 5), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 6), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 7), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 8), accommodation, reservation));
 
         return bookedDates;
     }

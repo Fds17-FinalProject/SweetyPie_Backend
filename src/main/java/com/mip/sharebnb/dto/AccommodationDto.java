@@ -18,6 +18,8 @@ public class AccommodationDto {
 
     private String gu;
 
+    private String address;
+
     private String title;
 
     private int bathroomNum;
