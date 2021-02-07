@@ -10,10 +10,16 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class BookmarkService {
+
     private final BookmarkRepository bookmarkRepository;
 
     public List<Bookmark> findBookmarks(long memberId) {
 
         return bookmarkRepository.findBookmarksByMember_Id(memberId);
+    }
+
+    public void deleteBookmarkById(long id) {
+
+        bookmarkRepository.deleteById(id);
     }
 }
