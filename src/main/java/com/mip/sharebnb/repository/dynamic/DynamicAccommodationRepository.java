@@ -51,6 +51,7 @@ public class DynamicAccommodationRepository {
                 .select(ac)
                 .from(ac)
                 .where(acBuilder)
+//                .orderBy(NumberExpression.random().asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize())
                 .fetch(), page, page.getPageSize());
