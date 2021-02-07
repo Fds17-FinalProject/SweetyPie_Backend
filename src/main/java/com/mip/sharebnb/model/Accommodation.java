@@ -35,7 +35,7 @@ public class Accommodation {
 
     private int bedroomNum;
 
-    private int bedNum;
+    private Integer bedNum;
 
     private int price;
 
