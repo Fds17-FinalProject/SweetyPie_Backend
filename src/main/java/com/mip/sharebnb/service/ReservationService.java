@@ -38,10 +38,12 @@ public class ReservationService {
 
 
     public List<ReservationDto> getReservations(Long memberId) {
-        if (memberId == null) {
-            return new ArrayList<>();
-        }
+
         List<Reservation> reservations = reservationRepository.findReservationByMemberId(memberId);
+
+        if (reservations.isEmpty()){
+            throw new NotFoundMemberException("등록된 회원 정보를 찾을 수 없습니다.");
+        }
 
         List<ReservationDto> reservationDtoList = new ArrayList<>();
 
@@ -62,10 +64,10 @@ public class ReservationService {
     @Transactional
     public Reservation insertReservation(ReservationDto reservationDto) throws RuntimeException {
 
-        Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new NotFoundMemberException("Member를 찾을 수 없습니다.")));
+        Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new NotFoundMemberException("등록된 회원 정보를 찾을 수 없습니다.")));
         Member member = optionalMember.get();
 
-        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new NotFoundAccommodation("숙박 정보를 찾을 수 없습니다.")));
+        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new NotFoundAccommodation("등록된 숙박 정보를 찾을 수 없습니다.")));
         Accommodation accommodation = optionalAccommodation.get();
 
         List<BookedDate> bookedDates = new ArrayList<>();
@@ -73,7 +75,7 @@ public class ReservationService {
         List<BookedDate> checkDuplicateDate = dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
         if (!checkDuplicateDate.isEmpty()){
-            throw new DuplicateDateException("예약된 날짜 입니다");
+            throw new DuplicateDateException("이미 예약된 날짜 입니다");
         } else {
             Reservation buildReservation = Reservation.builder()
                     .checkInDate(reservationDto.getCheckInDate())
@@ -88,6 +90,7 @@ public class ReservationService {
                     .build();
 
             for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
+                // 이걸 bookeddates로 해줄 필요가 있나? 그냥 setBookedDate만 하면 되지 않나?
                 bookedDates.add(setBookedDate(date, accommodation, buildReservation));
             }
 
