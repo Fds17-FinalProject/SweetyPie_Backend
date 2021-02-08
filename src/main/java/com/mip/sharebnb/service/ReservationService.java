@@ -95,27 +95,6 @@ public class ReservationService {
             return reservationRepository.save(buildReservation);
         }
 
-//        if (checkDuplicateDate.isEmpty()) {
-//            Reservation buildReservation = Reservation.builder()
-//                    .checkInDate(reservationDto.getCheckInDate())
-//                    .checkoutDate(reservationDto.getCheckoutDate())
-//                    .guestNum(reservationDto.getGuestNum())
-//                    .totalPrice(reservationDto.getTotalPrice())
-//                    .isCanceled(false)
-//                    .paymentDate(LocalDate.now())
-//                    .member(member)
-//                    .accommodation(accommodation)
-//                    .reservationCode(setReservationCode(accommodation.getId(), member.getId()))
-//                    .build();
-//
-//            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
-//                bookedDates.add(setBookedDate(date, accommodation, buildReservation));
-//            }
-//
-//            System.out.println(setReservationCode(accommodation.getId(), member.getId()));
-//            return reservationRepository.save(buildReservation);
-//        }
-//        return new Reservation();
     }
 
     @Transactional
