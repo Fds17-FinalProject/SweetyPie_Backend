@@ -199,10 +199,18 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+<<<<<<< HEAD
 # datasource
 /src/main/resources/datasource.yml
 /src/main/resources/application.yml
 *.yml
+
+# aws
+*.pem
+
+### datasource
+/src/main/resources/datasource.yml
+/src/main/resources/application.yml
 
 # aws
 *.pem
