@@ -2,6 +2,9 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.dto.ReservationDto;
+import com.mip.sharebnb.exception.DuplicateDateException;
+import com.mip.sharebnb.exception.NotFoundAccommodation;
+import com.mip.sharebnb.exception.NotFoundMemberException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Member;
@@ -57,19 +60,21 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation insertReservation(ReservationDto reservationDto) {
+    public Reservation insertReservation(ReservationDto reservationDto) throws RuntimeException {
 
-        Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElseThrow(RuntimeException::new));
+        Optional<Member> optionalMember = Optional.of(memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new NotFoundMemberException("Member를 찾을 수 없습니다.")));
         Member member = optionalMember.get();
 
-        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(RuntimeException::new));
+        Optional<Accommodation> optionalAccommodation = Optional.of(accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new NotFoundAccommodation("숙박 정보를 찾을 수 없습니다.")));
         Accommodation accommodation = optionalAccommodation.get();
 
         List<BookedDate> bookedDates = new ArrayList<>();
 
         List<BookedDate> checkDuplicateDate = dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
-        if (checkDuplicateDate.isEmpty()) {
+        if (!checkDuplicateDate.isEmpty()){
+            throw new DuplicateDateException("예약된 날짜 입니다");
+        } else {
             Reservation buildReservation = Reservation.builder()
                     .checkInDate(reservationDto.getCheckInDate())
                     .checkoutDate(reservationDto.getCheckoutDate())
@@ -90,7 +95,27 @@ public class ReservationService {
             return reservationRepository.save(buildReservation);
         }
 
-        return new Reservation();
+//        if (checkDuplicateDate.isEmpty()) {
+//            Reservation buildReservation = Reservation.builder()
+//                    .checkInDate(reservationDto.getCheckInDate())
+//                    .checkoutDate(reservationDto.getCheckoutDate())
+//                    .guestNum(reservationDto.getGuestNum())
+//                    .totalPrice(reservationDto.getTotalPrice())
+//                    .isCanceled(false)
+//                    .paymentDate(LocalDate.now())
+//                    .member(member)
+//                    .accommodation(accommodation)
+//                    .reservationCode(setReservationCode(accommodation.getId(), member.getId()))
+//                    .build();
+//
+//            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
+//                bookedDates.add(setBookedDate(date, accommodation, buildReservation));
+//            }
+//
+//            System.out.println(setReservationCode(accommodation.getId(), member.getId()));
+//            return reservationRepository.save(buildReservation);
+//        }
+//        return new Reservation();
     }
 
     @Transactional
@@ -148,6 +173,7 @@ public class ReservationService {
 
         accommodationDto.setCity(reservation.getAccommodation().getCity());
         accommodationDto.setGu(reservation.getAccommodation().getGu());
+        accommodationDto.setTitle(reservation.getAccommodation().getTitle());
         accommodationDto.setAccommodationPictures(reservation.getAccommodation().getAccommodationPictures());
 
         return accommodationDto;
