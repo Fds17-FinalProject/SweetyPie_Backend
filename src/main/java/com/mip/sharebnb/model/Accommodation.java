@@ -103,7 +103,6 @@ public class Accommodation {
     @OneToMany(mappedBy = "accommodation")
     private List<BookedDate> bookedDates;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "accommodation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<AccommodationPicture> accommodationPictures;
 
