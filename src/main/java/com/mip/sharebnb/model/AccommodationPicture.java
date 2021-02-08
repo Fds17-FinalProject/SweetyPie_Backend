@@ -36,4 +36,9 @@ public class AccommodationPicture {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
+
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
+        accommodation.getAccommodationPictures().add(this);
+    }
 }

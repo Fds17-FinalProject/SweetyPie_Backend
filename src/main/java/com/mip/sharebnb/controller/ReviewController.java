@@ -4,11 +4,13 @@ import com.mip.sharebnb.model.Review;
 import com.mip.sharebnb.service.ReviewService;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -21,6 +23,4 @@ public class ReviewController {
 
         return reviewService.findReviewByAccommodation_IdAndMember_Id(accommodationId, memberId).orElseThrow(() -> new NotFoundException("Not Found Review"));
     }
-
-
 }

@@ -35,4 +35,9 @@ public class Bookmark {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
+
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
+        accommodation.getBookmarks().add(this);
+    }
 }
