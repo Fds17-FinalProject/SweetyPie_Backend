@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Where;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -50,7 +49,8 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
-    private Long socialId;
+    @ColumnDefault("false")
+    private boolean isSocialMember;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
