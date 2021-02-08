@@ -7,12 +7,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -88,7 +90,7 @@ public class Accommodation {
     @JsonIgnore
     @ColumnDefault("0")
     private int hostReviewNum;
-    
+
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation")
     private List<Reservation> reservations;
@@ -102,6 +104,11 @@ public class Accommodation {
     private List<BookedDate> bookedDates;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "accommodation")
+    @OneToMany(mappedBy = "accommodation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<AccommodationPicture> accommodationPictures;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "accommodation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Bookmark> bookmarks = new ArrayList<>();
+
 }
