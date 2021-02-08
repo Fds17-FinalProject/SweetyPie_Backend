@@ -104,8 +104,4 @@ public class Accommodation {
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation")
     private List<AccommodationPicture> accommodationPictures;
-
-    public static Accommodation emptyObject() {
-        return new Accommodation();
-    }
 }
