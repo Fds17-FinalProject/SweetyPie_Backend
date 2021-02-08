@@ -2,6 +2,7 @@ package com.mip.sharebnb.repository.dynamic;
 
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.BookedDate;
+import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.BookedDateRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -125,12 +126,14 @@ class DynamicAccommodationRepositoryTest {
     }
 
     private List<BookedDate> givenBookDates(Accommodation accommodation) {
+        Reservation reservation = new Reservation();
+
         List<BookedDate> bookedDates = new ArrayList<>();
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 4), accommodation));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 5), accommodation));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 6), accommodation));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 7), accommodation));
-        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 8), accommodation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 4), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 5), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 6), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 7), accommodation, reservation));
+        bookedDates.add(new BookedDate(null, LocalDate.of(2022, 3, 8), accommodation, reservation));
 
         return bookedDates;
     }
