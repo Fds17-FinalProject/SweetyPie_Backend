@@ -23,9 +23,4 @@ fi
 nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/sharebnb-deploy/build/libs/* >/home/ubuntu/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 
-#if [ ! -z ${PREV_PID} ]; then
-#  echo "> Kill WAS running at ${CURRENT_PORT}."
-#  sudo kill ${CURRENT_PORT}
-#fi
-
 exit 0
