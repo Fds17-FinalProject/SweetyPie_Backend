@@ -10,7 +10,6 @@ public class SharebnbApplication {
             + "/home/ubuntu/conf/application.yml,"
             + "/home/ubuntu/conf/datasource.yml";
 
-
     public static void main(String[] args) {
         new SpringApplicationBuilder(SharebnbApplication.class)
                 .properties(APPLICATION_LOCATIONS)
