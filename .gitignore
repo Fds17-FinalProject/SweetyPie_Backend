@@ -206,3 +206,6 @@ Temporary Items
 
 # aws
 *.pem
+
+# run
+/src/main/java/com/mip/sharebnb/SharebnbApplication.java
