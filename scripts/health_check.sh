@@ -17,9 +17,7 @@ else
 fi
 
 echo "> Start health check of WAS at 'http://127.0.0.1:${TARGET_PORT}/api/accommodations' ..."
-CURRENT_PID=$(lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
-
-sleep 10
+#CURRENT_PID=$(lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
 
 for RETRY_COUNT in 1 2 3 4 5 6 7 8 9 10
 do
@@ -29,12 +27,13 @@ do
   if [ ${RESPONSE_CODE} -eq 200 ]; then
     echo "> New WAS successfully running"
     exit 0
-    if [ ! -z ${CURRENT_PID} ]; then
-      echo "> Kill WAS running at ${CURRENT_PORT}."
-      sudo kill ${CURRENT_PID}
-    fi
+#    if [ ! -z ${CURRENT_PID} ]; then
+#      echo "> Kill WAS running at ${CURRENT_PORT}."
+#      sudo kill ${CURRENT_PID}
+#    fi
   elif [ ${RETRY_COUNT} -eq 10 ]; then
     echo "> Health check failed."
     exit 1
   fi
+  sleep 10
 done

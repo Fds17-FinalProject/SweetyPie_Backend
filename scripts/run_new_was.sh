@@ -13,7 +13,6 @@ else
 fi
 
 TARGET_PID=$(lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
-PREV_PID=$(lsof -Fp -i TCP:${PREV_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
 
 if [ ! -z ${TARGET_PID} ]; then
   echo "> Kill WAS running at ${TARGET_PORT}."
