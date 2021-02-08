@@ -71,7 +71,7 @@ public class AuthService {
             Map<String, String> map = new HashMap<>();
             map.put("email", memberDto.getEmail());
             map.put("name", memberDto.getName());
-            map.put("socialId", memberDto.getEmail());
+            map.put("socialId", memberDto.getSocialId());
 
             return map;
         }
