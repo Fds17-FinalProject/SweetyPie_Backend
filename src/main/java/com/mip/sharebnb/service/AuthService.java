@@ -35,6 +35,7 @@ public class AuthService {
     private final MemberService memberService;
 
     final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
+    final static String GOOGLE_REDIRECT_URL = "http://ec2-3-34-50-91.ap-northeast-2.compute.amazonaws.com/api/login/google";
 
     @Value("${google.client_id}")
     String clientId;
@@ -97,7 +98,7 @@ public class AuthService {
                 .clientId(clientId)
                 .clientSecret(clientSecret)
                 .code(authCode)
-                .redirectUri("http://localhost:8080/api/login/google")
+                .redirectUri(GOOGLE_REDIRECT_URL)
                 .grantType("authorization_code").build();
         System.out.println(authCode);
         //JSON 파싱을 위한 기본값 세팅
