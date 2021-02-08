@@ -1,7 +1,5 @@
 package com.mip.sharebnb.dto;
 
-import com.mip.sharebnb.model.Bookmark;
-import com.mip.sharebnb.model.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,22 +8,15 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class MemberDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class GoogleMemberDto {
 
     @Email
     private String email;
-
-    @Size(min = 3, max = 100)
-    private String password;
-
-    @Size(min = 3, max = 30)
-    private String prePassword;
 
     @Size(min = 3, max = 30)
     private String name;
@@ -35,8 +26,6 @@ public class MemberDto {
 
     private LocalDate birthDate;
 
-    private List<Review> reviews;
-
-    private List<Bookmark> bookmarks;
+    private String socialId;
 
 }

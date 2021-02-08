@@ -6,14 +6,11 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 @SpringBootApplication
 public class SharebnbApplication {
 
-//    public static void main(String[] args) {
-//        SpringApplication.run(SharebnbApplication.class, args);
-//    }
-
     public static final String APPLICATION_LOCATIONS = "spring.config.location="
+//            + "/home/ubuntu/conf/application.yml,"
+//            + "/home/ubuntu/conf/datasource.yml";
             + "classpath:application.yml,"
             + "classpath:datasource.yml";
-
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(SharebnbApplication.class)
