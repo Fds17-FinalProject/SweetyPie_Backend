@@ -57,13 +57,19 @@ class ReservationControllerTest {
     void getReservations() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(10)))
                 .andExpect(jsonPath("$.[0].checkInDate").value("2020-02-20"))
                 .andExpect(jsonPath("$.[0].checkoutDate").value("2020-02-22"))
                 .andExpect(jsonPath("$.[0].accommodationDto.city").value("서울시"))
                 .andExpect(jsonPath("$.[0].accommodationDto.gu").value("강남구"))
                 .andExpect(jsonPath("$.[0].accommodationDto.accommodationPictures.[0].url").value("picture"));
 
+    }
+
+    @Test
+    void getReservationsException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation/10"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
