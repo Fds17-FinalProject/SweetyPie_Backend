@@ -208,4 +208,4 @@ Temporary Items
 *.sql
 
 # run
-#/src/main/java/com/mip/sharebnb/SharebnbApplication.java
+/src/main/java/com/mip/sharebnb/SharebnbApplication.java
