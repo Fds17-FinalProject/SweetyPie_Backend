@@ -78,11 +78,10 @@ class ReservationControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2020, 2, 20))
-                        .checkoutDate(LocalDate.of(2020, 2, 22))
+                        .checkoutDate(LocalDate.of(2020, 2, 23))
                         .guestNum(3)
                         .memberId(1L)
                         .accommodationId(1L)
-                        .reservationId(1L)
                         .totalPrice(30000)
                         .build())))
                 .andExpect(status().isOk())
@@ -118,11 +117,11 @@ class ReservationControllerTest {
 
     @Test
     void updateReservation() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Reservation.builder()
-                        .checkInDate(LocalDate.of(2020, 2, 20))
-                        .checkoutDate(LocalDate.of(2020, 2, 22))
+                        .checkInDate(LocalDate.of(2021, 2, 25))
+                        .checkoutDate(LocalDate.of(2021, 2, 28))
                         .guestNum(3)
                         .totalPrice(30000)
                         .build())))
@@ -130,6 +129,34 @@ class ReservationControllerTest {
                 .andReturn();
 
         logger.info(result::toString);
+
+    }
+
+    @Test
+    void updateReservationNotFoundReservationException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/100")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(Reservation.builder()
+                        .checkInDate(LocalDate.of(2020, 2, 20))
+                        .checkoutDate(LocalDate.of(2020, 2, 22))
+                        .guestNum(3)
+                        .totalPrice(30000)
+                        .build())))
+                .andExpect(status().isBadRequest());
+
+    }
+
+    @Test
+    void updateReservationDuplicateDateException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/6")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(Reservation.builder()
+                        .checkInDate(LocalDate.of(2020, 2, 25))
+                        .checkoutDate(LocalDate.of(2020, 2, 27))
+                        .guestNum(3)
+                        .totalPrice(30000)
+                        .build())))
+                .andExpect(status().isNotFound());
 
     }
 
