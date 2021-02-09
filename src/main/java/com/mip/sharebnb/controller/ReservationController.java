@@ -1,12 +1,8 @@
 package com.mip.sharebnb.controller;
 
-import com.mip.sharebnb.dto.ErrorDto;
 import com.mip.sharebnb.dto.ReservationDto;
-import com.mip.sharebnb.exception.DuplicateDateException;
-import com.mip.sharebnb.exception.NotFoundAccommodation;
 import com.mip.sharebnb.exception.NotFoundMemberException;
 import com.mip.sharebnb.exception.UnValidException;
-import com.mip.sharebnb.exceptionhandler.ReservationHandler;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +40,10 @@ public class ReservationController {
     }
 
     @PatchMapping("/reservation/{id}")
-    public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto) {
-
+    public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto, Errors errors) {
+        if (errors.hasErrors()) {
+            throw new UnValidException("입력한 타입 및 값이 맞지 않습니다.");
+        }
         return reservationService.updateReservation(id, reservationDto);
     }
 
