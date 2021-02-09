@@ -1,9 +1,9 @@
 package com.mip.sharebnb.service;
 
+import com.mip.sharebnb.dto.ReviewDto;
 import com.mip.sharebnb.model.Review;
-import com.mip.sharebnb.repository.AccommodationRepository;
-import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReviewRepository;
+import javassist.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,13 +26,7 @@ class ReviewServiceTest {
     @Mock
     private ReviewRepository reviewRepository;
 
-    @Mock
-    private AccommodationRepository accommodationRepository;
-
-    @Mock
-    private MemberRepository memberRepository;
-
-    @DisplayName("작성한 리뷰 가져 오기")
+    @DisplayName("작성한 리뷰 가져오기")
     @Test
     void findReviewByAccommodation_IdAndMember_Id() {
         when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1, 1)).thenReturn(mockReview());
@@ -43,8 +37,17 @@ class ReviewServiceTest {
         assertThat(review.getRating()).isEqualTo(3);
     }
 
+    @DisplayName("리뷰 수정")
     @Test
-    void writeReview() {
+    void updateReview() throws NotFoundException {
+        when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1L, 1L)).thenReturn(mockReview());
+
+        reviewService.updateReview(mockReviewDto());
+
+        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(1L, 1L).get();
+
+        assertThat(review.getContent()).isEqualTo("변경");
+        assertThat(review.getRating()).isEqualTo(4);
     }
 
     private Optional<Review> mockReview() {
@@ -56,5 +59,15 @@ class ReviewServiceTest {
                 .member(null)
                 .content("좋아요")
                 .build());
+    }
+
+    private ReviewDto mockReviewDto() {
+
+        return ReviewDto.builder()
+                .content("변경")
+                .rating(4)
+                .accommodationId(1)
+                .memberId(1)
+                .build();
     }
 }
