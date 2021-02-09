@@ -46,6 +46,7 @@ public class MemberService {
                 .birthDate(memberDto.getBirthDate())
                 .contact(memberDto.getContact())
                 .role(MemberRole.MEMBER)
+                .isSocialMember(true)
                 .build();
 
         return memberRepository.save(member);
