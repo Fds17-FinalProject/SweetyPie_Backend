@@ -18,7 +18,7 @@ hooks:
       runas: ubuntu
     - location: scripts/health_check.sh
       timeout: 180
-      runas: unbuntu
+      runas: ubuntu
     - location: scripts/switch.sh
       timeout: 180
       runas: ubuntu
