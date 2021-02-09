@@ -54,7 +54,6 @@ public class AuthController {
             return new ResponseEntity<>(map, httpHeaders,  HttpStatus.OK);
         // 로그인 안되면 203과 memberDto 리턴
         } else {
-//            map.put("url",url);
             return new ResponseEntity<>(map, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
