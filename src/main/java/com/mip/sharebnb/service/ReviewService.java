@@ -38,7 +38,18 @@ public class ReviewService {
                         .orElseThrow(() -> new NotFoundException("Not Found Member")))
                 .build();
 
-
         reviewRepository.save(review);
+    }
+
+    public void updateReview(ReviewDto reviewDto) throws NotFoundException {
+        Review originReview = reviewRepository
+                .findReviewByAccommodation_IdAndMember_Id(reviewDto.getAccommodationId(), reviewDto.getMemberId())
+                .orElseThrow(() -> new NotFoundException("Not Found Review"));
+
+        originReview.setContent(reviewDto.getContent());
+        originReview.setRating(reviewDto.getRating());
+        originReview.setCreatedDate(LocalDate.now());
+
+        reviewRepository.save(originReview);
     }
 }

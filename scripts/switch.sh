@@ -29,6 +29,8 @@ sudo service nginx reload
 
 echo "> Nginx reloaded."
 
+sleep 5
+
 if [ ! -z ${CURRENT_PID} ]; then
   echo "> Kill WAS running at ${CURRENT_PORT}."
   sudo kill ${CURRENT_PID}
