@@ -7,10 +7,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 public class SharebnbApplication {
 
     public static final String APPLICATION_LOCATIONS = "spring.config.location="
-//            + "/home/ubuntu/conf/application.yml,"
-//            + "/home/ubuntu/conf/datasource.yml";
-            + "classpath:application.yml,"
-            + "classpath:datasource.yml";
+//            + "classpath:application.yml,"
+//            + "classpath:datasource.yml";
+            + "/home/ubuntu/conf/application.yml,"
+            + "/home/ubuntu/conf/datasource.yml";
+//            + "classpath:application.yml,"
+//            + "classpath:datasource.yml";
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(SharebnbApplication.class)

@@ -17,6 +17,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -48,9 +49,12 @@ public class AuthController {
         }
         // 로그인 되면 200과 token 리턴
         if (map.get("token")!=null) {
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + map.get("token"));
+            return new ResponseEntity<>(map, httpHeaders,  HttpStatus.OK);
         // 로그인 안되면 203과 memberDto 리턴
         } else {
+//            map.put("url",url);
             return new ResponseEntity<>(map, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
         }
     }
@@ -62,5 +66,4 @@ public class AuthController {
 
         return ResponseEntity.ok(new TokenDto(token));
     }
-
 }
