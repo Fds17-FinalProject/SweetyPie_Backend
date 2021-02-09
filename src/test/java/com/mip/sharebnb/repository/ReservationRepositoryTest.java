@@ -31,15 +31,12 @@ class ReservationRepositoryTest {
     private AccommodationRepository accommodationRepository;
 
     @Autowired
-    private BookedDateRepository bookedDateRepository;
-
-    @Autowired
     private MemberRepository memberRepository;
 
     @DisplayName("예약 내역 조회 리스트")
     @Test
     @Transactional
-    public void getReservationByMemberId() throws JsonProcessingException {
+    public void getReservationByMemberId(){
 
         List<Reservation> reservationByMember = reservationRepository.findReservationByMemberId(1L);
 
@@ -95,7 +92,6 @@ class ReservationRepositoryTest {
         accommodation.setBuildingType("아파트");
         Accommodation findAccommodation1 = accommodationRepository.save(accommodation);
 
-
         Reservation reservation1 = new Reservation();
         List<BookedDate> bookedDates = new ArrayList<>();
 
@@ -109,19 +105,64 @@ class ReservationRepositoryTest {
         reservation1.setAccommodation(findAccommodation1);
         reservation1.setMember(saveMember);
 
-        for (LocalDate date = LocalDate.of(2020,2,25); date.isBefore(LocalDate.of(2020,2,28)); date = date.plusDays(1)) {
-            bookedDates.add(saveBookedDate(date, accommodation ,reservation1));
+        for (LocalDate date = LocalDate.of(2020,2,20); date.isBefore(LocalDate.of(2020,2,22)); date = date.plusDays(1)) {
+            BookedDate bookedDate = new BookedDate();
+            bookedDate.setDate(date);
+            bookedDate.setReservation(reservation1);
+            bookedDate.setAccommodation(findAccommodation1);
+            bookedDates.add(bookedDate);
         }
-
 
         reservationRepository.save(reservation1);
 
+        Member member2 = new Member();
+        LocalDate birtDate2 = LocalDate.of(2020,12,14);
+        member2.setId(2L);
+        member2.setEmail("test999@gmail.com");
+        member2.setPassword("1234");
+        member2.setName("tester");
+        member2.setBirthDate(birtDate);
+        member2.setContact("01044445555");
+
+        Member saveMember2 = memberRepository.save(member2);
+
+        Accommodation accommodation2 = new Accommodation();
+        accommodation2.setId(1L);
+        accommodation2.setBathroomNum(2);
+        accommodation2.setBedroomNum(2);
+        accommodation2.setAccommodationType("집전체");
+        accommodation2.setBuildingType("아파트");
+        Accommodation findAccommodation2 = accommodationRepository.save(accommodation2);
+
+
+        Reservation reservation2 = new Reservation();
+        List<BookedDate> bookedDates2 = new ArrayList<>();
+
+        LocalDate checkIn2 = LocalDate.of(2020,2,25);
+        LocalDate checkout2 = LocalDate.of(2020,2,27);
+        reservation2.setCheckInDate(checkIn2);
+        reservation2.setCheckoutDate(checkout2);
+        reservation2.setGuestNum(3);
+        reservation2.setTotalPrice(20000);
+        reservation2.setPaymentDate(LocalDate.now());
+        reservation2.setAccommodation(findAccommodation2);
+        reservation2.setMember(saveMember2);
+
+        for (LocalDate date = LocalDate.of(2020,2,25); date.isBefore(LocalDate.of(2020,2,27)); date = date.plusDays(1)) {
+            BookedDate bookedDate = new BookedDate();
+            bookedDate.setDate(date);
+            bookedDate.setReservation(reservation2);
+            bookedDate.setAccommodation(findAccommodation1);
+            bookedDates.add(bookedDate);
+        }
+
+        reservationRepository.save(reservation2);
     }
 
     @Test
     void delete(){
 
-        reservationRepository.deleteById(1L);
+        reservationRepository.deleteById(2L);
     }
 
     private List<LocalDate> mockDates() {
