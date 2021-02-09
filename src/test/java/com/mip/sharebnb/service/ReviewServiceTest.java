@@ -29,9 +29,9 @@ class ReviewServiceTest {
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void findReviewByAccommodation_IdAndMember_Id() {
-        when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1L, 1L)).thenReturn(mockReview());
+        when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1, 1)).thenReturn(mockReview());
 
-        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(1L, 1L).get();
+        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(1, 1).get();
 
         assertThat(review.getContent()).isEqualTo("좋아요");
         assertThat(review.getRating()).isEqualTo(3);
