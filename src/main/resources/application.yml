@@ -23,4 +23,3 @@ logging:
 jasypt:
   encryptor:
     bean: jasyptStringEncryptor
-
