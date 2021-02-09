@@ -84,7 +84,7 @@ class ReservationControllerTest {
                         .accommodationId(1L)
                         .totalPrice(30000)
                         .build())))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andReturn();
 
         logger.info(result::toString);
@@ -148,11 +148,11 @@ class ReservationControllerTest {
 
     @Test
     void updateReservationDuplicateDateException() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/6")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/3")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Reservation.builder()
-                        .checkInDate(LocalDate.of(2020, 2, 25))
-                        .checkoutDate(LocalDate.of(2020, 2, 27))
+                        .checkInDate(LocalDate.of(2021, 2, 28))
+                        .checkoutDate(LocalDate.of(2021, 3, 2))
                         .guestNum(3)
                         .totalPrice(30000)
                         .build())))
