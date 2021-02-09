@@ -35,7 +35,7 @@ public class AuthService {
     private final MemberService memberService;
 
     final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
-    final static String GOOGLE_REDIRECT_URL = "http://ec2-3-34-50-91.ap-northeast-2.compute.amazonaws.com/api/login/google";
+    final static String GOOGLE_REDIRECT_URL = "http://localhost:3000/redirect";
 
     @Value("${google.client_id}")
     String clientId;
@@ -100,7 +100,6 @@ public class AuthService {
                 .code(authCode)
                 .redirectUri(GOOGLE_REDIRECT_URL)
                 .grantType("authorization_code").build();
-        System.out.println(authCode);
         //JSON 파싱을 위한 기본값 세팅
         //요청시 파라미터는 스네이크 케이스로 세팅되므로 Object mapper에 미리 설정해준다.
         ObjectMapper mapper = new ObjectMapper();
