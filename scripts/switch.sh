@@ -8,6 +8,7 @@ TARGET_PORT=0
 
 echo "> Nginx currently proxies to ${CURRENT_PORT}."
 
+CURRENT_PID=$(lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
 # Toggle port number
 if [ ${CURRENT_PORT} -eq 8081 ]; then
   TARGET_PORT=8082
@@ -27,3 +28,8 @@ echo "> Now Nginx proxies to ${TARGET_PORT}."
 sudo service nginx reload
 
 echo "> Nginx reloaded."
+
+if [ ! -z ${CURRENT_PID} ]; then
+  echo "> Kill WAS running at ${CURRENT_PORT}."
+  sudo kill ${CURRENT_PID}
+fi
