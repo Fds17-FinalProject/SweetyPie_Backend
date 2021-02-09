@@ -24,7 +24,7 @@ import java.util.List;
 @Where(clause = "is_Deleted = false")
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MEMBER_ID")
     private Long id;
 
