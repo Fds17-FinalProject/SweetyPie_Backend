@@ -11,6 +11,8 @@ public class SharebnbApplication {
 //            + "classpath:datasource.yml";
             + "/home/ubuntu/conf/application.yml,"
             + "/home/ubuntu/conf/datasource.yml";
+//            + "classpath:application.yml,"
+//            + "classpath:datasource.yml";
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(SharebnbApplication.class)
