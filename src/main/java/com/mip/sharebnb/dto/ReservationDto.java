@@ -4,18 +4,13 @@ import com.mip.sharebnb.model.AccommodationPicture;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Builder
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class ReservationDto {
 
     private Long memberId;
@@ -24,15 +19,12 @@ public class ReservationDto {
 
     private Long reservationId;
 
-    @NonNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent(message = "체크인은 현재날짜 이후의 날짜이어야 합니다.")
     private LocalDate checkInDate;
 
-    @NonNull
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @FutureOrPresent(message = "체크아웃은 현재날짜 이후의 날짜이어야 합니다.")
     private LocalDate checkoutDate;
 
-    @Positive(message = "인원수가 맞지 않습니다.")
     @Min(value = 1, message = "인원은 최소 1명입니다.") @Max(value = 8, message = "인원은 최대 8명입니다.")
     private int guestNum;
 
