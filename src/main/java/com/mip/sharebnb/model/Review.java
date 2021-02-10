@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
 @Builder
@@ -45,4 +46,9 @@ public class Review {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Accommodation accommodation;
+
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    private Reservation reservation;
 }
