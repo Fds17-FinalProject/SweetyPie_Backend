@@ -1,17 +1,14 @@
 package com.mip.sharebnb.exceptionhandler;
 
 import com.mip.sharebnb.dto.ErrorDto;
-import com.mip.sharebnb.exception.DuplicateDateException;
-import com.mip.sharebnb.exception.NotFoundAccommodation;
-import com.mip.sharebnb.exception.NotFoundMemberException;
-import com.mip.sharebnb.exception.UnValidException;
+import com.mip.sharebnb.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ReservationHandler {
+public class ReservationExceptionHandler {
 
     @ExceptionHandler(NotFoundMemberException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -21,9 +18,17 @@ public class ReservationHandler {
 
     }
 
-    @ExceptionHandler(NotFoundAccommodation.class)
+    @ExceptionHandler(NotFoundAccommodationException.class)
     @ResponseStatus(HttpStatus.BAD_GATEWAY)
-    public ErrorDto handleNotFoundAccommodationException(NotFoundAccommodation ex){
+    public ErrorDto handleNotFoundAccommodationException(NotFoundAccommodationException ex){
+
+        return ErrorDto.of(ex.getMessage());
+
+    }
+
+    @ExceptionHandler(NotFoundReservationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorDto handleNotFoundReservationException(NotFoundReservationException ex){
 
         return ErrorDto.of(ex.getMessage());
 
@@ -39,7 +44,7 @@ public class ReservationHandler {
 
     @ExceptionHandler(UnValidException.class)
     @ResponseStatus(HttpStatus.ALREADY_REPORTED)
-    public ErrorDto handleUnValidExceptionException(UnValidException ex){
+    public ErrorDto handleUnValidException(UnValidException ex){
 
         return ErrorDto.of(ex.getMessage());
 
