@@ -41,8 +41,10 @@ public class ReservationService {
             reservationDto.setCheckInDate(reservation.getCheckInDate());
             reservationDto.setCheckoutDate(reservation.getCheckoutDate());
             reservationDto.setIsWrittenReview(reservation.getIsWrittenReview());
-            reservationDto.setAccommodationDto(mappingAccommodationDto(reservation));
-
+            reservationDto.setCity(reservation.getAccommodation().getCity());
+            reservationDto.setGu(reservation.getAccommodation().getGu());
+            reservationDto.setTitle(reservation.getAccommodation().getTitle());
+            reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
             reservationDtoList.add(reservationDto);
         }
         return reservationDtoList;
