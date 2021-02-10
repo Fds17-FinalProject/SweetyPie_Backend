@@ -24,3 +24,7 @@ jasypt:
   encryptor:
     bean: jasyptStringEncryptor
 
+server:
+  error:
+    include-message: ALWAYS
+    include-stacktrace: ALWAYS
