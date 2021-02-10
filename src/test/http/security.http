@@ -14,11 +14,11 @@ POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-  "email":"eeee33dr4@eeee.com",
-  "password":"member",
+  "email":"ee2ee33dr4@eeee.com",
+  "password":"member33!@",
   "name":"name",
-  "birthDate": "2022-02-10",
-  "contact":"010085512"
+  "birthDate": "2002-02-10",
+  "contact":"01008551215"
    }
 
 ### 회원정보찾기 테스트
