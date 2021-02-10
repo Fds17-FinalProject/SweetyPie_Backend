@@ -36,6 +36,7 @@ public class AuthService {
 
     final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
     final static String GOOGLE_REDIRECT_URL = "http://localhost:3000/redirect";
+    final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
 
     @Value("${google.client_id}")
     String clientId;
@@ -60,7 +61,7 @@ public class AuthService {
         GoogleMemberDto memberDto = pareUserInfoToGoogleMemberDto(googleUserInfo);
 
         // 로그인이 가능할 때 로그인을 해서 JWT 토큰을 리턴한다
-        if (isLoginPossible(memberDto)) {
+        if (isLoginPossible(memberDto, googleUserInfo)) {
             LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
             Map<String, String> map = new HashMap<>();
             map.put("token", login(loginDto));
@@ -122,7 +123,9 @@ public class AuthService {
 
         String resultJson = restTemplate.getForObject(requestUrl, String.class);
 
-        return mapper.readValue(resultJson, new TypeReference<Map<String, String>>(){});
+        Map<String, String> userInfo = mapper.readValue(resultJson, new TypeReference<Map<String, String>>(){});
+        userInfo.put("accessToken", result.getAccessToken());
+        return userInfo;
     }
 
     private GoogleMemberDto pareUserInfoToGoogleMemberDto (Map<String, String> userInfo) {
@@ -134,7 +137,7 @@ public class AuthService {
                 .build();
     }
 
-    private boolean isLoginPossible(GoogleMemberDto memberDto) {
+    private boolean isLoginPossible(GoogleMemberDto memberDto, Map<String, String> userInfo) {
         Optional<Member> optionalMember = memberRepository.findByEmail(memberDto.getEmail());
 
         if (!optionalMember.isPresent()) {
@@ -145,9 +148,20 @@ public class AuthService {
                 return true;
             // google 메일이 이미 가입되어 있을때 에러를 내보낸다
             } else {
-                throw new MemberAlreadySignupException("이미 가입된 회원입니다");
+                // 액세스 토큰이 필요없으니 만료시킨다
+                revokeAccessToken(userInfo.get("accessToken"));
+                throw new MemberAlreadySignupException("이미 가입된 회원입니다:액세스토큰이 만료되었습니다");
             }
         }
+    }
+
+    private void revokeAccessToken(String token) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        final String requestUrl = UriComponentsBuilder.fromHttpUrl(GOOGLE_REVOKE_TOKEN_BASE_URL)
+                .queryParam("token", token).encode().toUriString();
+
+        String resultJson = restTemplate.postForObject(requestUrl, null, String.class);
     }
 
 }
