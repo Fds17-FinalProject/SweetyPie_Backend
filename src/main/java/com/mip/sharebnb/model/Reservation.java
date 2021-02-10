@@ -57,6 +57,6 @@ public class Reservation {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<BookedDate> bookedDates = new ArrayList<>();
 }

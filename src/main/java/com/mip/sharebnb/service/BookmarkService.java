@@ -1,5 +1,6 @@
 package com.mip.sharebnb.service;
 
+import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.model.Bookmark;
 import com.mip.sharebnb.repository.BookmarkRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,9 @@ public class BookmarkService {
         return bookmarkRepository.findBookmarksByMember_Id(memberId);
     }
 
-    public void deleteBookmarkById(long id) {
+    public void deleteBookmarkById(Long id) {
+        bookmarkRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Bookmark Not Found"));
 
-        bookmarkRepository.findById(id).ifPresent(bookmark -> bookmarkRepository.deleteById(id));
+        bookmarkRepository.deleteById(id);
     }
 }

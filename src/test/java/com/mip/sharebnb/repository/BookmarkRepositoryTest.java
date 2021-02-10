@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,24 +50,22 @@ class BookmarkRepositoryTest {
         Member member = givenMember();
         givenBookmarks(member);
 
+        List<Member> members = memberRepository.findAll();
+
         // 삭제 전
-        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(member.getId());
+        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(members.get(members.size() - 1).getId());
 
         assertThat(bookmarks.size()).isEqualTo(2);
 
-        bookmarkRepository.deleteById(bookmarks.get(0).getId());
-        bookmarkRepository.deleteById(bookmarks.get(1).getId());
-
-        // 삭제 후
-        bookmarks = bookmarkRepository.findBookmarksByMember_Id(1);
-
-        assertThat(bookmarks.size()).isEqualTo(0);
+        for (Bookmark bookmark : bookmarks) {
+            bookmarkRepository.deleteById(bookmark.getId());
+        }
     }
 
     private void givenBookmarks(Member member) {
 
-        Accommodation accommodation = new Accommodation(null, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
-        Accommodation accommodation2 = new Accommodation(null, "서울특별시", "서대문구", "서울특별시 서대문구", "아파트", 2, 2, 2, 100000, 4, "010-1234-5678", 36.141f, 126.531f, "서대문구", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
+        Accommodation accommodation = new Accommodation(null, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, new ArrayList<>());
+        Accommodation accommodation2 = new Accommodation(null, "서울특별시", "서대문구", "서울특별시 서대문구", "아파트", 2, 2, 2, 100000, 4, "010-1234-5678", 36.141f, 126.531f, "서대문구", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, new ArrayList<>());
 
         accommodationRepository.save(accommodation);
         accommodationRepository.save(accommodation2);
@@ -84,7 +83,7 @@ class BookmarkRepositoryTest {
 
     private Member givenMember() {
         Member member = new Member();
-        member.setEmail("ddd@gmail.com");
+        member.setEmail("ddd2@gmail.com");
         member.setName("이재복");
         member.setPassword("1234");
         member.setContact("12378");
