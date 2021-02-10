@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.tags.EditorAwareTag;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -53,7 +52,7 @@ public class ReservationService {
 
     @Transactional
     public Reservation makeAReservation(ReservationDto reservationDto) throws RuntimeException {
-        if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate()) || reservationDto.getCheckInDate().isBefore(LocalDate.now()) || reservationDto.getCheckoutDate().isBefore(LocalDate.now())) {
+        if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate())) {
             throw new InvalidInputException("예약기간이 올바르지 않습니다");
         }
 
