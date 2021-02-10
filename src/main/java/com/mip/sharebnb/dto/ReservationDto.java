@@ -35,6 +35,8 @@ public class ReservationDto {
     @Positive
     private int totalPrice;
 
+    private Boolean isWrittenReview;
+
     private AccommodationDto accommodationDto;
 
 }
