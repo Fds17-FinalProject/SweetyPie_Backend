@@ -33,11 +33,7 @@ public class MemberController {
 
     @PostMapping("/member")
     public ResponseEntity<MemberDto> signup(
-            @Valid @RequestBody MemberDto memberDto, Errors errors) throws InvalidInputException {
-
-        if (errors.hasErrors()) {
-            throw new InvalidInputException("입력한 정보가 조건에 맞지 않습니다");
-        }
+            @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
 
         Member member = memberService.signup(memberDto);
 
@@ -49,9 +45,6 @@ public class MemberController {
     public ResponseEntity<MemberDto> updateMember(
             @PathVariable Long member_id,
             @Valid @RequestBody MemberDto memberDto, Errors errors) throws InvalidInputException {
-        if (errors.hasErrors()) {
-            throw new InvalidInputException("입력한 정보가 조건에 맞지 않습니다");
-        }
 
         Member member = memberService.updateMember(member_id, memberDto);
         return ResponseEntity.ok(mapToMemberDto(member));
