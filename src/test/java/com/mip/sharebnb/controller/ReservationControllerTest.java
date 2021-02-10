@@ -57,9 +57,10 @@ class ReservationControllerTest {
     void getReservations() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(10)))
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$.[0].checkInDate").value("2020-02-20"))
                 .andExpect(jsonPath("$.[0].checkoutDate").value("2020-02-22"))
+                .andExpect(jsonPath("$.[0].isWrittenReview").value(true))
                 .andExpect(jsonPath("$.[0].accommodationDto.city").value("서울시"))
                 .andExpect(jsonPath("$.[0].accommodationDto.gu").value("강남구"))
                 .andExpect(jsonPath("$.[0].accommodationDto.accommodationPictures.[0].url").value("picture"));
@@ -88,12 +89,6 @@ class ReservationControllerTest {
                 .andReturn();
 
         logger.info(result::toString);
-
-//        이걸 넣었을 때 왜 checkInDate가 null로 뜨지??
-//                .andExpect(jsonPath("$.checkInDate").value("2020-02-20"))
-//                .andExpect(jsonPath("$.checkoutDate").value("2020-02-22"))
-//                .andExpect(jsonPath("$.guestNum").value(3))
-//                .andExpect(jsonPath("$.totalPrice").value(30000))
 
     }
 
