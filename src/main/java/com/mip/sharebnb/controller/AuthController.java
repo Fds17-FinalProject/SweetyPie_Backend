@@ -20,7 +20,6 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
-@CrossOrigin
 @RequiredArgsConstructor
 public class AuthController {
 
