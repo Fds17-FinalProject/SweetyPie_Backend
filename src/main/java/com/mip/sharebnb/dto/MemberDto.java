@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,6 +26,8 @@ public class MemberDto {
     private String email;
 
     @Size(min = 8, max = 50, message = "비밀번호는 8자 이상 50자 이하여야 합니다")
+    @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$",
+            message = "비밀번호는 영어와 숫자와 특수문자를 포함해서 8자이상 으로 입력해주세요.")
     private String password;
 
     @Size(min = 8, max = 50, message = "이전 비밀번호는 8자 이상 50자 이하여야 합니다.")
