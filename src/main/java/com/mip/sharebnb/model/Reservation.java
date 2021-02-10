@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Where;
 
@@ -38,6 +39,9 @@ public class Reservation {
 
     private boolean isCanceled;
 
+    @ColumnDefault(value = "false")
+    private Boolean isWrittenReview;
+
     @CreationTimestamp
     private LocalDate paymentDate; // 결제일
 
@@ -59,4 +63,9 @@ public class Reservation {
     @JsonIgnore
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private List<BookedDate> bookedDates = new ArrayList<>();
+
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    private Review review;
 }
