@@ -2,11 +2,11 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.MemberDto;
-import com.mip.sharebnb.exception.PrePasswordNotMatchedException;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.MemberRole;
 import com.mip.sharebnb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -60,7 +60,7 @@ public class MemberService {
     }
 
     @Transactional
-    public Member updateMember(Long id, MemberDto memberDto) {
+    public Member updateMember(Long id, MemberDto memberDto) throws InvalidInputException {
 
         Member member = memberRepository
                 .findById(id)
@@ -77,7 +77,7 @@ public class MemberService {
             member.setContact(memberDto.getContact());
         } else if (memberDto.getPassword() != null && memberDto.getPrePassword() != null) {
             if (!passwordEncoder.matches(memberDto.getPrePassword(), member.getPassword())) {
-                throw new PrePasswordNotMatchedException("이전 비밀번호가 일치하지 않습니다");
+                throw new InvalidInputException("이전 비밀번호가 일치하지 않습니다");
             }
             member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         }
