@@ -3,8 +3,10 @@ package com.mip.sharebnb.controller;
 import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.service.MemberService;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,7 +44,7 @@ public class MemberController {
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<MemberDto> updateMember(
             @PathVariable Long member_id,
-            @Valid @RequestBody MemberDto memberDto) {
+            @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
 
         Member member = memberService.updateMember(member_id, memberDto);
         return ResponseEntity.ok(mapToMemberDto(member));
@@ -50,7 +52,7 @@ public class MemberController {
 
     @DeleteMapping("/member/{member_id}")
     @PreAuthorize("hasRole('MEMBER')")
-    public ResponseEntity<Boolean> updateMember(@PathVariable Long member_id) {
+    public ResponseEntity<Boolean> withdrawalMember(@PathVariable Long member_id) {
 
         Member member = memberService.withdrawal(member_id);
         return ResponseEntity.ok(member.isDeleted());
