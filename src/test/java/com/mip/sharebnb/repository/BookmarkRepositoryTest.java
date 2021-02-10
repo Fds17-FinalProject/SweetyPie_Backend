@@ -33,10 +33,9 @@ class BookmarkRepositoryTest {
     @DisplayName("북마크 리스트 조회")
     @Test
     void findBookmarksByMember_Id() {
-        Member member = givenMember();
-        givenBookmarks(member);
+        List<Member> members = memberRepository.findAll();
 
-        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(member.getId());
+        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(members.get(members.size() - 1).getId());
 
         assertThat(bookmarks.size()).isEqualTo(2);
 
@@ -46,6 +45,7 @@ class BookmarkRepositoryTest {
 
     @DisplayName("북마크 제거")
     @Test
+//    @Transactional
     void deleteBookmark() {
         Member member = givenMember();
         givenBookmarks(member);
@@ -58,8 +58,13 @@ class BookmarkRepositoryTest {
         assertThat(bookmarks.size()).isEqualTo(2);
 
         for (Bookmark bookmark : bookmarks) {
+            System.out.println("삭제 시점-----------------------");
             bookmarkRepository.deleteById(bookmark.getId());
+//            bookmarkRepository.delete(bookmark);
         }
+
+        bookmarks = bookmarkRepository.findBookmarksByMember_Id(members.get(members.size() - 1).getId());
+        assertThat(bookmarks.size()).isEqualTo(0);
     }
 
     private void givenBookmarks(Member member) {
