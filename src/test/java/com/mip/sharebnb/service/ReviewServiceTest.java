@@ -7,7 +7,6 @@ import com.mip.sharebnb.model.Review;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReviewRepository;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +52,7 @@ class ReviewServiceTest {
 
     @DisplayName("리뷰 등록")
     @Test
-    void postReview() throws NotFoundException {
+    void postReview() {
         when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
         when(memberRepository.findById(1L)).thenReturn(mockMember());
 
@@ -64,7 +63,7 @@ class ReviewServiceTest {
 
     @DisplayName("리뷰 수정")
     @Test
-    void updateReview() throws NotFoundException {
+    void updateReview() {
         when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1L, 1L)).thenReturn(mockReview());
 
         reviewService.updateReview(mockReviewDto());
@@ -77,7 +76,7 @@ class ReviewServiceTest {
 
     @DisplayName("리뷰 삭제")
     @Test
-    void deleteReview() throws NotFoundException {
+    void deleteReview() {
         when(reviewRepository.findById(1L)).thenReturn(mockReview());
 
         reviewService.deleteReview(1L);
