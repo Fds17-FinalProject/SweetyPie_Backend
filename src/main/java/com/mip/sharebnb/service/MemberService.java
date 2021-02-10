@@ -2,6 +2,8 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.MemberDto;
+import com.mip.sharebnb.exception.DataNotFoundException;
+import com.mip.sharebnb.exception.DuplicateValueExeption;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.MemberRole;
 import com.mip.sharebnb.repository.MemberRepository;
@@ -56,7 +58,7 @@ public class MemberService {
     public Member getMember(Long id) {
         return memberRepository
                 .findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("찾는 멤버가 없습니다"));
+                .orElseThrow(() -> new DataNotFoundException("조회하는 멤버가 존재하지 않습니다"));
     }
 
     @Transactional
@@ -64,7 +66,7 @@ public class MemberService {
 
         Member member = memberRepository
                 .findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("찾는 멤버가 없습니다"));
+                .orElseThrow(() -> new DataNotFoundException("수정할 멤버가 존재하지 않습니다"));
 
         if (memberDto.getEmail() != null) {
             checkDuplicateEmail(memberDto);
@@ -89,7 +91,7 @@ public class MemberService {
     public Member withdrawal(Long id) {
         Member member = memberRepository
                 .findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("찾는 멤버가 없습니다"));
+                .orElseThrow(() -> new DataNotFoundException("탈퇴할 멤버가 존재하지 않습니다"));
 
         member.setDeleted(true);
         return memberRepository.save(member);
@@ -97,7 +99,7 @@ public class MemberService {
 
     private void checkDuplicateEmail(MemberDto memberDto) {
         if (memberRepository.findByEmail(memberDto.getEmail()).orElse(null) != null) {
-            throw new RuntimeException("이미 가입되어 있는 유저입니다.");
+            throw new DuplicateValueExeption("이미 가입되어 있는 유저입니다.");
         }
     }
 
