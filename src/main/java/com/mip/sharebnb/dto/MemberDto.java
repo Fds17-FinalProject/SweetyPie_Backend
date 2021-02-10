@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Past;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,23 +20,23 @@ import java.util.List;
 @Builder
 public class MemberDto {
 
-    @Email
-    @Size(min = 5, max = 50)
+    @Email(message = "이메일형식이 아닙니다")
+    @Size(min = 5, max = 50, message = "이메일 길이를 확인해주세요")
     private String email;
 
-    @Size(min = 8, max = 50)
+    @Size(min = 8, max = 50, message = "비밀번호는 8자 이상 50자 이하여야 합니다")
     private String password;
 
-    @Size(min = 8, max = 50)
+    @Size(min = 8, max = 50, message = "이전 비밀번호는 8자 이상 50자 이하여야 합니다.")
     private String prePassword;
 
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 50, message = "이름은 2자 이상 50자 이하여야 합니다.")
     private String name;
 
-    @Size(min = 3, max = 20)
+    @Size(min = 11, max = 11, message = "연락처는 11자리로 입력해주세요")
     private String contact;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Past
     private LocalDate birthDate;
 
     private List<Review> reviews;
