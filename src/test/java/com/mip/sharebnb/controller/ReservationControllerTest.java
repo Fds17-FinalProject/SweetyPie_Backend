@@ -68,9 +68,10 @@ class ReservationControllerTest {
     }
 
     @Test
-    void getReservationsException() throws Exception {
+    void getReservationsIfNull() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation/10"))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$", hasSize(0)))
+                .andExpect(status().isOk());
     }
 
     @Test
