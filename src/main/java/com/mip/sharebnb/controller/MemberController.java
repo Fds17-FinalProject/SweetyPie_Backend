@@ -33,7 +33,7 @@ public class MemberController {
 
     @PostMapping("/member")
     public ResponseEntity<MemberDto> signup(
-            @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
+            @Valid @RequestBody MemberDto memberDto) {
 
         Member member = memberService.signup(memberDto);
 
@@ -44,7 +44,7 @@ public class MemberController {
     @PreAuthorize("hasRole('MEMBER')")
     public ResponseEntity<MemberDto> updateMember(
             @PathVariable Long member_id,
-            @Valid @RequestBody MemberDto memberDto, Errors errors) throws InvalidInputException {
+            @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
 
         Member member = memberService.updateMember(member_id, memberDto);
         return ResponseEntity.ok(mapToMemberDto(member));
