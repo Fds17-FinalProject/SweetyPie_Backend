@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Objects;
 
 @CrossOrigin
 @RestController
@@ -30,10 +31,11 @@ public class ReservationController {
     @PostMapping("/reservation")
     public ResponseEntity<Object> makeAReservation(@Valid @RequestBody ReservationDto reservationDto, Errors errors){
         if (errors.hasErrors()) {
-            throw new InvalidInputException("입력한 타입 및 값이 맞지 않습니다.");
+
+            return new ResponseEntity<>(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
 
-        reservationService.insertReservation(reservationDto);
+        reservationService.makeAReservation(reservationDto);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
