@@ -20,8 +20,7 @@ public class BookmarkService {
     }
 
     public void deleteBookmarkById(Long id) {
-        bookmarkRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Bookmark Not Found"));
 
-        bookmarkRepository.deleteById(id);
+        bookmarkRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Bookmark Not Found"));
     }
 }
