@@ -115,6 +115,25 @@ class MemberControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @DisplayName("이름&연락처형식에러")
+    @Test
+    void signupNameContactValidationTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                MemberDto.builder()
+                                        .email("signuptest@member.com")
+                                        .birthDate(LocalDate.of(2000,2,22))
+                                        .contact("0111eee")
+                                        .name("테스ter")
+                                        .password("password12#$")
+                                        .build()
+                        )
+                ))
+                .andExpect(status().isNotFound());
+    }
+
     @Test
     void updateMemberTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
