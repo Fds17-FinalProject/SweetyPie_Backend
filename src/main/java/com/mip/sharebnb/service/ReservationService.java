@@ -27,11 +27,8 @@ public class ReservationService {
     private final MemberRepository memberRepository;
     private final AccommodationRepository accommodationRepository;
     private final BookedDateRepository bookedDateRepository;
-    private final ReviewRepository reviewRepository;
 
     public List<ReservationDto> getReservations(Long memberId) {
-        Optional<Member> optionalMember = memberRepository.findById(memberId);
-        Member member = optionalMember.get();
         List<Reservation> reservations = reservationRepository.findReservationByMemberId(memberId);
 
         List<ReservationDto> reservationDtoList = new ArrayList<>();
@@ -43,8 +40,11 @@ public class ReservationService {
             reservationDto.setReservationId(reservation.getId());
             reservationDto.setCheckInDate(reservation.getCheckInDate());
             reservationDto.setCheckoutDate(reservation.getCheckoutDate());
-            reservationDto.setAccommodationDto(mappingAccommodationDto(reservation));
-
+            reservationDto.setIsWrittenReview(reservation.getIsWrittenReview());
+            reservationDto.setCity(reservation.getAccommodation().getCity());
+            reservationDto.setGu(reservation.getAccommodation().getGu());
+            reservationDto.setTitle(reservation.getAccommodation().getTitle());
+            reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
             reservationDtoList.add(reservationDto);
         }
         return reservationDtoList;
@@ -84,7 +84,6 @@ public class ReservationService {
             reservation.setReservationCode(setReservationCode(accommodation.getId(), member.getId()));
 
             for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
-                // 이걸 bookeddates로 해줄 필요가 있나? 그냥 setBookedDate만 하면 되지 않나?
                 bookedDates.add(setBookedDate(date, accommodation, reservation)); // 네이밍
             }
             return reservationRepository.save(reservation);
@@ -107,7 +106,6 @@ public class ReservationService {
             localDates.add(reservationBookedDate.getDate());
         }
 
-        // 이미 Reservation에 bookedDate를 가지고 있으니 삭제를 넣어주면 됨
         Long accommodationId = originReservation.getAccommodation().getId();
         LocalDate checkInDate = reservationDto.getCheckInDate();
         LocalDate checkoutDate = reservationDto.getCheckoutDate();
@@ -116,9 +114,8 @@ public class ReservationService {
 
         List<BookedDate> duplicateDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
 
-        // 예약하려고 날짜가 기존에 저장되어있던 날짜가 아닐때 예약을 할 수 있게  리스트가 비어있을 때 저장
         if (!duplicateDates.isEmpty()){
-            // 중복된 예약날짜면 다시 삭제했던 원래 날짜들을 넣어줘야 함.
+
             throw new DuplicateValueExeption("이미 예약된 날짜입니다.");
         }else {
             originReservation.setCheckInDate(reservationDto.getCheckInDate());
@@ -127,7 +124,7 @@ public class ReservationService {
             originReservation.setTotalPrice(reservationDto.getTotalPrice());
             List<BookedDate> bookedDates = new ArrayList<>();
             for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
-                // 이걸 bookeddates로 해줄 필요가 있나? 그냥 setBookedDate만 하면 되지 않나?
+
                 setBookedDate(date, originReservation.getAccommodation(), originReservation); // 네이밍
 
             }
