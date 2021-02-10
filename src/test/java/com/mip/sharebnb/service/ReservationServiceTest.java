@@ -50,11 +50,13 @@ class ReservationServiceTest {
         List<ReservationDto> reservationDtoList = reservationService.getReservations(1L);
 
         assertThat(reservationDtoList.size()).isEqualTo(1);
+        assertThat(reservationDtoList.get(0).getAccommodationId()).isEqualTo(1);
         assertThat(reservationDtoList.get(0).getCheckInDate()).isEqualTo("2020-02-22");
         assertThat(reservationDtoList.get(0).getCheckoutDate()).isEqualTo("2020-02-24");
-        assertThat(reservationDtoList.get(0).getAccommodationDto().getCity()).isEqualTo("서울시");
-        assertThat(reservationDtoList.get(0).getAccommodationDto().getGu()).isEqualTo("강남구");
-        assertThat(reservationDtoList.get(0).getAccommodationDto().getAccommodationPictures().get(0).getUrl()).isEqualTo("picture");
+        assertThat(reservationDtoList.get(0).getCity()).isEqualTo("서울시");
+        assertThat(reservationDtoList.get(0).getGu()).isEqualTo("강남구");
+        assertThat(reservationDtoList.get(0).getIsWrittenReview()).isEqualTo(false);
+        assertThat(reservationDtoList.get(0).getAccommodationPicture().getUrl()).isEqualTo("picture");
 
     }
 
@@ -196,9 +198,9 @@ class ReservationServiceTest {
 
         accommodationPictures.add(secAccommodationPicture);
 
-
         List<Reservation> reservations = new ArrayList<>();
         Accommodation accommodation = new Accommodation();
+        accommodation.setId(1L);
         accommodation.setCity("서울시");
         accommodation.setGu("강남구");
         accommodation.setBathroomNum(4);
@@ -212,6 +214,7 @@ class ReservationServiceTest {
         reservation.setCheckoutDate(checkoutDate);
         reservation.setTotalPrice(50000);
         reservation.setGuestNum(5);
+        reservation.setIsWrittenReview(false);
         reservation.setAccommodation(accommodation);
 
         reservations.add(reservation);
