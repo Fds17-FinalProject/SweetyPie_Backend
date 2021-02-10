@@ -6,7 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mip.sharebnb.dto.*;
-import com.mip.sharebnb.exception.MemberAlreadySignupException;
+import com.mip.sharebnb.exception.DuplicateValueExeption;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
@@ -150,7 +150,7 @@ public class AuthService {
             } else {
                 // 액세스 토큰이 필요없으니 만료시킨다
                 revokeAccessToken(userInfo.get("accessToken"));
-                throw new MemberAlreadySignupException("이미 가입된 회원입니다:액세스토큰이 만료되었습니다");
+                throw new DuplicateValueExeption("이미 가입된 회원입니다 => 액세스토큰을 만료 시켰습니다");
             }
         }
     }
