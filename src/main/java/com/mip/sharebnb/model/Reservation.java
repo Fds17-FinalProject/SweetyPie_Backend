@@ -63,9 +63,4 @@ public class Reservation {
     @JsonIgnore
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<BookedDate> bookedDates = new ArrayList<>();
-
-    @ToString.Exclude
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    private Review review;
 }
