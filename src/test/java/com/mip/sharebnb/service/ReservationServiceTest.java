@@ -68,7 +68,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    void insertReservation(){
+    void makeAReservation(){
         ReservationDto reservationDto = ReservationDto.builder()
                 .memberId(1L)
                 .accommodationId(1L)
@@ -83,7 +83,7 @@ class ReservationServiceTest {
 
         ReservationDto dto = setReservationDto();
 
-        Reservation reservation = reservationService.insertReservation(dto);
+        Reservation reservation = reservationService.makeAReservation(dto);
 
         assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2020, 2, 20));
         assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2020, 2, 22));
