@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
@@ -34,9 +33,11 @@ public class MemberDto {
     private String prePassword;
 
     @Size(min = 2, max = 50, message = "이름은 2자 이상 50자 이하여야 합니다.")
+    @Pattern(regexp="^[가-힣]*$" , message = "이름은 한글로만 입력해주세요")
     private String name;
 
     @Size(min = 11, max = 11, message = "연락처는 11자리로 입력해주세요")
+    @Pattern(regexp="^[0-9]*$" , message = "연락처는 숫자로만 입력해주세요")
     private String contact;
 
     @Past
