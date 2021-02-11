@@ -56,19 +56,15 @@ class BookmarkRepositoryTest {
 
         // 삭제 전
         List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMemberId(members.get(members.size() - 1).getId());
-        System.out.println("------------" + bookmarks);
 
         assertThat(bookmarks.size()).isEqualTo(2);
 
         for (Bookmark bookmark : bookmarks) {
-            System.out.println("삭제 시점-----------------------");
-            bookmarkRepository.deleteById(bookmark.getId());
-//            bookmarkRepository.delete(bookmark);
+            bookmarkRepository.delete(bookmark);
         }
 
         // 삭제 후
         bookmarks = bookmarkRepository.findBookmarksByMemberId(members.get(members.size() - 1).getId());
-        System.out.println("------------" + bookmarks);
         assertThat(bookmarks.size()).isEqualTo(0);
     }
 
