@@ -8,6 +8,10 @@ Content-Type: application/json
   "password":"member33!@"
 }
 
+### 로그아웃 테스트
+GET http://localhost:8080/api/logout
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDU5OTYwfQ.lh833XmEKvfJ6NtwHWjz-4YVwsZAegE4B_t5sLqptMqthCymb62AzyQQyB4i2uWlbSl7bbLQqO3iWJN4jA3Gvw
+
 ### 회원가입 테스트
 
 POST http://localhost:8080/api/member
@@ -24,7 +28,7 @@ Content-Type: application/json
 ### 회원정보찾기 테스트
 
 GET http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyOTcwMTk1fQ.Ng8aG-LGAxywkpfum3AtiDzgYFp-Gn5UH0d33aH-3i3PrAB2u5Gl_tQ1qSPr8VrYYmirdszQO1c1A7y61AxUkA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDU5OTYwfQ.lh833XmEKvfJ6NtwHWjz-4YVwsZAegE4B_t5sLqptMqthCymb62AzyQQyB4i2uWlbSl7bbLQqO3iWJN4jA3Gvw
 
 ### 회원정보수정 : 메일주소
 
@@ -77,3 +81,4 @@ Content-Type: application/json
   "birthDate": "2020-02-03",
   "contact":"010-9908-5511"
 }
+
