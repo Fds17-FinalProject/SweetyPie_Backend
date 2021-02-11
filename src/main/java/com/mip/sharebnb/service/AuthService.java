@@ -12,6 +12,8 @@ import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,10 +36,13 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
     final static String GOOGLE_REDIRECT_URL = "http://localhost:3000/redirect";
     final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
+
+    @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds;
 
     @Value("${google.client_id}")
     String clientId;
@@ -87,6 +93,10 @@ public class AuthService {
 
     }
 
+    public void logout(String token) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(token, "", Duration.ofSeconds(tokenValidityInSeconds));
+    }
 
     private Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
 
