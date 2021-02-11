@@ -25,8 +25,8 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @GetMapping("/bookmark")
-    public List<BookmarkDto> getBookmarksByMemberId(@RequestParam long memberId) {
+    @GetMapping("/bookmark/{memberId}")
+    public List<BookmarkDto> getBookmarksByMemberId(@PathVariable long memberId) {
 
         return bookmarkService.findBookmarksByMemberId(memberId);
     }
