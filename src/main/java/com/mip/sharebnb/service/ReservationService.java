@@ -111,6 +111,7 @@ public class ReservationService {
             reservationDto.setCity(reservation.getAccommodation().getCity());
             reservationDto.setGu(reservation.getAccommodation().getGu());
             reservationDto.setTitle(reservation.getAccommodation().getTitle());
+            reservationDto.setHostName(reservation.getAccommodation().getHostName());
             reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
             reservationDtoList.add(reservationDto);
         }
