@@ -2,29 +2,31 @@ package com.mip.sharebnb.controller;
 
 import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.model.Member;
+import com.mip.sharebnb.service.AuthService;
 import com.mip.sharebnb.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
-
-    public MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final AuthService authService;
 
     @GetMapping("/member/{member_id}")
     @PreAuthorize("authenticated")
-    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
+    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id, HttpServletRequest request) {
+
+        authService.isInTheInvalidTokenList(request);
 
         Member member = memberService.getMember(member_id);
 
@@ -44,7 +46,10 @@ public class MemberController {
     @PreAuthorize("authenticated")
     public ResponseEntity<MemberDto> updateMember(
             @PathVariable Long member_id,
-            @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
+            @Valid @RequestBody MemberDto memberDto,
+            HttpServletRequest request) throws InvalidInputException {
+
+        authService.isInTheInvalidTokenList(request);
 
         Member member = memberService.updateMember(member_id, memberDto);
         return ResponseEntity.ok(mapToMemberDto(member));
@@ -52,7 +57,9 @@ public class MemberController {
 
     @DeleteMapping("/member/{member_id}")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Boolean> withdrawalMember(@PathVariable Long member_id) {
+    public ResponseEntity<Boolean> withdrawalMember(@PathVariable Long member_id, HttpServletRequest request) {
+
+        authService.isInTheInvalidTokenList(request);
 
         Member member = memberService.withdrawal(member_id);
         return ResponseEntity.ok(member.isDeleted());
