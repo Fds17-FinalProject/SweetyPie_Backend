@@ -5,7 +5,7 @@ Content-Type: application/json
 
 {
   "email":"member@mail.com",
-  "password":"member"
+  "password":"member33!@"
 }
 
 ### 회원가입 테스트
@@ -14,7 +14,7 @@ POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-  "email":"ee2ee33d2r@eeee.com",
+  "email":"member@mail.com",
   "password":"member33!@",
   "name":"한글",
   "birthDate": "2002-02-10",
@@ -24,7 +24,7 @@ Content-Type: application/json
 ### 회원정보찾기 테스트
 
 GET http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyNDQ4ODgxfQ.WgDayJ5Iz9ptnI_nS9CE7sn1GHMTYcGPC578PH7Me2aG6hh3XL-eO96rXmBbnqudl1Dc4y4kcigHK-r4Ik2Xnw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyOTcwMTk1fQ.Ng8aG-LGAxywkpfum3AtiDzgYFp-Gn5UH0d33aH-3i3PrAB2u5Gl_tQ1qSPr8VrYYmirdszQO1c1A7y61AxUkA
 
 ### 회원정보수정 : 메일주소
 
@@ -39,12 +39,12 @@ Content-Type: application/json
 ### 회원정보수정 : 비밀번호변경
 
 PUT http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXI2QG1haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjYsImV4cCI6MTYxMjQ1OTAxMH0.P7YGvup0vxTafTlIpHM6e9re2cEFCejDMafpGSBiZS-hUNBfktphlc85FLlQAbSNyrcNkAtujb6mRRMoFTWJiQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyOTY4MTgzfQ.VhKEZ-dc62IJ82dpYHRzJh8vmHvOfyrTmHCn1Khl-Y48hH2ijH3qVo6pJB8b-Z7PQLV1Lorjqe8SvutwfpmR_A
 Content-Type: application/json
 
 {
-  "prePassword":"member1",
-  "password": "member2"
+  "prePassword":"member33!@",
+  "password": "member33!@@"
 }
 
 ### 회원삭제 테스트
