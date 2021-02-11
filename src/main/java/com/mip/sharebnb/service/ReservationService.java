@@ -1,6 +1,5 @@
 package com.mip.sharebnb.service;
 
-import com.mip.sharebnb.dto.AccommodationDto;
 import com.mip.sharebnb.dto.ReservationDto;
 import com.mip.sharebnb.exception.*;
 import com.mip.sharebnb.model.*;
@@ -36,9 +35,8 @@ public class ReservationService {
 
     @Transactional
     public Reservation makeAReservation(ReservationDto reservationDto) throws RuntimeException {
-        if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate())) {
-            throw new InvalidInputException("예약기간이 올바르지 않습니다");
-        }
+
+        handleCheckoutBeforeCheckInInputException(reservationDto);
 
         Member member = memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new DataNotFoundException("등록된 회원 정보를 찾을 수 없습니다"));
 
@@ -52,44 +50,16 @@ public class ReservationService {
     @Transactional
     public Reservation updateReservation(Long reservationId, ReservationDto reservationDto) {
 
-        if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate())){
-            throw new InvalidInputException("예약 기간이 잘 못 되었습니다.");
-        }
+        handleCheckoutBeforeCheckInInputException(reservationDto);
 
-        Optional<Reservation> originOptionalReservation = Optional.of(reservationRepository.findById(reservationId).orElseThrow(() -> new DataNotFoundException("등록된 예약 정보를 찾을 수 없습니다.")));
-        Reservation originReservation = originOptionalReservation.get();
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new DataNotFoundException("예약 내역을 찾을 수 없습니다."));
 
-        List<BookedDate> originReservationBookedDates = originReservation.getBookedDates();
-        List<LocalDate> localDates = new ArrayList<>();
+        deleteBookedDate(reservation);
 
-        for (BookedDate reservationBookedDate : originReservationBookedDates) {
-            localDates.add(reservationBookedDate.getDate());
-        }
+        List<BookedDate> duplicateBookedDate = dynamicReservationRepository.findByAccommodationIdAndDate(reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
-        Long accommodationId = originReservation.getAccommodation().getId();
-        LocalDate checkInDate = reservationDto.getCheckInDate();
-        LocalDate checkoutDate = reservationDto.getCheckoutDate();
+        return  updateCheckDuplicateBookedDate(duplicateBookedDate, reservation, reservationDto);
 
-        bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(accommodationId, localDates);
-
-        List<BookedDate> duplicateDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodationId, checkInDate, checkoutDate);
-
-        if (!duplicateDates.isEmpty()){
-
-            throw new DuplicateValueExeption("이미 예약된 날짜입니다.");
-        }else {
-            originReservation.setCheckInDate(reservationDto.getCheckInDate());
-            originReservation.setCheckoutDate(reservationDto.getCheckoutDate());
-            originReservation.setGuestNum(reservationDto.getGuestNum());
-            originReservation.setTotalPrice(reservationDto.getTotalPrice());
-            List<BookedDate> bookedDates = new ArrayList<>();
-            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
-
-                setBookedDate(date, originReservation.getAccommodation(), originReservation); // 네이밍
-
-            }
-            return reservationRepository.save(originReservation);
-        }
     }
 
     @Transactional
@@ -98,7 +68,14 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 
-    private List<ReservationDto> makeReservationDtoList(List<Reservation> reservations){
+    private void handleCheckoutBeforeCheckInInputException(ReservationDto reservationDto){
+        if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate())) {
+
+            throw new InvalidInputException("예약기간이 잘 못 되었습니다");
+        }
+    }
+
+    private List<ReservationDto> makeReservationDtoList(List<Reservation> reservations) {
         List<ReservationDto> reservationDtoList = new ArrayList<>();
 
         for (Reservation reservation : reservations) {
@@ -118,6 +95,36 @@ public class ReservationService {
         return reservationDtoList;
     }
 
+    private void deleteBookedDate(Reservation reservation){
+        List<BookedDate> bookedDates = reservation.getBookedDates();
+        List<LocalDate> localDates = new ArrayList<>();
+
+        for (BookedDate bookedDate : bookedDates) {
+
+            localDates.add(bookedDate.getDate());
+        }
+
+        bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(reservation.getAccommodation().getId(), localDates);
+    }
+
+    private Reservation updateCheckDuplicateBookedDate(List<BookedDate> duplicateBookedDate, Reservation reservation, ReservationDto reservationDto){
+        if (duplicateBookedDate.isEmpty()) {
+            reservation.setCheckInDate(reservationDto.getCheckInDate());
+            reservation.setCheckoutDate(reservationDto.getCheckoutDate());
+            reservation.setGuestNum(reservationDto.getGuestNum());
+            reservation.setTotalPrice(reservationDto.getTotalPrice());
+
+            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
+                setBookedDate(date, reservation.getAccommodation(), reservation);
+            }
+            return reservationRepository.save(reservation);
+
+        } else {
+
+            throw new DuplicateValueExeption("이미 예약된 날짜입니다.");
+        }
+    }
+
     private Reservation checkDuplicateReservationDate(List<BookedDate> bookedDates, ReservationDto reservationDto, Member member, Accommodation accommodation) {
 
         if (bookedDates.isEmpty()) {
@@ -130,13 +137,14 @@ public class ReservationService {
             reservation.setAccommodation(accommodation);
             reservation.setPaymentDate(LocalDate.now());
             reservation.setCanceled(false);
-            reservation.setReservationCode(setReservationCode(reservationDto.getAccommodationId(), reservationDto.getMemberId()));
+            reservation.setReservationCode(setReservationCode(accommodation.getId(), member.getId()));
 
-            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()) ; date = date.plusDays(1)) {
+            for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
                 setBookedDate(date, accommodation, reservation);
             }
 
             return reservationRepository.save(reservation);
+
         } else {
             throw new DuplicateValueExeption("이미 예약된 날짜입니다.");
         }
