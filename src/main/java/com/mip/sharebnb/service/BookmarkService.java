@@ -27,11 +27,25 @@ public class BookmarkService {
 
     private final AccommodationRepository accommodationRepository;
 
-    public List<BookmarkDto> findBookmarks(long memberId) {
+    public List<BookmarkDto> findBookmarksByMemberId(long memberId) {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new DataNotFoundException("Not Found Member"));
 
         List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMemberId(memberId);
+
+        List<BookmarkDto> bookmarkDtos = new ArrayList<>();
+
+        for (Bookmark bookmark : bookmarks) {
+            bookmarkDtos.add(new BookmarkDto(bookmark.getId(), bookmark.getMember().getId(),
+                    bookmark.getAccommodation().getId()));
+        }
+
+        return bookmarkDtos;
+    }
+
+    public List<BookmarkDto> findBookmarksByMemberEmail(String email) {
+
+        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMemberEmail(email);
 
         List<BookmarkDto> bookmarkDtos = new ArrayList<>();
 
