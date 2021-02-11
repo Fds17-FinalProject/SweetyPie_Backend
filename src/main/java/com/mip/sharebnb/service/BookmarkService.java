@@ -2,6 +2,7 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.BookmarkDto;
 import com.mip.sharebnb.exception.DataNotFoundException;
+import com.mip.sharebnb.exception.DuplicateValueExeption;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.Bookmark;
 import com.mip.sharebnb.model.Member;
@@ -48,6 +49,11 @@ public class BookmarkService {
 
         Accommodation accommodation = accommodationRepository.findById(bookmarkDto.getAccommodationId())
                 .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
+
+        if (bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(bookmarkDto.getMemberId(),
+                bookmarkDto.getAccommodationId()).isPresent()) {
+            throw new DuplicateValueExeption("Already Have a Bookmark");
+        }
 
         Bookmark bookmark = new Bookmark();
         bookmark.setMember(member);
