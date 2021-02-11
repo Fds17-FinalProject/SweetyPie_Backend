@@ -13,7 +13,6 @@ import javax.validation.constraints.Positive;
 @NoArgsConstructor
 public class BookmarkDto {
 
-    @Positive
     private long bookmarkId;
 
     @Positive
