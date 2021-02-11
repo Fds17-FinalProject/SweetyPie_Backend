@@ -205,3 +205,6 @@ Temporary Items
 # aws
 *.pem
 *.sql
+
+# json
+*.json
