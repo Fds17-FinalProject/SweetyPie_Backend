@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,14 +23,14 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @GetMapping("/bookmark/{memberId}")
-    public List<BookmarkDto> getBookmarksByMemberId(@PathVariable long memberId) {
+    @GetMapping("/bookmark")
+    public List<BookmarkDto> getBookmarksByMemberId(@RequestParam long memberId) {
 
         return bookmarkService.findBookmarksByMemberId(memberId);
     }
 
-    @GetMapping("/bookmark/{email}")
-    public List<BookmarkDto> getBookmarksByEmail(@PathVariable String email) {
+    @GetMapping("/bookmark")
+    public List<BookmarkDto> getBookmarksByEmail(@RequestParam String email) {
 
         return bookmarkService.findBookmarksByMemberEmail(email);
     }

@@ -31,24 +31,11 @@ public class ReservationService {
     public List<ReservationDto> getReservations(Long memberId) {
         List<Reservation> reservations = reservationRepository.findReservationByMemberId(memberId);
 
-        List<ReservationDto> reservationDtoList = new ArrayList<>();
-
-        for (Reservation reservation : reservations) {
-            ReservationDto reservationDto = new ReservationDto();
-
-            reservationDto.setAccommodationId(reservation.getAccommodation().getId());
-            reservationDto.setReservationId(reservation.getId());
-            reservationDto.setCheckInDate(reservation.getCheckInDate());
-            reservationDto.setCheckoutDate(reservation.getCheckoutDate());
-            reservationDto.setIsWrittenReview(reservation.getIsWrittenReview());
-            reservationDto.setCity(reservation.getAccommodation().getCity());
-            reservationDto.setGu(reservation.getAccommodation().getGu());
-            reservationDto.setTitle(reservation.getAccommodation().getTitle());
-            reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
-            reservationDto.setHostName(reservation.getAccommodation().getHostName());
-            reservationDtoList.add(reservationDto);
+        if (reservations.isEmpty()) {
+            return new ArrayList<>();
         }
-        return reservationDtoList;
+
+        return makeReservationDtoList(reservations);
     }
 
     @Transactional
@@ -115,6 +102,26 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 
+    private List<ReservationDto> makeReservationDtoList(List<Reservation> reservations){
+        List<ReservationDto> reservationDtoList = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            ReservationDto reservationDto = new ReservationDto();
+
+            reservationDto.setAccommodationId(reservation.getAccommodation().getId());
+            reservationDto.setReservationId(reservation.getId());
+            reservationDto.setCheckInDate(reservation.getCheckInDate());
+            reservationDto.setCheckoutDate(reservation.getCheckoutDate());
+            reservationDto.setIsWrittenReview(reservation.getIsWrittenReview());
+            reservationDto.setCity(reservation.getAccommodation().getCity());
+            reservationDto.setGu(reservation.getAccommodation().getGu());
+            reservationDto.setTitle(reservation.getAccommodation().getTitle());
+            reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
+            reservationDtoList.add(reservationDto);
+        }
+        return reservationDtoList;
+    }
+
     private Reservation checkDuplicateReservationDate(List<BookedDate> bookedDates, ReservationDto reservationDto, Member member, Accommodation accommodation) {
 
         if (bookedDates.isEmpty()) {
@@ -134,24 +141,9 @@ public class ReservationService {
             }
 
             return reservationRepository.save(reservation);
-
         } else {
-
             throw new DuplicateValueExeption("이미 예약된 날짜입니다.");
-
         }
-    }
-
-    private AccommodationDto mappingAccommodationDto(Reservation reservation) {
-
-        AccommodationDto accommodationDto = new AccommodationDto();
-
-        accommodationDto.setCity(reservation.getAccommodation().getCity());
-        accommodationDto.setGu(reservation.getAccommodation().getGu());
-        accommodationDto.setTitle(reservation.getAccommodation().getTitle());
-        accommodationDto.setAccommodationPictures(reservation.getAccommodation().getAccommodationPictures());
-
-        return accommodationDto;
     }
 
     private void setBookedDate(LocalDate date, Accommodation accommodation, Reservation reservation) {
