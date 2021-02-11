@@ -3,9 +3,11 @@ package com.mip.sharebnb.service;
 import com.mip.sharebnb.dto.ReviewDto;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.Member;
+import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.model.Review;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.MemberRepository;
+import com.mip.sharebnb.repository.ReservationRepository;
 import com.mip.sharebnb.repository.ReviewRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@Transactional
 @ExtendWith(MockitoExtension.class)
 class ReviewServiceTest {
 
@@ -39,12 +43,15 @@ class ReviewServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @Mock
+    private ReservationRepository reservationRepository;
+
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void findReviewByAccommodation_IdAndMember_Id() {
-        when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1, 1)).thenReturn(mockReview());
+        when(reviewRepository.findReviewByReservationId(1)).thenReturn(mockReview());
 
-        Review review = reviewService.findReviewByAccommodationIdAndMemberId(1, 1);
+        Review review = reviewService.findReviewByReservationId(1);
 
         assertThat(review.getContent()).isEqualTo("좋아요");
         assertThat(review.getRating()).isEqualTo(3);
@@ -53,6 +60,7 @@ class ReviewServiceTest {
     @DisplayName("리뷰 등록")
     @Test
     void postReview() {
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation());
         when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
         when(memberRepository.findById(1L)).thenReturn(mockMember());
 
@@ -64,11 +72,11 @@ class ReviewServiceTest {
     @DisplayName("리뷰 수정")
     @Test
     void updateReview() {
-        when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1L, 1L)).thenReturn(mockReview());
+        when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview());
 
         reviewService.updateReview(mockReviewDto());
 
-        Review review = reviewService.findReviewByAccommodationIdAndMemberId(1L, 1L);
+        Review review = reviewService.findReviewByReservationId(0);
 
         assertThat(review.getContent()).isEqualTo("변경");
         assertThat(review.getRating()).isEqualTo(4);
@@ -92,6 +100,7 @@ class ReviewServiceTest {
                 .accommodation(null)
                 .member(null)
                 .content("좋아요")
+                .reservation(mockReservation().get())
                 .build());
     }
 
@@ -120,5 +129,21 @@ class ReviewServiceTest {
         member.setBirthDate(LocalDate.of(1993, 5, 1));
 
         return Optional.of(member);
+    }
+
+    private Optional<Reservation> mockReservation() {
+        Reservation reservation = new Reservation();
+
+        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
+        LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
+        reservation.setId(1L);
+        reservation.setCheckInDate(checkInDate);
+        reservation.setCheckoutDate(checkoutDate);
+        reservation.setTotalPrice(50000);
+        reservation.setGuestNum(5);
+        reservation.setIsWrittenReview(false);
+        reservation.setAccommodation(mockAccommodation().get());
+
+        return Optional.of(reservation);
     }
 }
