@@ -96,7 +96,7 @@ public class AuthService {
 
     public void logout(String token) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(token, "", Duration.ofSeconds(tokenValidityInSeconds));
+        valueOperations.set(token, token, Duration.ofSeconds(tokenValidityInSeconds));
     }
 
     public boolean isInTheInvalidTokenList(String token) {
