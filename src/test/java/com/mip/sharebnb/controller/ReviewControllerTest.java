@@ -40,7 +40,7 @@ class ReviewControllerTest {
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void getReview() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/review?memberId=1&accommodationId=1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/review/1"))
                 .andExpect(status().isOk());
     }
 
