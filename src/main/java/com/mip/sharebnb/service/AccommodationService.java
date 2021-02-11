@@ -1,7 +1,8 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.AccommodationDto;
-import com.mip.sharebnb.exception.CheckoutCheckInException;
+import com.mip.sharebnb.exception.DataNotFoundException;
+import com.mip.sharebnb.exception.InvalidInputException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
@@ -22,7 +23,7 @@ public class AccommodationService {
 
     public AccommodationDto findById(Long id) throws NotFoundException {
         Accommodation accommodation = accommodationRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Not Found Accommodation"));
+                .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
 
         return mappingAccommodationDto(accommodation);
     }
@@ -47,15 +48,15 @@ public class AccommodationService {
                                                           int guestNum, Pageable page) {
 
         if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
-            throw new CheckoutCheckInException("Checkout time is before check-in time");
+            throw new InvalidInputException("Checkout time is before check-in time");
         }
 
         if (checkout != null && checkout.isBefore(LocalDate.now())) {
-            throw new CheckoutCheckInException("Check out time has passed");
+            throw new InvalidInputException("Checkout time has passed");
         }
 
         if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            throw new CheckoutCheckInException("Check-in time has passed");
+            throw new InvalidInputException("Check-in time has passed");
         }
 
         if (checkIn == null) {

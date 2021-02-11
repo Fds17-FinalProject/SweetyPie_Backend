@@ -4,6 +4,7 @@ import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.QAccommodation;
 import com.mip.sharebnb.model.QBookedDate;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -47,14 +48,18 @@ public class DynamicAccommodationRepository {
                 .from(bd)
                 .where(bdBuilder)));
 
-        return new PageImpl<>(queryFactory
+        QueryResults<Accommodation> results = queryFactory
                 .select(ac)
                 .from(ac)
                 .where(acBuilder)
 //                .orderBy(NumberExpression.random().asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize())
-                .fetch(), page, page.getPageSize());
+                .fetchResults();
+
+        System.out.println("---------------------" + results.getTotal());
+
+        return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
 
     public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
