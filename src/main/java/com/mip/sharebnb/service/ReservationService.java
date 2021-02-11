@@ -45,6 +45,7 @@ public class ReservationService {
             reservationDto.setGu(reservation.getAccommodation().getGu());
             reservationDto.setTitle(reservation.getAccommodation().getTitle());
             reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
+            reservationDto.setHostName(reservation.getAccommodation().getHostName());
             reservationDtoList.add(reservationDto);
         }
         return reservationDtoList;
