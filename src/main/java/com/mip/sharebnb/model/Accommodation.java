@@ -103,7 +103,4 @@ public class Accommodation {
     @OneToMany(mappedBy = "accommodation")
     private List<AccommodationPicture> accommodationPictures;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "accommodation")
-    private List<Bookmark> bookmarks;
 }
