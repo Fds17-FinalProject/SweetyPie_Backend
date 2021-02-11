@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mip.sharebnb.dto.ReservationDto;
 import com.mip.sharebnb.model.Reservation;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.logging.Logger;
 import org.junit.platform.commons.logging.LoggerFactory;
@@ -64,7 +65,6 @@ class ReservationControllerTest {
                 .andExpect(jsonPath("$.[0].accommodationDto.city").value("서울시"))
                 .andExpect(jsonPath("$.[0].accommodationDto.gu").value("강남구"))
                 .andExpect(jsonPath("$.[0].accommodationDto.accommodationPictures.[0].url").value("picture"));
-
     }
 
     @Test
@@ -78,34 +78,84 @@ class ReservationControllerTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
-                        .checkInDate(LocalDate.of(2020, 2, 20))
-                        .checkoutDate(LocalDate.of(2020, 2, 23))
+                        .checkInDate(LocalDate.of(2022, 4, 20))
+                        .checkoutDate(LocalDate.of(2022, 4, 23))
                         .guestNum(3)
                         .memberId(1L)
                         .accommodationId(1L)
                         .totalPrice(30000)
                         .build())))
-                .andExpect(status().isNotFound())
+                .andExpect(status().isOk())
                 .andReturn();
 
         logger.info(result::toString);
 
     }
 
+    @DisplayName("Id 값이 잘 못 들어와 객체를 찾을 수 없을 때 예외")
     @Test
-    void makeAReservationValidation() throws Exception {
+    void makeAReservationDataNotFoundException() throws Exception {
 
-        // memberId, accommodationId, guestNum, totalPrice 값이 잘 못 들어왔을 때 각각 에러확인
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
-                        .memberId(0L)
+                        .memberId(0L) // 0인 객체가 없어서 에러발생
                         .accommodationId(1L)
                         .reservationId(1L)
                         .checkInDate(LocalDate.of(2020, 2, 20))
                         .checkoutDate(LocalDate.of(2020, 2, 20))
                         .guestNum(1)
                         .totalPrice(11000)
+                        .build())))
+                .andExpect(status().isNotFound());
+    }
+
+    @DisplayName("guestNum or totalPrice 값이 잘 못 들어왔을 때 예외")
+    @Test
+    void makeAReservationInvalidationException() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .memberId(1L)
+                        .accommodationId(1L)
+                        .reservationId(1L)
+                        .checkInDate(LocalDate.of(2020, 2, 20))
+                        .checkoutDate(LocalDate.of(2020, 2, 20))
+                        .guestNum(-1)
+                        .totalPrice(11000) // 음수 값이 올 수 없어서 에러 발생
+                        .build())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("현재 날짜이전으로 예약이 들어왔을 때 예외")
+    @Test
+    void makeAReservationInvalidDateException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .checkInDate(LocalDate.of(2020, 3, 20))
+                        .checkoutDate(LocalDate.of(2020, 3, 23))
+                        .guestNum(3)
+                        .memberId(1L)
+                        .accommodationId(1L)
+                        .totalPrice(30000)
+                        .build())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("중복된 예약 날짜가 들어왔을 때 예외")
+    @Test
+    void makeAReservationDuplicateValueException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .checkInDate(LocalDate.of(2022, 3, 22))
+                        .checkoutDate(LocalDate.of(2022, 3, 24))
+                        .guestNum(3)
+                        .memberId(1L)
+                        .accommodationId(1L)
+                        .totalPrice(30000)
                         .build())))
                 .andExpect(status().isBadRequest());
     }

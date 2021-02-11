@@ -21,14 +21,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DuplicateValueExeption.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto handleDuplicateValueException(DuplicateValueExeption ex){
 
         return ErrorDto.of(ex.getMessage());
     }
 
     @ExceptionHandler(InvalidInputException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorDto handleInvalidInputException(InvalidInputException ex){
 
         return ErrorDto.of(ex.getMessage());
