@@ -23,7 +23,7 @@ public class MemberController {
     }
 
     @GetMapping("/member/{member_id}")
-    @PreAuthorize("hasRole('MEMBER')")
+    @PreAuthorize("authenticated")
     public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
 
         Member member = memberService.getMember(member_id);
@@ -41,7 +41,7 @@ public class MemberController {
     }
 
     @PutMapping("/member/{member_id}")
-    @PreAuthorize("hasRole('MEMBER')")
+    @PreAuthorize("authenticated")
     public ResponseEntity<MemberDto> updateMember(
             @PathVariable Long member_id,
             @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
@@ -51,7 +51,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/member/{member_id}")
-    @PreAuthorize("hasRole('MEMBER')")
+    @PreAuthorize("authenticated")
     public ResponseEntity<Boolean> withdrawalMember(@PathVariable Long member_id) {
 
         Member member = memberService.withdrawal(member_id);
