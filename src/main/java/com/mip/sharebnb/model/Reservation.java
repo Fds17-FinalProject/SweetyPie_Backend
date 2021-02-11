@@ -10,9 +10,16 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -50,22 +57,15 @@ public class Reservation {
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
-    private List<BookedDate> bookedDates = new ArrayList<>();
-
-    @ToString.Exclude
-    @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY)
-    private Review review;
+    @OneToMany(mappedBy = "reservation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<BookedDate> bookedDates;
 }
