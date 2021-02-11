@@ -24,6 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,12 +95,14 @@ public class AuthService {
 
     }
 
-    public void logout(String token) {
+    public void logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(token, token, Duration.ofSeconds(tokenValidityInSeconds));
     }
 
-    public boolean isInTheInvalidTokenList(String token) {
+    public boolean isInTheInvalidTokenList(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
         return StringUtils.hasText(valueOperations.get(token));
