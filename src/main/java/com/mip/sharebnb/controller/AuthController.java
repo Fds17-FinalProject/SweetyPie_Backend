@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Map;
 
@@ -56,5 +57,12 @@ public class AuthController {
         String token = authService.signupBeforeGoogleLogin(memberDto);
 
         return ResponseEntity.ok(new TokenDto(token));
+    }
+
+    @GetMapping("logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        authService.logout(request);
+
+        return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 }
