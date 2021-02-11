@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.Authentication;
 
+import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -56,6 +57,18 @@ class AuthServiceTest {
         String result = valueOperations.get(token);
 
         assertThat(result).isEqualTo(token);
+    }
+
+    @Test
+    void isInTheInvalidTokenListTest() {
+        String token = "isInTheInvalidTokenListTest1234";
+
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(token, token, Duration.ofSeconds(10));
+
+        boolean result = authService.isInTheInvalidTokenList(token);
+
+        assertThat(result).isTrue();
     }
 
 }
