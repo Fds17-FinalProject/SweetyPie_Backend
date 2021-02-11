@@ -33,6 +33,9 @@ class BookmarkRepositoryTest {
     @DisplayName("북마크 리스트 조회")
     @Test
     void findBookmarksByMember_Id() {
+        Member member = givenMember();
+        givenBookmarks(member);
+
         List<Member> members = memberRepository.findAll();
 
         List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(members.get(members.size() - 1).getId());
@@ -45,7 +48,6 @@ class BookmarkRepositoryTest {
 
     @DisplayName("북마크 제거")
     @Test
-//    @Transactional
     void deleteBookmark() {
         Member member = givenMember();
         givenBookmarks(member);
@@ -88,7 +90,7 @@ class BookmarkRepositoryTest {
 
     private Member givenMember() {
         Member member = new Member();
-        member.setEmail("ddd2@gmail.com");
+        member.setEmail("ddd3@gmail.com");
         member.setName("이재복");
         member.setPassword("1234");
         member.setContact("12378");

@@ -29,7 +29,7 @@ public class ReviewController {
     @GetMapping("/review")
     public Review getReview(@RequestParam long memberId, @RequestParam long accommodationId) {
 
-        return reviewService.findReviewByAccommodation_IdAndMember_Id(accommodationId, memberId);
+        return reviewService.findReviewByAccommodationIdAndMemberId(accommodationId, memberId);
     }
 
     @PostMapping("/review")

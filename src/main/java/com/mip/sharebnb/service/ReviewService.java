@@ -28,7 +28,7 @@ public class ReviewService {
 
     private final ReservationRepository reservationRepository;
 
-    public Review findReviewByAccommodation_IdAndMember_Id(long accommodationId, long memberId) {
+    public Review findReviewByAccommodationIdAndMemberId(long accommodationId, long memberId) {
 
         return reviewRepository.findReviewByAccommodation_IdAndMember_Id(accommodationId, memberId)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));

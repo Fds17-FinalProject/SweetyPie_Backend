@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -102,11 +101,10 @@ public class Accommodation {
     @OneToMany(mappedBy = "accommodation")
     private List<BookedDate> bookedDates;
 
-    @OneToMany(mappedBy = "accommodation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "accommodation")
     private List<AccommodationPicture> accommodationPictures;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "accommodation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Bookmark> bookmarks = new ArrayList<>();
-
+    @OneToMany(mappedBy = "accommodation")
+    private List<Bookmark> bookmarks;
 }

@@ -57,8 +57,6 @@ public class DynamicAccommodationRepository {
                 .limit(page.getPageSize())
                 .fetchResults();
 
-        System.out.println("---------------------" + results.getTotal());
-
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
 
