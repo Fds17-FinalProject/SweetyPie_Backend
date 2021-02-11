@@ -14,7 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -25,7 +24,6 @@ import java.util.List;
 public class Accommodation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ACCOMMODATION_ID")
     private Long id;
 
     private String city;
@@ -108,6 +106,6 @@ public class Accommodation {
 
     @JsonIgnore
     @OneToMany(mappedBy = "accommodation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Bookmark> bookmarks = new ArrayList<>();
+    private List<Bookmark> bookmarks;
 
 }

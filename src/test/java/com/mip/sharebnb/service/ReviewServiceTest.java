@@ -1,9 +1,12 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.ReviewDto;
+import com.mip.sharebnb.model.Accommodation;
+import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.Review;
+import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReviewRepository;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,9 +15,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,28 +33,55 @@ class ReviewServiceTest {
     @Mock
     private ReviewRepository reviewRepository;
 
+    @Mock
+    private AccommodationRepository accommodationRepository;
+
+    @Mock
+    private MemberRepository memberRepository;
+
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void findReviewByAccommodation_IdAndMember_Id() {
         when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1, 1)).thenReturn(mockReview());
 
-        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(1, 1).get();
+        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(1, 1);
 
         assertThat(review.getContent()).isEqualTo("좋아요");
         assertThat(review.getRating()).isEqualTo(3);
     }
 
+    @DisplayName("리뷰 등록")
+    @Test
+    void postReview() {
+        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
+
+        reviewService.writeReview(mockReviewDto());
+
+        verify(reviewRepository, times(1)).save(any(Review.class));
+    }
+
     @DisplayName("리뷰 수정")
     @Test
-    void updateReview() throws NotFoundException {
+    void updateReview() {
         when(reviewRepository.findReviewByAccommodation_IdAndMember_Id(1L, 1L)).thenReturn(mockReview());
 
         reviewService.updateReview(mockReviewDto());
 
-        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(1L, 1L).get();
+        Review review = reviewService.findReviewByAccommodation_IdAndMember_Id(1L, 1L);
 
         assertThat(review.getContent()).isEqualTo("변경");
         assertThat(review.getRating()).isEqualTo(4);
+    }
+
+    @DisplayName("리뷰 삭제")
+    @Test
+    void deleteReview() {
+        when(reviewRepository.findById(1L)).thenReturn(mockReview());
+
+        reviewService.deleteReview(1L);
+
+        verify(reviewRepository, times(1)).deleteById(1L);
     }
 
     private Optional<Review> mockReview() {
@@ -66,8 +100,25 @@ class ReviewServiceTest {
         return ReviewDto.builder()
                 .content("변경")
                 .rating(4)
-                .accommodationId(1)
-                .memberId(1)
+                .accommodationId(mockAccommodation().get().getId())
+                .memberId(mockMember().get().getId())
                 .build();
+    }
+
+    private Optional<Accommodation> mockAccommodation() {
+        return Optional.of(new Accommodation(1L, "서울특별시", "마포구", "서울특별시 마포구 독막로 266", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, new ArrayList<>(), null, null, null));
+    }
+
+    private Optional<Member> mockMember() {
+        Member member = new Member();
+
+        member.setId(1L);
+        member.setEmail("ddd@gmail.com");
+        member.setName("이재복");
+        member.setPassword("1234");
+        member.setContact("12378");
+        member.setBirthDate(LocalDate.of(1993, 5, 1));
+
+        return Optional.of(member);
     }
 }

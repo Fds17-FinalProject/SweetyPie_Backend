@@ -14,8 +14,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
 @Builder
@@ -31,6 +31,7 @@ public class Review {
     @Column(columnDefinition = "DECIMAL(5,3)")
     private float rating;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @CreationTimestamp
@@ -39,12 +40,15 @@ public class Review {
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
+
+    @ToString.Exclude
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    private Reservation reservation;
 }
