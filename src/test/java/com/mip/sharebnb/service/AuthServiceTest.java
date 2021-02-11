@@ -7,10 +7,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import javax.servlet.*;
+import javax.servlet.http.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.Principal;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -51,7 +63,10 @@ class AuthServiceTest {
     @Test
     void logoutTest() {
         String token = "ThisIsTestToken1234";
-        authService.logout(token);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", token);
+
+        authService.logout(request);
 
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         String result = valueOperations.get(token);
@@ -62,11 +77,13 @@ class AuthServiceTest {
     @Test
     void isInTheInvalidTokenListTest() {
         String token = "isInTheInvalidTokenListTest1234";
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", token);
 
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(token, token, Duration.ofSeconds(10));
 
-        boolean result = authService.isInTheInvalidTokenList(token);
+        boolean result = authService.isInTheInvalidTokenList(request);
 
         assertThat(result).isTrue();
     }
