@@ -41,7 +41,7 @@ class BookmarkServiceTest {
         when(bookmarkRepository.findBookmarksByMemberId(1L)).thenReturn(mockBookmark());
         when(memberRepository.findById(1L)).thenReturn(mockMember());
 
-        List<BookmarkDto> bookmarkDtos = bookmarkService.findBookmarks(1L);
+        List<BookmarkDto> bookmarkDtos = bookmarkService.findBookmarksByMemberId(1L);
 
         assertThat(bookmarkDtos.size()).isEqualTo(2);
 
