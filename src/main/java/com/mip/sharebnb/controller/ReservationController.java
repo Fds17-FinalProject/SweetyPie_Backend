@@ -29,23 +29,19 @@ public class ReservationController {
     }
 
     @PostMapping("/reservation")
-    public ResponseEntity<Object> makeAReservation(@Valid @RequestBody ReservationDto reservationDto, Errors errors){
-        if (errors.hasErrors()) {
+    public ResponseEntity<Reservation> makeAReservation(@Valid @RequestBody ReservationDto reservationDto){
 
-            return new ResponseEntity<>(Objects.requireNonNull(errors.getFieldError()).getDefaultMessage(), HttpStatus.BAD_REQUEST);
-        }
+        Reservation reservation = reservationService.makeAReservation(reservationDto);
 
-        reservationService.makeAReservation(reservationDto);
-
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
 
     @PatchMapping("/reservation/{id}")
-    public Reservation updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto, Errors errors) {
-        if (errors.hasErrors()) {
-            throw new InvalidInputException("입력한 타입 및 값이 맞지 않습니다.");
-        }
-        return reservationService.updateReservation(id, reservationDto);
+    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto) {
+
+        Reservation reservation = reservationService.updateReservation(id, reservationDto);
+
+        return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
 
     @DeleteMapping("/reservation/{id}")
