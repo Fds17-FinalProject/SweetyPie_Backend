@@ -20,6 +20,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -66,6 +67,6 @@ public class Reservation {
 
     @ToString.Exclude
     @JsonIgnore
-    @OneToMany(mappedBy = "reservation", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<BookedDate> bookedDates;
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    private List<BookedDate> bookedDates = new ArrayList<>();
 }
