@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -96,6 +97,12 @@ public class AuthService {
     public void logout(String token) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(token, "", Duration.ofSeconds(tokenValidityInSeconds));
+    }
+
+    public boolean isInTheInvalidTokenList(String token) {
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+
+        return StringUtils.hasText(valueOperations.get(token));
     }
 
     private Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
