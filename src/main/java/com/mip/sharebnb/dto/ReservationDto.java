@@ -1,10 +1,15 @@
 package com.mip.sharebnb.dto;
 
 import com.mip.sharebnb.model.AccommodationPicture;
-import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 
 @Builder
@@ -30,6 +35,8 @@ public class ReservationDto {
 
     @Positive(message = "총 비용이 맞지 않습니다.")
     private int totalPrice;
+
+    private String hostName;
 
     private Boolean isWrittenReview;
 
