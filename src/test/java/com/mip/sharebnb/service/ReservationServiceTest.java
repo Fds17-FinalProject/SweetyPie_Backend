@@ -1,6 +1,8 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.ReservationDto;
+import com.mip.sharebnb.exception.DataNotFoundException;
+import com.mip.sharebnb.exception.DuplicateValueExeption;
 import com.mip.sharebnb.model.*;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.BookedDateRepository;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,9 +35,6 @@ class ReservationServiceTest {
     private ReservationRepository reservationRepository;
 
     @Mock
-    private BookedDateRepository bookedDateRepository;
-
-    @Mock
     private AccommodationRepository accommodationRepository;
 
     @Mock
@@ -43,6 +43,7 @@ class ReservationServiceTest {
     @Mock
     private DynamicReservationRepository dynamicReservationRepository;
 
+    @DisplayName("예약 내역 조회")
     @Test
     void getReservationByMemberId() {
         when(reservationRepository.findReservationByMemberId(1L)).thenReturn(mockReservations());
@@ -59,6 +60,7 @@ class ReservationServiceTest {
         assertThat(reservationDtoList.get(0).getAccommodationPicture().getUrl()).isEqualTo("picture");
     }
 
+    @DisplayName("예약 내역이 없음")
     @Test
     void getReservationByMemberIdEmpty() {
         when(reservationRepository.findReservationByMemberId(1L)).thenReturn(new ArrayList<>());
@@ -68,6 +70,7 @@ class ReservationServiceTest {
         assertThat(reservations.isEmpty()).isTrue();
     }
 
+    @DisplayName("예약하기 성공")
     @Test
     void makeAReservation(){
         ReservationDto reservationDto = ReservationDto.builder()
@@ -86,48 +89,54 @@ class ReservationServiceTest {
 
         Reservation reservation = reservationService.makeAReservation(dto);
 
-        assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2020, 2, 20));
-        assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2020, 2, 22));
+        assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2020, 3, 20));
+        assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2020, 3, 22));
         assertThat(reservation.getGuestNum()).isEqualTo(3);
         assertThat(reservation.getTotalPrice()).isEqualTo(30000);
         assertThat(reservation.getReservationCode()).isEqualTo("202102070000100001");
 
         verify(reservationRepository, times(1)).save(any(Reservation.class));
-
     }
 
-    @DisplayName("update 성공")
+    @DisplayName("회원 정보를 찾을 수 없습니다.")
+    @Test
+    void makeAReservationDataNotFoundException(){
+        lenient().when(accommodationRepository.findById(1L)).thenReturn(Optional.of(new Accommodation()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(mockReservationDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 회원 정보를 찾을 수 없습니다");
+    }
+
+    @DisplayName("예약수정 성공")
     @Test
     void updateReservationSuccess(){
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22)));
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
+        when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
 
         ReservationDto dto = mockReservationDto();
 
         Reservation reservation = reservationService.updateReservation(1L, dto);
 
-        verify(reservationRepository, times(1)).findById(1L);
-        verify(bookedDateRepository, times(1)).deleteBookedDateByAccommodationIdAndDateIn(1L, mockDates());
-        verify(dynamicReservationRepository, times(1)).findByAccommodationIdAndDate(1L, dto.getCheckInDate(), dto.getCheckoutDate());
-        verify(reservationRepository, times(1)).save(any(Reservation.class));
-        verify(bookedDateRepository, times(0)).save(any(BookedDate.class));
+        assertThat(reservation.getCheckInDate()).isEqualTo(dto.getCheckInDate());
+        assertThat(reservation.getCheckoutDate()).isEqualTo(dto.getCheckoutDate());
+        assertThat(reservation.getGuestNum()).isEqualTo(dto.getGuestNum());
+        assertThat(reservation.getTotalPrice()).isEqualTo(dto.getTotalPrice());
+
     }
 
-    @DisplayName("예약 날짜 중복으로 update 실패")
+    @DisplayName("예약 날짜 중복으로 예약수정 실패")
     @Test
     void updateReservationFail(){
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22)));
-        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22))).thenReturn(mockBookedDate());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(mockBookedDate());
 
         ReservationDto dto = mockReservationDto();
 
-        Reservation reservation = reservationService.updateReservation(1L, dto);
+        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.updateReservation(1L, dto));
 
-        verify(reservationRepository, times(1)).findById(1L);
-        verify(bookedDateRepository, times(1)).deleteBookedDateByAccommodationIdAndDateIn(1L, mockDates());
-        verify(dynamicReservationRepository, times(1)).findByAccommodationIdAndDate(1L, LocalDate.of(2020,2,20), LocalDate.of(2020,2,22));
-        verify(bookedDateRepository, times(3)).save(any(BookedDate.class));
+        assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
     }
 
     @Test
@@ -213,8 +222,8 @@ class ReservationServiceTest {
     }
 
     private Reservation mockReservation(){
-        return Reservation.builder().checkInDate(LocalDate.of(2020, 2, 20))
-                .checkoutDate(LocalDate.of(2020, 2, 22))
+        return Reservation.builder().checkInDate(LocalDate.of(2020, 3, 20))
+                .checkoutDate(LocalDate.of(2020, 3, 22))
                 .guestNum(3)
                 .totalPrice(30000)
                 .reservationCode("202102070000100001")
@@ -232,17 +241,6 @@ class ReservationServiceTest {
         dto.setTotalPrice(30000);
 
         return dto;
-    }
-
-    private List<LocalDate> mockDates() {
-
-        List<LocalDate> localDates = new ArrayList<>();
-        localDates.add(LocalDate.of(2020, 2, 20));
-        localDates.add(LocalDate.of(2020, 2, 21));
-        localDates.add(LocalDate.of(2020, 2, 22));
-
-        return localDates;
-
     }
 
     private Optional<Reservation> mockFindReservation(LocalDate checkInDate, LocalDate checkoutDate) {

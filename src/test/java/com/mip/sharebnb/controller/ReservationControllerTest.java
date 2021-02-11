@@ -76,21 +76,17 @@ class ReservationControllerTest {
 
     @Test
     void makeAReservation() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
-                        .checkInDate(LocalDate.of(2022, 4, 20))
-                        .checkoutDate(LocalDate.of(2022, 4, 23))
+                        .checkInDate(LocalDate.of(2100, 5, 11))
+                        .checkoutDate(LocalDate.of(2100, 5, 12))
                         .guestNum(3)
                         .memberId(1L)
                         .accommodationId(1L)
                         .totalPrice(30000)
                         .build())))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        logger.info(result::toString);
-
+                .andExpect(status().isOk());
     }
 
     @DisplayName("Id 값이 잘 못 들어와 객체를 찾을 수 없을 때 예외")
@@ -121,8 +117,8 @@ class ReservationControllerTest {
                         .memberId(1L)
                         .accommodationId(1L)
                         .reservationId(1L)
-                        .checkInDate(LocalDate.of(2020, 2, 20))
-                        .checkoutDate(LocalDate.of(2020, 2, 20))
+                        .checkInDate(LocalDate.of(2022, 2, 20))
+                        .checkoutDate(LocalDate.of(2022, 2, 20))
                         .guestNum(-1)
                         .totalPrice(11000) // 음수 값이 올 수 없어서 에러 발생
                         .build())))
@@ -163,11 +159,11 @@ class ReservationControllerTest {
 
     @Test
     void updateReservation() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/3")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/7")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Reservation.builder()
-                        .checkInDate(LocalDate.of(2021, 2, 25))
-                        .checkoutDate(LocalDate.of(2021, 2, 28))
+                        .checkInDate(LocalDate.of(2027, 2, 25))
+                        .checkoutDate(LocalDate.of(2027, 2, 28))
                         .guestNum(3)
                         .totalPrice(30000)
                         .build())))
@@ -179,7 +175,7 @@ class ReservationControllerTest {
     }
 
     @Test
-    void updateReservationNotFoundReservationException() throws Exception {
+    void updateReservationDataNotFoundException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/100")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Reservation.builder()
@@ -188,21 +184,21 @@ class ReservationControllerTest {
                         .guestNum(3)
                         .totalPrice(30000)
                         .build())))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
 
     }
 
     @Test
     void updateReservationDuplicateDateException() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/3")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(Reservation.builder()
-                        .checkInDate(LocalDate.of(2021, 2, 28))
-                        .checkoutDate(LocalDate.of(2021, 3, 2))
+                        .checkInDate(LocalDate.of(2020, 2, 10))
+                        .checkoutDate(LocalDate.of(2020, 2, 12))
                         .guestNum(3)
                         .totalPrice(30000)
                         .build())))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
 
     }
 
