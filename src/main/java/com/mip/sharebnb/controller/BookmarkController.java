@@ -25,9 +25,15 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @GetMapping("/bookmark/{memberId}")
-    public List<BookmarkDto> getBookmarks(@PathVariable long memberId) {
+    public List<BookmarkDto> getBookmarksByMemberId(@PathVariable long memberId) {
 
-        return bookmarkService.findBookmarks(memberId);
+        return bookmarkService.findBookmarksByMemberId(memberId);
+    }
+
+    @GetMapping("/bookmark/{email}")
+    public List<BookmarkDto> getBookmarksByEmail(@PathVariable String email) {
+
+        return bookmarkService.findBookmarksByMemberEmail(email);
     }
 
     @PostMapping("/bookmark")
