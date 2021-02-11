@@ -28,16 +28,16 @@ public class ReviewService {
 
     private final ReservationRepository reservationRepository;
 
-    public Review findReviewByAccommodationIdAndMemberId(long accommodationId, long memberId) {
+    public Review findReviewByReservationId(long reservationId) {
 
-        return reviewRepository.findReviewByAccommodation_IdAndMember_Id(accommodationId, memberId)
+        return reviewRepository.findReviewByReservationId(reservationId)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
     }
 
     public void writeReview(ReviewDto reviewDto) {
 
-        if (reviewRepository.findReviewByAccommodation_IdAndMember_Id(reviewDto.getAccommodationId(), reviewDto.getMemberId()).isPresent()) {
-            throw new DuplicateValueExeption("이미 작성한 리뷰가 있습니다.");
+        if (reviewRepository.findReviewByReservationId(reviewDto.getReservationId()).isPresent()) {
+            throw new DuplicateValueExeption("Already Have a Review.");
         }
 
         Reservation reservation = reservationRepository.findById(reviewDto.getReservationId())
@@ -63,7 +63,7 @@ public class ReviewService {
 
     public void updateReview(ReviewDto reviewDto) {
         Review originReview = reviewRepository
-                .findReviewByAccommodation_IdAndMember_Id(reviewDto.getAccommodationId(), reviewDto.getMemberId())
+                .findReviewByReservationId(reviewDto.getReservationId())
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
 
         originReview.setContent(reviewDto.getContent());
@@ -74,8 +74,11 @@ public class ReviewService {
     }
 
     public void deleteReview(Long id) {
-
-        reviewRepository.findById(id)
+        Review originReview = reviewRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
+
+        originReview.getReservation().setIsWrittenReview(false);
+
+        reviewRepository.deleteById(id);
     }
 }
