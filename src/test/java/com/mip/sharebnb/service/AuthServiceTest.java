@@ -5,6 +5,8 @@ import com.mip.sharebnb.security.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.Authentication;
 
 import java.time.LocalDate;
@@ -20,6 +22,8 @@ class AuthServiceTest {
 
     AuthService authService;
     TokenProvider tokenProvider;
+    @Autowired
+    RedisTemplate<String, String> redisTemplate;
 
     @Autowired
     public AuthServiceTest(AuthService authService, TokenProvider tokenProvider) {
@@ -41,6 +45,17 @@ class AuthServiceTest {
         Authentication authentication = tokenProvider.getAuthentication(token);
 
         assertThat(authentication.getName()).isEqualTo(memberDto.getEmail());
+    }
+
+    @Test
+    void logoutTest() {
+        String token = "ThisIsTestToken1234";
+        authService.logout(token);
+
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        String result = valueOperations.get(token);
+
+        assertThat(result).isEqualTo(token);
     }
 
 }
