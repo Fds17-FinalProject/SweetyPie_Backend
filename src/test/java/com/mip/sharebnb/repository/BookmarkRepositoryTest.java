@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,8 +74,8 @@ class BookmarkRepositoryTest {
 
     private void givenBookmarks(Member member) {
 
-        Accommodation accommodation = new Accommodation(null, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, new ArrayList<>());
-        Accommodation accommodation2 = new Accommodation(null, "서울특별시", "서대문구", "서울특별시 서대문구", "아파트", 2, 2, 2, 100000, 4, "010-1234-5678", 36.141f, 126.531f, "서대문구", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, new ArrayList<>());
+        Accommodation accommodation = new Accommodation(null, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
+        Accommodation accommodation2 = new Accommodation(null, "서울특별시", "서대문구", "서울특별시 서대문구", "아파트", 2, 2, 2, 100000, 4, "010-1234-5678", 36.141f, 126.531f, "서대문구", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
 
         accommodationRepository.save(accommodation);
         accommodationRepository.save(accommodation2);
