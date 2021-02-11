@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mip.sharebnb.dto.*;
 import com.mip.sharebnb.exception.DuplicateValueExeption;
+import com.mip.sharebnb.exception.InvalidTokenException;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
@@ -101,11 +102,13 @@ public class AuthService {
         valueOperations.set(token, token, Duration.ofSeconds(tokenValidityInSeconds));
     }
 
-    public boolean isInTheInvalidTokenList(HttpServletRequest request) {
+    public void isInTheInvalidTokenList(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 
-        return StringUtils.hasText(valueOperations.get(token));
+        if (StringUtils.hasText(valueOperations.get(token))) {
+            throw new InvalidTokenException("유효하지 않은 토큰으로 접근했습니다.");
+        }
     }
 
     private Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
