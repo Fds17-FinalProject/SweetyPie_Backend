@@ -77,7 +77,9 @@ public class BookmarkService {
     }
 
     public void deleteBookmark(long memberId, long accommodationId) {
+        Bookmark bookmark = bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(memberId, accommodationId)
+                .orElseThrow(() -> new DataNotFoundException("Bookmark Not Found"));
 
-        bookmarkRepository.deleteBookmarkByMemberIdAndAccommodationId(memberId, accommodationId);
+        bookmarkRepository.delete(bookmark);
     }
 }
