@@ -31,10 +31,6 @@ public class ReservationService {
     public List<ReservationDto> getReservations(Long memberId) {
         List<Reservation> reservations = reservationRepository.findReservationByMemberId(memberId);
 
-        if (reservations.isEmpty()) {
-            return new ArrayList<>();
-        }
-
         return makeReservationDtoList(reservations);
     }
 
@@ -107,7 +103,6 @@ public class ReservationService {
 
         for (Reservation reservation : reservations) {
             ReservationDto reservationDto = new ReservationDto();
-
             reservationDto.setAccommodationId(reservation.getAccommodation().getId());
             reservationDto.setReservationId(reservation.getId());
             reservationDto.setCheckInDate(reservation.getCheckInDate());
