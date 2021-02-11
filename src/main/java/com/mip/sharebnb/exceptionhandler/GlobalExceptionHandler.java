@@ -36,8 +36,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorDto processValidationError(MethodArgumentNotValidException exception) {
-        BindingResult bindingResult = exception.getBindingResult();
+    public ErrorDto handleValidationError(MethodArgumentNotValidException ex) {
+        BindingResult bindingResult = ex.getBindingResult();
 
         StringBuilder builder = new StringBuilder();
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
@@ -51,6 +51,13 @@ public class GlobalExceptionHandler {
         }
 
         return ErrorDto.of(builder.toString());
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorDto handleInvalidInputException(InvalidTokenException ex) {
+
+        return ErrorDto.of(ex.getMessage());
     }
 
 }
