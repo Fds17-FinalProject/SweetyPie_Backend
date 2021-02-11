@@ -22,6 +22,9 @@ public class ReviewDto {
     @Positive
     private long accommodationId;
 
+    @Positive
+    private long reservationId;
+
     @Min(0)
     @Max(5)
     private float rating;

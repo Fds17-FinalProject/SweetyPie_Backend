@@ -14,7 +14,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Data
@@ -34,7 +33,6 @@ public class AccommodationPicture {
     @ToString.Exclude
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ACCOMMODATION_ID")
     private Accommodation accommodation;
 
     public void setAccommodation(Accommodation accommodation) {

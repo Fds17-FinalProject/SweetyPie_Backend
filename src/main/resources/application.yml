@@ -3,7 +3,7 @@ spring:
     open-in-view: true
     database: mysql
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     generate-ddl: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -16,7 +16,7 @@ logging:
       hibernate:
         type:
           descriptor:
-            sql: trace
+            sql: off
       springframework:
         web: DEBUG
 

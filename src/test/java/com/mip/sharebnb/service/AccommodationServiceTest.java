@@ -62,9 +62,12 @@ class AccommodationServiceTest {
     @DisplayName("메인 검색 (지역, 인원)")
     @Test
     void searchAccommodationsByQueryDsl1() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch("원룸", null, null, 1, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
+        when(dynamicAccommodationRepository
+                .findAccommodationsBySearch("서울", LocalDate.now(), null, 1, PageRequest.of(1, 10)))
+                .thenReturn(mockAccommodationPage());
 
-        Page<Accommodation> accommodations = accommodationService.findAccommodationsBySearch("원룸", null, null, 1, PageRequest.of(1, 10));
+        Page<Accommodation> accommodations = accommodationService
+                .findAccommodationsBySearch("서울", null, null, 1, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
         assertThat(accommodations.toList().get(0).getBuildingType()).isEqualTo("원룸");
@@ -75,21 +78,12 @@ class AccommodationServiceTest {
     @DisplayName("메인 검색 (체크인, 체크아웃)")
     @Test
     void searchAccommodationsByQueryDsl2() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, null, null, 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
+        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 3, 5)
+                , LocalDate.of(2022, 3, 10), 0, PageRequest.of(1, 10)))
+                .thenReturn(mockAccommodationPage());
 
-        Page<Accommodation> accommodations = accommodationService.findAccommodationsBySearch(null, null, null, 0, PageRequest.of(1, 10));
-
-        assertThat(accommodations.toList().size()).isEqualTo(10);
-        assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
-        assertThat(accommodations.toList().get(0).getAccommodationPictures().get(0).getUrl()).isEqualTo("https://sharebnb.co.kr/pictures/1.jpg");
-    }
-
-    @DisplayName("메인 검색 (체크인이 체크아웃 보다 나중일 경우)")
-    @Test
-    void searchAccommodationsByQueryDsl3() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), LocalDate.of(2022, 4, 25), 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
-
-        Page<Accommodation> accommodations = accommodationService.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), LocalDate.of(2022, 4, 25), 0, PageRequest.of(1, 10));
+        Page<Accommodation> accommodations = accommodationService.findAccommodationsBySearch(null, LocalDate.of(2022, 3, 5),
+                LocalDate.of(2022, 3, 10), 0, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
         assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
@@ -99,7 +93,8 @@ class AccommodationServiceTest {
     @DisplayName("메인 검색 (체크인만)")
     @Test
     void searchAccommodationsByQueryDsl4() {
-        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), null, 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
+        when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1),
+                null, 0, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
 
         Page<Accommodation> accommodations = accommodationService.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1), null, 0, PageRequest.of(1, 10));
 
@@ -115,7 +110,7 @@ class AccommodationServiceTest {
     }
 
     private Accommodation mockAccommodation(Long id) {
-        Accommodation accommodation = new Accommodation(id, "서울특별시", "마포구", "서울특별시 마포구 독막로 266", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
+        Accommodation accommodation = new Accommodation(id, "서울특별시", "마포구", "서울특별시 마포구 독막로 266", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
         List<AccommodationPicture> accommodationPictures = new ArrayList<>();
 
         accommodationPictures.add(new AccommodationPicture("https://sharebnb.co.kr/pictures/1.jpg"));
@@ -131,7 +126,7 @@ class AccommodationServiceTest {
     private List<Accommodation> mockAccommodationList() {
         List<Accommodation> accommodations = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            accommodations.add(mockAccommodation((long) i));
+            accommodations.add(mockAccommodation((long) i + 1));
         }
 
         return accommodations;

@@ -201,11 +201,10 @@ Temporary Items
 
 # datasource
 /src/main/resources/datasource.yml
-/src/main/resources/application.yml
 
 # aws
 *.pem
 *.sql
 
-# run
-/src/main/java/com/mip/sharebnb/SharebnbApplication.java
+# json
+*.json
