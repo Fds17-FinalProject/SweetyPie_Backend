@@ -1,26 +1,63 @@
 package com.mip.sharebnb.service;
 
+import com.mip.sharebnb.dto.BookmarkDto;
 import com.mip.sharebnb.exception.DataNotFoundException;
+import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.Bookmark;
+import com.mip.sharebnb.model.Member;
+import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.BookmarkRepository;
+import com.mip.sharebnb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
 
-    public List<Bookmark> findBookmarks(long memberId) {
+    private final MemberRepository memberRepository;
 
-        return bookmarkRepository.findBookmarksByMember_Id(memberId);
+    private final AccommodationRepository accommodationRepository;
+
+    public List<BookmarkDto> findBookmarks(long memberId) {
+        memberRepository.findById(memberId)
+                .orElseThrow(() -> new DataNotFoundException("Not Found Member"));
+
+        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMemberId(memberId);
+
+        List<BookmarkDto> bookmarkDtos = new ArrayList<>();
+
+        for (Bookmark bookmark : bookmarks) {
+            bookmarkDtos.add(new BookmarkDto(bookmark.getId(), bookmark.getMember().getId(),
+                    bookmark.getAccommodation().getId()));
+        }
+
+        return bookmarkDtos;
     }
 
-    public void deleteBookmarkById(Long id) {
+    public void postBookmark(BookmarkDto bookmarkDto) {
+        Member member = memberRepository.findById(bookmarkDto.getMemberId())
+                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
-        bookmarkRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Bookmark Not Found"));
+        Accommodation accommodation = accommodationRepository.findById(bookmarkDto.getAccommodationId())
+                .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setMember(member);
+        bookmark.setAccommodation(accommodation);
+
+        bookmarkRepository.save(bookmark);
+    }
+
+    public void deleteBookmark(long memberId, long accommodationId) {
+
+        bookmarkRepository.deleteBookmarkByMemberIdAndAccommodationId(memberId, accommodationId);
     }
 }
