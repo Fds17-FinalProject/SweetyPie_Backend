@@ -19,12 +19,14 @@ import javax.validation.Valid;
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
+//@PreAuthorize("hasRole('MEMBER')")
 @RequestMapping("/api")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
     @GetMapping("/review/{reservationId}")
+
     public Review getReview(@PathVariable long reservationId) {
 
         return reviewService.findReviewByReservationId(reservationId);
