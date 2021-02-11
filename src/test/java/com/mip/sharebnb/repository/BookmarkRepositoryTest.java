@@ -32,6 +32,7 @@ class BookmarkRepositoryTest {
 
     @DisplayName("북마크 리스트 조회")
     @Test
+
     void findBookmarksByMember_Id() {
         Member member = givenMember();
         givenBookmarks(member);
@@ -56,6 +57,7 @@ class BookmarkRepositoryTest {
 
         // 삭제 전
         List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMember_Id(members.get(members.size() - 1).getId());
+        System.out.println("------------" + bookmarks);
 
         assertThat(bookmarks.size()).isEqualTo(2);
 
@@ -65,7 +67,9 @@ class BookmarkRepositoryTest {
 //            bookmarkRepository.delete(bookmark);
         }
 
+        // 삭제 후
         bookmarks = bookmarkRepository.findBookmarksByMember_Id(members.get(members.size() - 1).getId());
+        System.out.println("------------" + bookmarks);
         assertThat(bookmarks.size()).isEqualTo(0);
     }
 

@@ -74,9 +74,8 @@ public class ReviewService {
     }
 
     public void deleteReview(Long id) {
+
         reviewRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
-
-        reviewRepository.deleteById(id);
     }
 }
