@@ -31,12 +31,13 @@ public class ReviewService {
 
     public void writeReview(ReviewDto reviewDto) {
 
-        if (reviewRepository.findReviewByReservationId(reviewDto.getReservationId()).isPresent()) {
-            throw new DuplicateValueExeption("Already Have a Review");
-        }
-
         Reservation reservation = reservationRepository.findById(reviewDto.getReservationId())
                 .orElseThrow(() -> new DataNotFoundException("Reservation Not Found"));
+
+        if (reviewRepository.findReviewByReservationId(reviewDto.getReservationId()).isPresent()
+                || reservation.getIsWrittenReview()) {
+            throw new DuplicateValueExeption("Already Have a Review");
+        }
 
         Accommodation accommodation = reservation.getAccommodation();
         if (accommodation == null) {
