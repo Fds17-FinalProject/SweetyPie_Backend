@@ -46,8 +46,6 @@ public class ReservationDto {
 
     private String title;
 
-    private String hostName;
-
     private AccommodationPicture accommodationPicture;
 
 }
