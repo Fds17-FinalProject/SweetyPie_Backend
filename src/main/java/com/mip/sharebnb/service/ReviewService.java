@@ -112,8 +112,6 @@ public class ReviewService {
         originReview.setContent(reviewDto.getContent());
         originReview.setRating(reviewDto.getRating());
         originReview.setCreatedDate(LocalDate.now());
-
-        reviewRepository.save(originReview);
     }
 
     public void deleteReview(Long id) {
