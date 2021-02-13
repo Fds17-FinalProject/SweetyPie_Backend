@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -61,7 +60,7 @@ public class DynamicAccommodationRepository {
                 .select(ac)
                 .from(ac)
                 .where(acBuilder)
-//                .orderBy(NumberExpression.random().asc())
+                .orderBy(ac.randId.asc())
                 .offset(page.getOffset())
                 .limit(page.getPageSize())
                 .fetchResults();
@@ -70,21 +69,21 @@ public class DynamicAccommodationRepository {
     }
 
     public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
-                                                             float minLongitude, float maxLongitude, @PageableDefault(page = 1) Pageable page) {
+                                                             float minLongitude, float maxLongitude, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        builder.and(ac.latitude.gt(minLatitude));
-        builder.and(ac.latitude.lt(maxLatitude));
+        builder.and(ac.latitude.between(minLatitude, maxLatitude));
+        builder.and(ac.longitude.between(minLongitude, maxLongitude));
 
-        builder.and(ac.longitude.gt(minLongitude));
-        builder.and(ac.longitude.lt(maxLongitude));
-
-        return new PageImpl<>(queryFactory
+        QueryResults<Accommodation> results = queryFactory
                 .select(ac)
                 .from(ac)
                 .where(builder)
-                .offset(page.getOffset() - page.getPageSize())
+                .orderBy(ac.randId.asc())
+                .offset(page.getOffset())
                 .limit(page.getPageSize())
-                .fetch(), page, page.getPageSize());
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
 }
