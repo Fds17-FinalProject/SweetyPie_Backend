@@ -6,14 +6,15 @@ import com.mip.sharebnb.exception.InvalidInputException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
-import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class AccommodationService {
@@ -21,7 +22,7 @@ public class AccommodationService {
     private final DynamicAccommodationRepository dynamicAccommodationRepository;
     private final AccommodationRepository accommodationRepository;
 
-    public AccommodationDto findById(Long id) throws NotFoundException {
+    public AccommodationDto findById(Long id) {
         Accommodation accommodation = accommodationRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
 

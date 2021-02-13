@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,10 +36,12 @@ class ReviewRepositoryTest {
 
     @DisplayName("작성한 리뷰 가져오기")
     @Test
-    void findReviewByAccommodation_IdAndMember_Id() {
+    void findReviewByReservationId() {
         givenReview();
 
-        Review review = reviewRepository.findReviewByAccommodation_IdAndMember_Id(1, 1).get();
+        List<Review> reviews = reviewRepository.findAll();
+
+        Review review = reviewRepository.findReviewByReservationId(reviews.get(reviews.size() - 1).getReservation().getId()).get();
 
         assertThat(review.getRating()).isEqualTo(3);
     }
@@ -47,14 +50,13 @@ class ReviewRepositoryTest {
         Member member = givenMember();
         Accommodation accommodation = givenAccommodation();
 
-        Review review = new Review(3L, 3, "좋아요", LocalDate.now(), member, accommodation, givenReservation(member, accommodation));
+        Review review = new Review(null, 3, "좋아요", LocalDate.now(), member, accommodation, givenReservation(member, accommodation));
 
         reviewRepository.save(review);
     }
 
     private Member givenMember() {
         Member member = new Member();
-        member.setId(1L);
         member.setEmail("ddd@gmail.com");
         member.setName("이재복");
         member.setPassword("1234");
@@ -65,13 +67,13 @@ class ReviewRepositoryTest {
     }
 
     private Accommodation givenAccommodation() {
-        Accommodation accommodation = new Accommodation(1L, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null, null);
+        Accommodation accommodation = new Accommodation(null, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
 
         return accommodationRepository.save(accommodation);
     }
 
     private Reservation givenReservation(Member member, Accommodation accommodation) {
-        Reservation reservation = new Reservation(1L, LocalDate.of(2022, 3, 5), LocalDate.of(2022, 3, 10)
+        Reservation reservation = new Reservation(null, LocalDate.of(2022, 3, 5), LocalDate.of(2022, 3, 10)
                 , 3, 80000, false, null, null, null, member, accommodation, new ArrayList<>());
 
         return reservationRepository.save(reservation);
