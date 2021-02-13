@@ -104,7 +104,7 @@ class DynamicAccommodationRepositoryTest {
 
     private Accommodation givenAccommodation() {
 
-        return new Accommodation(null, "대구광역시", "수성구", "대구광역시 수성구 xx로", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, new ArrayList<>(), null);
+        return new Accommodation(null, 0, "대구광역시", "수성구", "대구광역시 수성구 xx로", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, new ArrayList<>(), null);
     }
 
     private Member givenMember() {
