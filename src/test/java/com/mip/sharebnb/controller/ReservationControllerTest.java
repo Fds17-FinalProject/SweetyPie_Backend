@@ -161,7 +161,7 @@ class ReservationControllerTest {
     void updateReservation() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/7")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Reservation.builder()
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2027, 2, 25))
                         .checkoutDate(LocalDate.of(2027, 2, 28))
                         .guestNum(3)
@@ -178,7 +178,7 @@ class ReservationControllerTest {
     void updateReservationDataNotFoundException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/100")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Reservation.builder()
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2020, 2, 20))
                         .checkoutDate(LocalDate.of(2020, 2, 22))
                         .guestNum(3)
@@ -192,7 +192,7 @@ class ReservationControllerTest {
     void updateReservationDuplicateDateException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Reservation.builder()
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2020, 2, 10))
                         .checkoutDate(LocalDate.of(2020, 2, 12))
                         .guestNum(3)
