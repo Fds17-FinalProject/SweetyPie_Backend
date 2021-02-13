@@ -56,10 +56,13 @@ class DynamicReservationRepositoryTest {
 
 
     private Reservation setReservation(){
-        Reservation reservation = Reservation.builder().checkInDate(LocalDate.of(2020, 2, 20)).checkoutDate(LocalDate.of(2020, 2, 22))
-                .guestNum(3)
-                .totalPrice(30000)
-                .build();
+
+        Reservation reservation = new Reservation();
+
+        reservation.setCheckInDate(LocalDate.of(2020, 2, 20));
+        reservation.setCheckoutDate(LocalDate.of(2020, 2, 22));
+        reservation.setGuestNum(3);
+        reservation.setTotalPrice(300000);
 
         return reservation;
     }
