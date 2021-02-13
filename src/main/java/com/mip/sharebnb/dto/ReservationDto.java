@@ -46,6 +46,19 @@ public class ReservationDto {
 
     private String title;
 
+
+    private String hostName;
+
+    private int bathroomNum;
+
+    private int bedroomNum;
+
+    private int bedNum;
+
+    private float ratingAvg;
+
+    private int reviewNum;
+
     private AccommodationPicture accommodationPicture;
 
 }
