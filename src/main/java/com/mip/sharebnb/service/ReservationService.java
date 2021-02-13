@@ -89,6 +89,11 @@ public class ReservationService {
             reservationDto.setGu(reservation.getAccommodation().getGu());
             reservationDto.setTitle(reservation.getAccommodation().getTitle());
             reservationDto.setHostName(reservation.getAccommodation().getHostName());
+            reservationDto.setBathroomNum(reservation.getAccommodation().getBathroomNum());
+            reservationDto.setBedNum(reservation.getAccommodation().getBedNum());
+            reservationDto.setBedroomNum(reservation.getAccommodation().getBedroomNum());
+            reservationDto.setRatingAvg(reservation.getAccommodation().getRating());
+            reservationDto.setReviewNum(reservation.getAccommodation().getReviewNum());
             reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
             reservationDtoList.add(reservationDto);
         }
