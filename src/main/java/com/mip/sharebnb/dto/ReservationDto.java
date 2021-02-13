@@ -36,8 +36,6 @@ public class ReservationDto {
     @Positive(message = "총 비용이 맞지 않습니다.")
     private int totalPrice;
 
-    private String hostName;
-
     private Boolean isWrittenReview;
 
     private String city;
@@ -45,6 +43,18 @@ public class ReservationDto {
     private String gu;
 
     private String title;
+
+    private String hostName;
+
+    private int bathroomNum;
+
+    private int bedroomNum;
+
+    private int bedNum;
+
+    private float ratingAvg;
+
+    private int reviewNum;
 
     private AccommodationPicture accommodationPicture;
 
