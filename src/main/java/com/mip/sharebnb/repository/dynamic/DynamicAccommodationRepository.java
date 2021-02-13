@@ -30,7 +30,16 @@ public class DynamicAccommodationRepository {
         BooleanBuilder acBuilder = new BooleanBuilder();
 
         if (searchKeyword != null && !searchKeyword.equals("")) {
+            String match = "[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]";
+
+            searchKeyword = searchKeyword.replace("특별시", "")
+                    .replace("광역시", "")
+                    .replaceAll(match, "");
+
             for (String keyword : searchKeyword.split(" ")) {
+                if (keyword.charAt(keyword.length() - 1) == '시') {
+                    keyword = keyword.substring(0, keyword.length() - 1);
+                }
                 acBuilder.and(ac.city.contains(keyword).or(ac.gu.contains(keyword)));
             }
         }
@@ -56,8 +65,6 @@ public class DynamicAccommodationRepository {
                 .offset(page.getOffset())
                 .limit(page.getPageSize())
                 .fetchResults();
-
-        System.out.println("---------------------" + results.getTotal());
 
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
