@@ -41,6 +41,9 @@ class ReservationServiceTest {
     private MemberRepository memberRepository;
 
     @Mock
+    private BookedDateRepository bookedDateRepository;
+
+    @Mock
     private DynamicReservationRepository dynamicReservationRepository;
 
     @DisplayName("예약 내역 조회")
@@ -139,6 +142,7 @@ class ReservationServiceTest {
         assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
     }
 
+    @DisplayName("예약 취소")
     @Test
     void deleteReservation(){
 
@@ -222,12 +226,16 @@ class ReservationServiceTest {
     }
 
     private Reservation mockReservation(){
-        return Reservation.builder().checkInDate(LocalDate.of(2020, 3, 20))
-                .checkoutDate(LocalDate.of(2020, 3, 22))
-                .guestNum(3)
-                .totalPrice(30000)
-                .reservationCode("202102070000100001")
-                .build();
+
+        Reservation reservation = new Reservation();
+
+        reservation.setCheckInDate(LocalDate.of(2020, 3, 20));
+        reservation.setCheckoutDate(LocalDate.of(2020, 3, 22));
+        reservation.setGuestNum(3);
+        reservation.setTotalPrice(30000);
+        reservation.setReservationCode("202102070000100001");
+
+        return reservation;
     }
 
     // updateReservation
@@ -267,7 +275,8 @@ class ReservationServiceTest {
 
     private List<BookedDate> mockBookedDate(){
 
-        Reservation reservation = Reservation.builder().id(1L).build();
+        Reservation reservation = new Reservation();
+        reservation.setId(1L);
 
         Accommodation accommodation = Accommodation.builder().id(1L).build();
 
