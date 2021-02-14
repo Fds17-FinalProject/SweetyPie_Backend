@@ -9,9 +9,9 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, Lo
 
     Page<Accommodation> findAccommodationsBy(Pageable pageable);
 
-    Page<Accommodation> findByCityContaining(String city, Pageable pageable);
+    Page<Accommodation> findByCityContainingOrderByRandId(String city, Pageable pageable);
 
-    Page<Accommodation> findByCityContainingOrGuContaining(String city, String gu, Pageable pageable);
+    Page<Accommodation> findByCityContainingOrGuContainingOrderByRandId(String city, String gu, Pageable pageable);
 
-    Page<Accommodation> findByBuildingTypeContaining(String buildingType, Pageable pageable);
+    Page<Accommodation> findByBuildingTypeContainingOrderByRandId(String buildingType, Pageable pageable);
 }
