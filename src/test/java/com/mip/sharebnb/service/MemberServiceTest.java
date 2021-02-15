@@ -4,6 +4,7 @@ import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.MemberRole;
 import com.mip.sharebnb.repository.MemberRepository;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -73,7 +74,7 @@ class MemberServiceTest {
 
 
     @Test
-    void updateMemberTest() {
+    void updateMemberTest() throws InvalidInputException {
         LocalDate date = LocalDate.now();
         when(memberRepository.findById(1L))
                 .thenReturn(Optional.of(new Member()));

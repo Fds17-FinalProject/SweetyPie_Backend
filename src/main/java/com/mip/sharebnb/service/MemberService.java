@@ -2,11 +2,13 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.MemberDto;
-import com.mip.sharebnb.exception.PrePasswordNotMatchedException;
+import com.mip.sharebnb.exception.DataNotFoundException;
+import com.mip.sharebnb.exception.DuplicateValueExeption;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.MemberRole;
 import com.mip.sharebnb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +48,7 @@ public class MemberService {
                 .birthDate(memberDto.getBirthDate())
                 .contact(memberDto.getContact())
                 .role(MemberRole.MEMBER)
+                .isSocialMember(true)
                 .build();
 
         return memberRepository.save(member);
@@ -55,15 +58,15 @@ public class MemberService {
     public Member getMember(Long id) {
         return memberRepository
                 .findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("찾는 멤버가 없습니다"));
+                .orElseThrow(() -> new DataNotFoundException("조회하는 멤버가 존재하지 않습니다"));
     }
 
     @Transactional
-    public Member updateMember(Long id, MemberDto memberDto) {
+    public Member updateMember(Long id, MemberDto memberDto) throws InvalidInputException {
 
         Member member = memberRepository
                 .findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("찾는 멤버가 없습니다"));
+                .orElseThrow(() -> new DataNotFoundException("수정할 멤버가 존재하지 않습니다"));
 
         if (memberDto.getEmail() != null) {
             checkDuplicateEmail(memberDto);
@@ -76,7 +79,7 @@ public class MemberService {
             member.setContact(memberDto.getContact());
         } else if (memberDto.getPassword() != null && memberDto.getPrePassword() != null) {
             if (!passwordEncoder.matches(memberDto.getPrePassword(), member.getPassword())) {
-                throw new PrePasswordNotMatchedException("이전 비밀번호가 일치하지 않습니다");
+                throw new InvalidInputException("이전 비밀번호가 일치하지 않습니다");
             }
             member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         }
@@ -88,7 +91,7 @@ public class MemberService {
     public Member withdrawal(Long id) {
         Member member = memberRepository
                 .findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("찾는 멤버가 없습니다"));
+                .orElseThrow(() -> new DataNotFoundException("탈퇴할 멤버가 존재하지 않습니다"));
 
         member.setDeleted(true);
         return memberRepository.save(member);
@@ -96,7 +99,7 @@ public class MemberService {
 
     private void checkDuplicateEmail(MemberDto memberDto) {
         if (memberRepository.findByEmail(memberDto.getEmail()).orElse(null) != null) {
-            throw new RuntimeException("이미 가입되어 있는 유저입니다.");
+            throw new DuplicateValueExeption("이미 가입되어 있는 유저입니다.");
         }
     }
 

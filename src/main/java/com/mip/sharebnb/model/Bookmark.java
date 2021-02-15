@@ -32,9 +32,4 @@ public class Bookmark {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     private Accommodation accommodation;
-
-    public void setAccommodation(Accommodation accommodation) {
-        this.accommodation = accommodation;
-        accommodation.getBookmarks().add(this);
-    }
 }

@@ -6,21 +6,27 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.mip.sharebnb.dto.*;
-import com.mip.sharebnb.exception.MemberAlreadySignupException;
+import com.mip.sharebnb.exception.DuplicateValueExeption;
+import com.mip.sharebnb.exception.InvalidTokenException;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -33,9 +39,13 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
     private final MemberService memberService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     final static String GOOGLE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/token";
     final static String GOOGLE_REDIRECT_URL = "http://localhost:3000/redirect";
+    final static String GOOGLE_REVOKE_TOKEN_BASE_URL = "https://oauth2.googleapis.com/revoke";
+
+    @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds;
 
     @Value("${google.client_id}")
     String clientId;
@@ -60,7 +70,7 @@ public class AuthService {
         GoogleMemberDto memberDto = pareUserInfoToGoogleMemberDto(googleUserInfo);
 
         // 로그인이 가능할 때 로그인을 해서 JWT 토큰을 리턴한다
-        if (isLoginPossible(memberDto)) {
+        if (isLoginPossible(memberDto, googleUserInfo)) {
             LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
             Map<String, String> map = new HashMap<>();
             map.put("token", login(loginDto));
@@ -86,6 +96,20 @@ public class AuthService {
 
     }
 
+    public void logout(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        valueOperations.set(token, token, Duration.ofSeconds(tokenValidityInSeconds));
+    }
+
+    public void isInTheInvalidTokenList(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+
+        if (StringUtils.hasText(valueOperations.get(token))) {
+            throw new InvalidTokenException("유효하지 않은 토큰으로 접근했습니다.");
+        }
+    }
 
     private Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
 
@@ -122,7 +146,9 @@ public class AuthService {
 
         String resultJson = restTemplate.getForObject(requestUrl, String.class);
 
-        return mapper.readValue(resultJson, new TypeReference<Map<String, String>>(){});
+        Map<String, String> userInfo = mapper.readValue(resultJson, new TypeReference<Map<String, String>>(){});
+        userInfo.put("accessToken", result.getAccessToken());
+        return userInfo;
     }
 
     private GoogleMemberDto pareUserInfoToGoogleMemberDto (Map<String, String> userInfo) {
@@ -134,7 +160,7 @@ public class AuthService {
                 .build();
     }
 
-    private boolean isLoginPossible(GoogleMemberDto memberDto) {
+    private boolean isLoginPossible(GoogleMemberDto memberDto, Map<String, String> userInfo) {
         Optional<Member> optionalMember = memberRepository.findByEmail(memberDto.getEmail());
 
         if (!optionalMember.isPresent()) {
@@ -145,9 +171,20 @@ public class AuthService {
                 return true;
             // google 메일이 이미 가입되어 있을때 에러를 내보낸다
             } else {
-                throw new MemberAlreadySignupException("이미 가입된 회원입니다");
+                // 액세스 토큰이 필요없으니 만료시킨다
+                revokeAccessToken(userInfo.get("accessToken"));
+                throw new DuplicateValueExeption("이미 가입된 회원입니다 => 액세스토큰을 만료 시켰습니다");
             }
         }
+    }
+
+    private void revokeAccessToken(String token) {
+
+        RestTemplate restTemplate = new RestTemplate();
+        final String requestUrl = UriComponentsBuilder.fromHttpUrl(GOOGLE_REVOKE_TOKEN_BASE_URL)
+                .queryParam("token", token).encode().toUriString();
+
+        String resultJson = restTemplate.postForObject(requestUrl, null, String.class);
     }
 
 }

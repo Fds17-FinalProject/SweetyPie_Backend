@@ -20,8 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @SpringBootTest(properties = "spring.config.location="
-        + "classpath:application.yml,"
-        + "classpath:datasource.yml")
+        + "classpath:test.yml")
 class ReviewControllerTest {
 
     private MockMvc mockMvc;
@@ -40,7 +39,7 @@ class ReviewControllerTest {
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void getReview() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/review?memberId=1&accommodationId=1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/review/1"))
                 .andExpect(status().isOk());
     }
 
@@ -52,5 +51,15 @@ class ReviewControllerTest {
                 .content(objectMapper.writeValueAsString(
                         new ReviewDto(1L, 1L, 2L, 3, "좋아요"))))
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("리뷰 등록하기 (이미 작성)")
+    @Test
+    void postReview2() throws Exception {
+                mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(
+                        new ReviewDto(1L, 1L, 1L, 3, "좋아요"))))
+                .andExpect(status().isBadRequest());
     }
 }
