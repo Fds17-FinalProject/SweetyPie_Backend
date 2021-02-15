@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -94,6 +93,7 @@ public class ReservationService {
             reservationDto.setBedroomNum(reservation.getAccommodation().getBedroomNum());
             reservationDto.setRatingAvg(reservation.getAccommodation().getRating());
             reservationDto.setReviewNum(reservation.getAccommodation().getReviewNum());
+            reservationDto.setPricePerDay(reservation.getAccommodation().getPrice());
             reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
             reservationDtoList.add(reservationDto);
         }
