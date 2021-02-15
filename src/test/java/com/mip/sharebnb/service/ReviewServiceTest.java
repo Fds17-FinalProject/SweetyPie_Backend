@@ -5,7 +5,6 @@ import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.model.Review;
-import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 import com.mip.sharebnb.repository.ReviewRepository;
@@ -36,9 +35,6 @@ class ReviewServiceTest {
 
     @Mock
     private ReviewRepository reviewRepository;
-
-    @Mock
-    private AccommodationRepository accommodationRepository;
 
     @Mock
     private MemberRepository memberRepository;

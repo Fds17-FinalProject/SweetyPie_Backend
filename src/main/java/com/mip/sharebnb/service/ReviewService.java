@@ -52,7 +52,7 @@ public class ReviewService {
         if (accommodation.getId() != reviewDto.getAccommodationId()) {
             throw new InvalidInputException("Accommodation Not Matched");
         }
-
+      
         Member member = memberRepository.findById(reviewDto.getMemberId())
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 

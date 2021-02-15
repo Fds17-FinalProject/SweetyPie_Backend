@@ -27,5 +27,5 @@ jwt:
   token-validity-in-seconds: 3600
 
 google:
-  client_id: 1040249436609-cgktc3s0g40m1dcmgftvi6g72d9jjn04.apps.googleusercontent.com
-  client_secret: JY_7wXyMWi-F2cM8bbB1wf_i
+  client_id: test
+  client_secret: test
