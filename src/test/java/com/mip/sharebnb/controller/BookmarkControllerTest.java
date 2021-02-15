@@ -1,6 +1,7 @@
 package com.mip.sharebnb.controller;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +31,7 @@ class BookmarkControllerTest {
                 .build();
     }
 
+    @DisplayName("북마크 가져오기")
     @Test
     void getBookmarks() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/bookmark/1"))
@@ -37,6 +39,7 @@ class BookmarkControllerTest {
                 .andExpect(jsonPath("$", hasSize(1)));
     }
 
+    @DisplayName("북마크 제거")
     @Test
     void deleteBookmark() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/bookmark?memberId=1&accommodationId=1"))
