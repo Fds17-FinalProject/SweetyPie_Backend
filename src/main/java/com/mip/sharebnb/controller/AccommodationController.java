@@ -54,14 +54,14 @@ public class AccommodationController {
             @RequestParam(required = false) String searchKeyword,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-            @RequestParam(required = false, defaultValue = "0") int guestNum, @PageableDefault Pageable page) {
+            @RequestParam(required = false, defaultValue = "1") int guestNum, @PageableDefault Pageable page) {
 
         return accommodationService.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
     }
 
     @GetMapping("/accommodations/mapSearch")
-    public Page<Accommodation> getAccommodationsByMapSearch(Float minLatitude, Float maxLatitude,
-                                                            Float minLongitude, Float maxLongitude,
+    public Page<Accommodation> getAccommodationsByMapSearch(@RequestParam float minLatitude, @RequestParam float maxLatitude,
+                                                            @RequestParam float minLongitude, @RequestParam float maxLongitude,
                                                             @PageableDefault Pageable page) {
 
         return accommodationService.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);

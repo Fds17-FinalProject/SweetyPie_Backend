@@ -36,12 +36,12 @@ public class AccommodationService {
 
     public Page<Accommodation> findByCityContaining(String searchKeyword, Pageable page) {
 
-        return accommodationRepository.findByCityContaining(searchKeyword, page);
+        return accommodationRepository.findByCityContainingOrderByRandId(searchKeyword, page);
     }
 
     public Page<Accommodation> findByBuildingTypeContaining(String buildingType, Pageable page) {
 
-        return accommodationRepository.findByBuildingTypeContaining(buildingType, page);
+        return accommodationRepository.findByBuildingTypeContainingOrderByRandId(buildingType, page);
     }
 
     public Page<Accommodation> findAccommodationsBySearch(String searchKeyword,

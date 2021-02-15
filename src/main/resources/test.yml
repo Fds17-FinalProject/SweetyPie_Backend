@@ -1,0 +1,31 @@
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    initialization-mode: always
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql: trace
+
+jwt:
+  header: Authorization
+  secret: c3ByaW5nLWJvb3QtcHJvamVjdC1haXJibmItY2xvbi1wcm9qZWN0LXNoYXJlYm5iLXN3ZWV0eXBpZS1mb3JudC1iYWNrZW5kLWNoZWVydXAtd2h5LXRoaXMtbmVlZC1zby1sb25nLXdoeQ==
+  token-validity-in-seconds: 3600
+
+google:
+  client_id: test
+  client_secret: test

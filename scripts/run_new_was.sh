@@ -23,6 +23,4 @@ fi
 nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/sharebnb-deploy/build/libs/* >/home/ubuntu/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 
-sleep 10
-
 exit 0

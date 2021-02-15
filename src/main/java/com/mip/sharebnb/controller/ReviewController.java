@@ -26,7 +26,6 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/review/{reservationId}")
-
     public Review getReview(@PathVariable long reservationId) {
 
         return reviewService.findReviewByReservationId(reservationId);
