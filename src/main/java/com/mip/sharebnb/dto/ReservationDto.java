@@ -56,6 +56,8 @@ public class ReservationDto {
 
     private int reviewNum;
 
+    private int pricePerDay;
+
     private AccommodationPicture accommodationPicture;
 
 }
