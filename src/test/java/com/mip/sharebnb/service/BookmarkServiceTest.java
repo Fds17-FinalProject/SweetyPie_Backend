@@ -38,7 +38,7 @@ class BookmarkServiceTest {
     @DisplayName("북마크 리스트 조회")
     @Test
     void findBookmarks() {
-        when(bookmarkRepository.findBookmarksByMemberId(1L)).thenReturn(mockBookmark());
+        when(bookmarkRepository.findBookmarksByMemberId(1L)).thenReturn(mockBookmarks());
         when(memberRepository.findById(1L)).thenReturn(mockMember());
 
         List<BookmarkDto> bookmarkDtos = bookmarkService.findBookmarksByMemberId(1L);
@@ -57,12 +57,14 @@ class BookmarkServiceTest {
     @DisplayName("북마크 제거")
     @Test
     void deleteBookmarkById() {
+        when(bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(1, 1))
+                .thenReturn(mockBookmark());
         bookmarkService.deleteBookmark(1, 1);
 
-        verify(bookmarkRepository, times(1)).deleteBookmarkByMemberIdAndAccommodationId(1, 1);
+        verify(bookmarkRepository, times(1)).delete(mockBookmark().get());
     }
 
-    private List<Bookmark> mockBookmark() {
+    private List<Bookmark> mockBookmarks() {
         List<Bookmark> bookmarks = new ArrayList<>();
         Member member = mockMember().get();
 
@@ -81,9 +83,20 @@ class BookmarkServiceTest {
         return bookmarks;
     }
 
+    private Optional<Bookmark> mockBookmark() {
+        Member member = mockMember().get();
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.setId(1L);
+        bookmark.setMember(member);
+        bookmark.setAccommodation(givenAccommodation(1L));
+
+        return Optional.of(bookmark);
+    }
+
     private Accommodation givenAccommodation(Long id) {
 
-        return new Accommodation(id, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
+        return new Accommodation(id, 0, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
     }
 
     private Optional<Member> mockMember() {
