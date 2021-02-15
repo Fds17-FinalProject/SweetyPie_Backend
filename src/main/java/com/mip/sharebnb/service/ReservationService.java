@@ -94,6 +94,7 @@ public class ReservationService {
             reservationDto.setRatingAvg(reservation.getAccommodation().getRating());
             reservationDto.setReviewNum(reservation.getAccommodation().getReviewNum());
             reservationDto.setPricePerDay(reservation.getAccommodation().getPrice());
+            reservationDto.setTotalPrice(reservation.getTotalPrice());
             reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
             reservationDtoList.add(reservationDto);
         }
