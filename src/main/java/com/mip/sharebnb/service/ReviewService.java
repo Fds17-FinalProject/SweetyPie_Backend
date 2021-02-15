@@ -60,10 +60,6 @@ public class ReviewService {
         float newRating = (accommodation.getRating() * accommodation.getReviewNum() + reviewDto.getRating())
                 / newReviewNum;
 
-        int newReviewNum = accommodation.getReviewNum() + 1;
-        float newRating = (accommodation.getRating() * accommodation.getReviewNum() + reviewDto.getRating())
-                / newReviewNum;
-
         reservation.setIsWrittenReview(true);
         accommodation.setRating(newRating);
         accommodation.setReviewNum(newReviewNum);
