@@ -1,6 +1,7 @@
 package com.mip.sharebnb.repository;
 
 import com.mip.sharebnb.model.Accommodation;
+import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.model.Review;
@@ -18,8 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest(properties = "spring.config.location="
-        + "classpath:application.yml,"
-        + "classpath:datasource.yml")
+        + "classpath:test.yml")
 class ReviewRepositoryTest {
 
     @Autowired
@@ -37,27 +37,26 @@ class ReviewRepositoryTest {
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void findReviewByReservationId() {
-        givenReview();
+        Accommodation accommodation = givenAccommodation();
+        Member member = givenMember();
+        Reservation reservation = givenReservation(accommodation, member);
+        givenReview(reservation);
 
         List<Review> reviews = reviewRepository.findAll();
 
-        Review review = reviewRepository.findReviewByReservationId(reviews.get(reviews.size() - 1).getReservation().getId()).get();
+        Review findReview = reviewRepository.findReviewByReservationId(reviews.get(reviews.size() - 1).getReservation().getId()).get();
 
-        assertThat(review.getRating()).isEqualTo(3);
+        assertThat(findReview.getRating()).isEqualTo(3);
     }
 
-    private void givenReview() {
-        Member member = givenMember();
-        Accommodation accommodation = givenAccommodation();
+    private Accommodation givenAccommodation() {
 
-        Review review = new Review(null, 3, "좋아요", LocalDate.now(), member, accommodation, givenReservation(member, accommodation));
-
-        reviewRepository.save(review);
+        return accommodationRepository.save(new Accommodation(null, 0, "대구광역시", "수성구", "대구광역시 수성구 xx로", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, new ArrayList<>(), null));
     }
 
     private Member givenMember() {
         Member member = new Member();
-        member.setEmail("ddd@gmail.com");
+        member.setEmail("d64u90@gmail.com");
         member.setName("이재복");
         member.setPassword("1234");
         member.setContact("12378");
@@ -66,16 +65,31 @@ class ReviewRepositoryTest {
         return memberRepository.save(member);
     }
 
-    private Accommodation givenAccommodation() {
-        Accommodation accommodation = new Accommodation(null, "서울특별시", "마포구", "서울특별시 마포구", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포", "버스 7016", "깔끔", "", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, null, null);
+    private Reservation givenReservation(Accommodation accommodation, Member member) {
+        Reservation reservation = new Reservation();
 
-        return accommodationRepository.save(accommodation);
-    }
+        LocalDate checkIn = LocalDate.of(2022, 3, 4);
+        LocalDate checkout = LocalDate.of(2022, 3, 9);
+        reservation.setCheckInDate(checkIn);
+        reservation.setCheckoutDate(checkout);
+        reservation.setGuestNum(3);
+        reservation.setTotalPrice(20000);
+        reservation.setPaymentDate(LocalDate.now());
+        reservation.setAccommodation(accommodation);
+        reservation.setMember(member);
 
-    private Reservation givenReservation(Member member, Accommodation accommodation) {
-        Reservation reservation = new Reservation(null, LocalDate.of(2022, 3, 5), LocalDate.of(2022, 3, 10)
-                , 3, 80000, false, null, null, null, member, accommodation, new ArrayList<>());
+        for (LocalDate localDate = reservation.getCheckInDate(); localDate.isBefore(reservation.getCheckoutDate()); localDate = localDate.plusDays(1)) {
+            BookedDate bookedDate = new BookedDate();
+            bookedDate.setDate(localDate);
+            bookedDate.setReservation(reservation);
+        }
 
         return reservationRepository.save(reservation);
+    }
+
+    private Review givenReview(Reservation reservation) {
+        Review review = new Review(null, 3f, "테스트 리뷰", LocalDate.now(), reservation.getMember(), reservation.getAccommodation(), reservation);
+
+        return reviewRepository.save(review);
     }
 }

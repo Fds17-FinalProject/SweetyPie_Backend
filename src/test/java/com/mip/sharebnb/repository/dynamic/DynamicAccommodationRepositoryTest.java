@@ -22,8 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest(properties = "spring.config.location="
-        + "classpath:application.yml,"
-        + "classpath:datasource.yml")
+        + "classpath:test.yml")
 class DynamicAccommodationRepositoryTest {
 
     @Autowired
@@ -80,12 +79,16 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("검색어 없이 메인 검색 테스트")
     @Test
     void searchIfSearchKeywordIsEmpty() {
-        Page<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2021, 5, 1), LocalDate.of(2021, 5, 5), 3, PageRequest.of(1, 10));
+        Accommodation accommodation = givenAccommodation();
+        setBookDates(accommodation);
+        accommodationRepository.save(accommodation);
 
-        assertThat(accommodations.toList().size()).isEqualTo(10);
+        Page<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.now(), null, 0, PageRequest.of(1, 10));
 
-        for (Accommodation accommodation : accommodations) {
-            assertThat(accommodation.getCapacity()).isGreaterThanOrEqualTo(3);
+        assertThat(accommodations.toList().size()).isEqualTo(0);
+
+        for (Accommodation acc : accommodations) {
+            assertThat(acc.getCapacity()).isGreaterThanOrEqualTo(3);
         }
     }
 
@@ -122,9 +125,9 @@ class DynamicAccommodationRepositoryTest {
         Member member = givenMember();
         Reservation reservation = givenReservation(accommodation, member);
 
-        for (int i = 0; i < 5; i++) {
+        for (LocalDate localDate = reservation.getCheckInDate(); localDate.isBefore(reservation.getCheckoutDate()); localDate = localDate.plusDays(1)) {
             BookedDate bookedDate = new BookedDate();
-            bookedDate.setDate(LocalDate.of(2022, 3, 4).plusDays(i));
+            bookedDate.setDate(localDate);
             bookedDate.setReservation(reservation);
         }
 

@@ -61,7 +61,6 @@ class ReviewServiceTest {
     @Test
     void postReview() {
         when(reservationRepository.findById(0L)).thenReturn(mockReservation());
-        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
         when(memberRepository.findById(1L)).thenReturn(mockMember());
 
         reviewService.writeReview(mockReviewDto());
@@ -73,6 +72,8 @@ class ReviewServiceTest {
     @Test
     void updateReview() {
         when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview());
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation());
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
 
         reviewService.updateReview(mockReviewDto());
 
@@ -115,7 +116,7 @@ class ReviewServiceTest {
     }
 
     private Optional<Accommodation> mockAccommodation() {
-        return Optional.of(new Accommodation(1L, "서울특별시", "마포구", "서울특별시 마포구 독막로 266", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, new ArrayList<>(), null, null));
+        return Optional.of(new Accommodation(1L, 0, "서울특별시", "마포구", "서울특별시 마포구 독막로 266", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, new ArrayList<>(), null, null));
     }
 
     private Optional<Member> mockMember() {
@@ -136,7 +137,7 @@ class ReviewServiceTest {
 
         LocalDate checkInDate = LocalDate.of(2020, 2, 22);
         LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
-        reservation.setId(1L);
+        reservation.setId(2L);
         reservation.setCheckInDate(checkInDate);
         reservation.setCheckoutDate(checkoutDate);
         reservation.setTotalPrice(50000);
