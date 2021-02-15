@@ -27,4 +27,4 @@ jasypt:
 server:
   error:
     include-message: ALWAYS
-    include-stacktrace: ALWAYS
+    include-stacktrace: never
