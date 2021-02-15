@@ -27,8 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @SpringBootTest(properties = "spring.config.location="
-        + "classpath:application.yml,"
-        + "classpath:datasource.yml")
+        + "classpath:test.yml")
 class ReservationControllerTest {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -55,8 +54,8 @@ class ReservationControllerTest {
                 .andExpect(jsonPath("$.[0].checkInDate").value("2022-02-10"))
                 .andExpect(jsonPath("$.[0].checkoutDate").value("2022-02-12"))
                 .andExpect(jsonPath("$.[0].isWrittenReview").value(true))
-                .andExpect(jsonPath("$.[0].city").value("서울시"))
-                .andExpect(jsonPath("$.[0].gu").value("강남구"))
+                .andExpect(jsonPath("$.[0].city").value("서울특별시"))
+                .andExpect(jsonPath("$.[0].gu").value("마포구"))
                 .andExpect(jsonPath("$.[0].accommodationPicture.url").value("picture"));
     }
 
