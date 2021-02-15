@@ -154,7 +154,7 @@ class ReservationControllerTest {
     @DisplayName("예약 수정")
     @Test
     void updateReservation() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2027, 2, 25))
@@ -162,11 +162,7 @@ class ReservationControllerTest {
                         .guestNum(3)
                         .totalPrice(30000)
                         .build())))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        logger.info(result::toString);
-
+                .andExpect(status().isOk());
     }
 
     @DisplayName("예약 변경시 예약내역을 찾을 수 없을 때 예외")
