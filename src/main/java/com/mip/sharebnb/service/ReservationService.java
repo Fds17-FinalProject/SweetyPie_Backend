@@ -93,6 +93,7 @@ public class ReservationService {
             reservationDto.setBedroomNum(reservation.getAccommodation().getBedroomNum());
             reservationDto.setRatingAvg(reservation.getAccommodation().getRating());
             reservationDto.setReviewNum(reservation.getAccommodation().getReviewNum());
+            reservationDto.setPricePerDay(reservation.getAccommodation().getPrice());
             reservationDto.setAccommodationPicture(reservation.getAccommodation().getAccommodationPictures().get(0));
             reservationDtoList.add(reservationDto);
         }
