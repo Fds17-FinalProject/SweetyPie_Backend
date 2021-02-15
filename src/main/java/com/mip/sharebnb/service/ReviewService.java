@@ -8,6 +8,7 @@ import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.Reservation;
 import com.mip.sharebnb.model.Review;
+import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 import com.mip.sharebnb.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     private final ReservationRepository reservationRepository;
+
+    private final MemberRepository memberRepository;
 
     public Review findReviewByReservationId(long reservationId) {
 
@@ -50,14 +53,8 @@ public class ReviewService {
             throw new InvalidInputException("Accommodation Not Matched");
         }
 
-        Member member = reservation.getMember();
-        if (member == null) {
-            throw new DataNotFoundException("Member Not Found");
-        }
-
-        if (member.getId() != reviewDto.getMemberId()) {
-            throw new InvalidInputException("Member Not Matched");
-        }
+        Member member = memberRepository.findById(reviewDto.getMemberId())
+                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
         int newReviewNum = accommodation.getReviewNum() + 1;
         float newRating = (accommodation.getRating() * accommodation.getReviewNum() + reviewDto.getRating())
@@ -95,14 +92,8 @@ public class ReviewService {
             throw new InvalidInputException("Accommodation Not Matched");
         }
 
-        Member member = reservation.getMember();
-        if (member == null) {
-            throw new DataNotFoundException("Member Not Found");
-        }
-
-        if (member.getId() != reviewDto.getMemberId()) {
-            throw new InvalidInputException("Member Not Matched");
-        }
+        memberRepository.findById(reviewDto.getMemberId())
+                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
         float originRating = accommodation.getRating();
         float newRating = originRating + (reviewDto.getRating() - originReview.getRating()) / accommodation.getReviewNum();
