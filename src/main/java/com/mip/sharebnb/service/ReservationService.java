@@ -175,7 +175,7 @@ public class ReservationService {
     private void setReservation(Reservation reservation, ReservationDto reservationDto){
         reservation.setCheckInDate(reservationDto.getCheckInDate());
         reservation.setCheckoutDate(reservationDto.getCheckoutDate());
-        reservation.setGuestNum(reservationDto.getGuestNum());
+        reservation.setTotalGuestNum(reservationDto.getTotalGuestNum());
         reservation.setAdults(reservationDto.getAdults());
         reservation.setChildren(reservationDto.getChildren());
         reservation.setInfants(reservationDto.getInfants());
