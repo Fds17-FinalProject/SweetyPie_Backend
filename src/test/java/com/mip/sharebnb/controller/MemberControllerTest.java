@@ -22,8 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Transactional
 @SpringBootTest(properties = "spring.config.location="
-        + "classpath:application.yml,"
-        + "classpath:datasource.yml")
+        + "classpath:test.yml")
 class MemberControllerTest {
 
     private MockMvc mockMvc;
@@ -41,22 +40,9 @@ class MemberControllerTest {
 
     @Test
     void getMemberTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                        .email("getmembertest@mail.com")
-                                        .birthDate(LocalDate.now())
-                                        .contact("011-111-1234")
-                                        .name("tester")
-                                        .password("password")
-                                        .build()
-                        )
-                ));
         mockMvc.perform(MockMvcRequestBuilders.get("/api/member/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("getmembertest@mail.com"));
+                .andExpect(jsonPath("$.email").value("test123@gmail.com"));
     }
 
     @Test
