@@ -8,6 +8,16 @@ Content-Type: application/json
   "password":"member33!@"
 }
 
+### 로그인 테스트-testDB
+
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{
+  "email":"test123@gmail.com",
+  "password":"12345678a!"
+}
+
 ### 로그아웃 테스트
 GET http://localhost:8080/api/logout
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDY1NDkyfQ.9Zai4qqm2UHhxtrcl8H_k7Bd5gcOTF-loKTGuywXtgA0kdVeUvvPHbHSpWP83meGYigLP6L8WGFYf2r2ZFVLOQ
