@@ -33,6 +33,8 @@
     - S3
     - Code Deploy
 - MySQL
+- H2
+- Redis
 - Git
 - Github
 - Git flow
