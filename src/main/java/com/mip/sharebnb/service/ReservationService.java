@@ -118,13 +118,8 @@ public class ReservationService {
 
     private Reservation updateCheckDuplicateBookedDate(List<BookedDate> duplicateBookedDate, Reservation reservation, ReservationDto reservationDto){
         if (duplicateBookedDate.isEmpty()) {
-            reservation.setCheckInDate(reservationDto.getCheckInDate());
-            reservation.setCheckoutDate(reservationDto.getCheckoutDate());
-            reservation.setGuestNum(reservationDto.getGuestNum());
-            reservation.setAdults(reservationDto.getAdults());
-            reservation.setChildren(reservationDto.getChildren());
-            reservation.setInfants(reservationDto.getInfants());
-            reservation.setTotalPrice(reservationDto.getTotalPrice());
+
+            setReservation(reservation, reservationDto);
 
             for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
                 setBookedDate(date, reservation.getAccommodation(), reservation);
@@ -141,10 +136,7 @@ public class ReservationService {
 
         if (bookedDates.isEmpty()) {
             Reservation reservation = new Reservation();
-            reservation.setCheckInDate(reservationDto.getCheckInDate());
-            reservation.setCheckoutDate(reservationDto.getCheckoutDate());
-            reservation.setGuestNum(reservationDto.getGuestNum());
-            reservation.setTotalPrice(reservationDto.getTotalPrice());
+            setReservation(reservation, reservationDto);
             reservation.setMember(member);
             reservation.setAccommodation(accommodation);
             reservation.setPaymentDate(LocalDate.now());
@@ -178,5 +170,15 @@ public class ReservationService {
         String strMemberId = String.format("%05d", memberId);
 
         return today + strAccommodationId + strMemberId;
+    }
+
+    private void setReservation(Reservation reservation, ReservationDto reservationDto){
+        reservation.setCheckInDate(reservationDto.getCheckInDate());
+        reservation.setCheckoutDate(reservationDto.getCheckoutDate());
+        reservation.setGuestNum(reservationDto.getGuestNum());
+        reservation.setAdults(reservationDto.getAdults());
+        reservation.setChildren(reservationDto.getChildren());
+        reservation.setInfants(reservationDto.getInfants());
+        reservation.setTotalPrice(reservationDto.getTotalPrice());
     }
 }
