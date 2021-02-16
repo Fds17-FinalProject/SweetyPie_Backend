@@ -2,7 +2,6 @@ package com.mip.sharebnb.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -10,15 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +33,12 @@ public class Reservation {
 
     private int guestNum;
 
+    private int adults;
+
+    private int children;
+
+    private int infants;
+
     private int totalPrice;
 
     private boolean isCanceled;
@@ -50,9 +47,9 @@ public class Reservation {
     private Boolean isWrittenReview;
 
     @CreationTimestamp
-    private LocalDate paymentDate; // 결제일
+    private LocalDate paymentDate;
 
-    private String reservationCode; // 우리가 만들어 줘야 함.
+    private String reservationCode;
 
     @ToString.Exclude
     @JsonIgnore
