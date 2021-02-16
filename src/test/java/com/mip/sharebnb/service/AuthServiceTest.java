@@ -1,11 +1,8 @@
 package com.mip.sharebnb.service;
 
-import com.mip.sharebnb.dto.BookmarkDto;
 import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.LoginDto;
-import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.exception.InvalidTokenException;
-import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -35,7 +31,6 @@ class AuthServiceTest {
     TokenProvider tokenProvider;
     @Autowired
     RedisTemplate<String, String> redisTemplate;
-
 
     @Test
     void signupBeforeGoogleLoginTest() {
@@ -88,6 +83,8 @@ class AuthServiceTest {
 
         String token = authService.login(loginDto);
 
-        assertThat(token).isNotEmpty();
+        Authentication authentication = tokenProvider.getAuthentication(token);
+
+        assertThat(authentication.getName()).isEqualTo(loginDto.getEmail());
     }
 }
