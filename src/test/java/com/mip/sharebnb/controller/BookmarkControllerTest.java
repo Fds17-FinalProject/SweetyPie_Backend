@@ -36,7 +36,7 @@ class BookmarkControllerTest {
     void getBookmarks() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/bookmark/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)));
+                .andExpect(jsonPath("$", hasSize(3)));
     }
 
     @DisplayName("북마크 제거")
