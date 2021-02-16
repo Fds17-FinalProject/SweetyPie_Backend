@@ -84,11 +84,10 @@ class AuthServiceTest {
 
         LoginDto loginDto = new LoginDto();
         loginDto.setEmail("test123@gmail.com");
-        loginDto.setPassword("1234");
+        loginDto.setPassword("12345678a!");
 
         String token = authService.login(loginDto);
 
         assertThat(token).isNotEmpty();
     }
-
 }

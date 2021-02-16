@@ -1,5 +1,5 @@
 
-insert into member(id, email, password, name, contact, birth_date, is_deleted, role ) values(1, 'test123@gmail.com', '$2a$10$l4Vp0DfrB7CkSqasVyVSOufyP9FCqWReCtYd7xJ1ZYXrYAjXuUXji', 'tester', '01022223333', '19990911', false, 'MEMBER');
+insert into member(id, email, password, name, contact, birth_date, is_deleted, role ) values(1, 'test123@gmail.com', '$2a$10$VT30l3sY6tkd53TId.hhUe9LfV2mWixZtyuFLAQh7V2aJrQy65146', 'tester', '01022223333', '19990911', false, 'MEMBER');
 
 INSERT INTO accommodation (id, city, gu, title, accommodation_desc, accommodation_type, address, bathroom_num, bed_num,
                            bedroom_num, building_type, capacity, contact, host_desc, host_name, host_review_num,
@@ -28,3 +28,9 @@ insert into accommodation_picture(id, url, accommodation_id) values(1, 'picture'
 
 INSERT INTO bookmark(id, accommodation_id, member_id)
 values (1, 1, 1);
+
+INSERT INTO bookmark(id, accommodation_id, member_id)
+values (2, 1, 1);
+
+INSERT INTO bookmark(id, accommodation_id, member_id)
+values (3, 1, 1);

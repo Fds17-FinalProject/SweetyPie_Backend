@@ -2,6 +2,7 @@ package com.mip.sharebnb.dto;
 
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class LoginDto {
 
     @Email(message = "이메일 형식이 아닙니다")
