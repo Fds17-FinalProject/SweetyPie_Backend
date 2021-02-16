@@ -1,13 +1,19 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.ReservationDto;
-import com.mip.sharebnb.exception.*;
-import com.mip.sharebnb.model.*;
-import com.mip.sharebnb.repository.*;
-
+import com.mip.sharebnb.exception.DataNotFoundException;
+import com.mip.sharebnb.exception.DuplicateValueExeption;
+import com.mip.sharebnb.exception.InvalidInputException;
+import com.mip.sharebnb.model.Accommodation;
+import com.mip.sharebnb.model.BookedDate;
+import com.mip.sharebnb.model.Member;
+import com.mip.sharebnb.model.Reservation;
+import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.repository.BookedDateRepository;
+import com.mip.sharebnb.repository.MemberRepository;
+import com.mip.sharebnb.repository.ReservationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicReservationRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReservationService {
 
     private final DynamicReservationRepository dynamicReservationRepository;
@@ -32,7 +39,6 @@ public class ReservationService {
         return makeReservationDtoList(reservations);
     }
 
-    @Transactional
     public Reservation makeAReservation(ReservationDto reservationDto) throws RuntimeException {
 
         handleCheckoutBeforeCheckInInputException(reservationDto);
@@ -46,7 +52,6 @@ public class ReservationService {
         return checkDuplicateReservationDate(bookedDates, reservationDto, member, accommodation);
     }
 
-    @Transactional
     public Reservation updateReservation(Long reservationId, ReservationDto reservationDto) {
 
         handleCheckoutBeforeCheckInInputException(reservationDto);
@@ -61,7 +66,6 @@ public class ReservationService {
 
     }
 
-    @Transactional
     public void deleteReservation(Long reservationId) {
 
         reservationRepository.deleteById(reservationId);
@@ -84,6 +88,7 @@ public class ReservationService {
             reservationDto.setCheckInDate(reservation.getCheckInDate());
             reservationDto.setCheckoutDate(reservation.getCheckoutDate());
             reservationDto.setIsWrittenReview(reservation.getIsWrittenReview());
+            reservationDto.setTotalGuestNum(reservation.getTotalGuestNum());
             reservationDto.setAdultNum(reservation.getAdultNum());
             reservationDto.setChildNum(reservation.getChildNum());
             reservationDto.setInfantNum(reservation.getInfantNum());
