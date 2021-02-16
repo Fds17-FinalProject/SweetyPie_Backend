@@ -121,6 +121,9 @@ public class ReservationService {
             reservation.setCheckInDate(reservationDto.getCheckInDate());
             reservation.setCheckoutDate(reservationDto.getCheckoutDate());
             reservation.setGuestNum(reservationDto.getGuestNum());
+            reservation.setAdults(reservationDto.getAdults());
+            reservation.setChildren(reservationDto.getChildren());
+            reservation.setInfants(reservationDto.getInfants());
             reservation.setTotalPrice(reservationDto.getTotalPrice());
 
             for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
