@@ -31,11 +31,11 @@ public class ReservationDto {
     private int totalGuestNum;
 
     @Min(value = 1, message = "성인 인원은 최소 1명입니다.")
-    private int adults;
+    private int adultNum;
 
-    private int children;
+    private int childNum;
 
-    private int infants;
+    private int infantNum;
 
     @Positive(message = "총 비용이 맞지 않습니다.")
     private int totalPrice;
