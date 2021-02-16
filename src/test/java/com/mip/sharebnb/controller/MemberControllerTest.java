@@ -38,13 +38,16 @@ class MemberControllerTest {
                 .build();
     }
 
+    @DisplayName("회원정보검색")
     @Test
     void getMemberTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/member/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/member/1")
+                .header("Authorization", "token"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test123@gmail.com"));
     }
 
+    @DisplayName("회원가입")
     @Test
     void signupTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
@@ -53,10 +56,10 @@ class MemberControllerTest {
                         objectMapper.writeValueAsString(
                                 MemberDto.builder()
                                 .email("signuptest@mail.com")
-                                .birthDate(LocalDate.now())
-                                .contact("011-111-1234")
-                                .name("tester")
-                                .password("password")
+                                .birthDate(LocalDate.of(1999,2,3))
+                                .contact("01012341234")
+                                .name("테스터")
+                                .password("12345678a!")
                                 .build()
                         )
                 ))
@@ -72,17 +75,17 @@ class MemberControllerTest {
                         objectMapper.writeValueAsString(
                                 MemberDto.builder()
                                         .email("signuptest")
-                                        .birthDate(LocalDate.of(2000,2,22))
-                                        .contact("01111111234")
-                                        .name("tester")
-                                        .password("password1234")
+                                        .birthDate(LocalDate.of(1999,2,3))
+                                        .contact("01012341234")
+                                        .name("테스터")
+                                        .password("12345678a!")
                                         .build()
                         )
                 ))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("비밀번호형식에러")
+    @DisplayName("회원가입비밀번호형식에러")
     @Test
     void signupPasswordValidationTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
@@ -90,15 +93,15 @@ class MemberControllerTest {
                 .content(
                         objectMapper.writeValueAsString(
                                 MemberDto.builder()
-                                        .email("signuptest@member.com")
-                                        .birthDate(LocalDate.of(2000,2,22))
-                                        .contact("01111111234")
-                                        .name("tester")
-                                        .password("password1234")
+                                        .email("signuptest@mail.com")
+                                        .birthDate(LocalDate.of(1999,2,3))
+                                        .contact("01012341234")
+                                        .name("테스터")
+                                        .password("password123")
                                         .build()
                         )
                 ))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @DisplayName("이름&연락처형식에러")
@@ -109,33 +112,22 @@ class MemberControllerTest {
                 .content(
                         objectMapper.writeValueAsString(
                                 MemberDto.builder()
-                                        .email("signuptest@member.com")
-                                        .birthDate(LocalDate.of(2000,2,22))
-                                        .contact("0111eee")
+                                        .email("signuptest@mail.com")
+                                        .birthDate(LocalDate.of(1999,2,3))
+                                        .contact("010547")
                                         .name("테스ter")
-                                        .password("password12#$")
+                                        .password("12345678a!")
                                         .build()
                         )
                 ))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("회원정보수정-email")
     @Test
     void updateMemberTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                        .email("updatetest@mail.com")
-                                        .birthDate(LocalDate.now())
-                                        .contact("011-111-1234")
-                                        .name("tester")
-                                        .password("password")
-                                        .build()
-                        )
-                ));
         mockMvc.perform(MockMvcRequestBuilders.put("/api/member/1")
+                .header("Authorization", "token")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
                         objectMapper.writeValueAsString(
@@ -147,22 +139,11 @@ class MemberControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @DisplayName("회원탈퇴")
     @Test
     void withdrawalTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                        .email("deletetest@mail.com")
-                                        .birthDate(LocalDate.now())
-                                        .contact("011-111-1234")
-                                        .name("tester")
-                                        .password("password")
-                                        .build()
-                        )
-                ));
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/member/1"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/member/1")
+                .header("Authorization", "token"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
     }
