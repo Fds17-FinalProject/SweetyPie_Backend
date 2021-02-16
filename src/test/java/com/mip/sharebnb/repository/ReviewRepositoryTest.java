@@ -72,7 +72,7 @@ class ReviewRepositoryTest {
         LocalDate checkout = LocalDate.of(2022, 3, 9);
         reservation.setCheckInDate(checkIn);
         reservation.setCheckoutDate(checkout);
-        reservation.setGuestNum(3);
+        reservation.setTotalGuestNum(3);
         reservation.setTotalPrice(20000);
         reservation.setPaymentDate(LocalDate.now());
         reservation.setAccommodation(accommodation);
