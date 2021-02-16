@@ -1,7 +1,11 @@
 package com.mip.sharebnb.service;
 
+import com.mip.sharebnb.dto.BookmarkDto;
 import com.mip.sharebnb.dto.GoogleMemberDto;
+import com.mip.sharebnb.dto.LoginDto;
+import com.mip.sharebnb.dto.MemberDto;
 import com.mip.sharebnb.exception.InvalidTokenException;
+import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -19,21 +25,17 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest(properties = "spring.config.location="
-        + "classpath:application.yml,"
-        + "classpath:datasource.yml")
-
+        + "classpath:test.yml")
+@Transactional
 class AuthServiceTest {
 
+    @Autowired
     AuthService authService;
+    @Autowired
     TokenProvider tokenProvider;
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
-    @Autowired
-    public AuthServiceTest(AuthService authService, TokenProvider tokenProvider) {
-        this.authService = authService;
-        this.tokenProvider = tokenProvider;
-    }
 
     @Test
     void signupBeforeGoogleLoginTest() {
@@ -75,6 +77,18 @@ class AuthServiceTest {
         valueOperations.set(token, token, Duration.ofSeconds(10));
 
         assertThrows(InvalidTokenException.class, () -> authService.isInTheInvalidTokenList(request));
+    }
+
+    @Test
+    void loginServiceTest() {
+
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test123@gmail.com");
+        loginDto.setPassword("1234");
+
+        String token = authService.login(loginDto);
+
+        assertThat(token).isNotEmpty();
     }
 
 }
