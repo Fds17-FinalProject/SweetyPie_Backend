@@ -4,6 +4,7 @@ import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.LoginDto;
 import com.mip.sharebnb.exception.InvalidTokenException;
 import com.mip.sharebnb.security.jwt.TokenProvider;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +33,7 @@ class AuthServiceTest {
     @Autowired
     RedisTemplate<String, String> redisTemplate;
 
+    @DisplayName("구글가입이후로그인")
     @Test
     void signupBeforeGoogleLoginTest() {
         GoogleMemberDto memberDto = GoogleMemberDto.builder()
@@ -48,6 +50,7 @@ class AuthServiceTest {
         assertThat(authentication.getName()).isEqualTo(memberDto.getEmail());
     }
 
+    @DisplayName("로그아웃테스트")
     @Test
     void logoutTest() {
         String token = "ThisIsTestToken1234";
@@ -62,6 +65,7 @@ class AuthServiceTest {
         assertThat(result).isEqualTo(token);
     }
 
+    @DisplayName("토큰")
     @Test
     void isInTheInvalidTokenListTest() {
         String token = "isInTheInvalidTokenListTest1234";
