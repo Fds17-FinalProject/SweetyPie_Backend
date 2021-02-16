@@ -32,19 +32,19 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations")
-    public Page<Accommodation> getAllAccommodations(@PageableDefault Pageable page) {
+    public Page<Accommodation> getAllAccommodations(@PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findAccommodations(page);
     }
 
     @GetMapping("/accommodations/city/{city}")
-    public Page<Accommodation> getAccommodationsByCity(@PathVariable String city, @PageableDefault Pageable page) {
+    public Page<Accommodation> getAccommodationsByCity(@PathVariable String city, @PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findByCityContaining(city, page);
     }
 
     @GetMapping("/accommodations/buildingType/{buildingType}")
-    public Page<Accommodation> getAccommodationsByBuildingType(@PathVariable String buildingType, @PageableDefault Pageable page) {
+    public Page<Accommodation> getAccommodationsByBuildingType(@PathVariable String buildingType, @PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findByBuildingTypeContaining(buildingType, page);
     }
@@ -54,7 +54,7 @@ public class AccommodationController {
             @RequestParam(required = false) String searchKeyword,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-            @RequestParam(required = false, defaultValue = "1") int guestNum, @PageableDefault Pageable page) {
+            @RequestParam(required = false, defaultValue = "1") int guestNum, @PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
     }
@@ -62,7 +62,7 @@ public class AccommodationController {
     @GetMapping("/accommodations/mapSearch")
     public Page<Accommodation> getAccommodationsByMapSearch(@RequestParam float minLatitude, @RequestParam float maxLatitude,
                                                             @RequestParam float minLongitude, @RequestParam float maxLongitude,
-                                                            @PageableDefault Pageable page) {
+                                                            @PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);
     }

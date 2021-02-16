@@ -25,6 +25,7 @@ public class Accommodation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ColumnDefault("0")
     private int randId;
 
     private String city;
