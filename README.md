@@ -42,3 +42,6 @@
 - Slack
 - Notion
 - Zoom
+
+## DB 구조 (ERD)
+![ERD](img/SweetyPie_ERD.png)
