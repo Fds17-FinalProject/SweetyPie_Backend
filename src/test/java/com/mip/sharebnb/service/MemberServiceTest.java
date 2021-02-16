@@ -5,6 +5,7 @@ import com.mip.sharebnb.model.Member;
 import com.mip.sharebnb.model.MemberRole;
 import com.mip.sharebnb.repository.MemberRepository;
 import org.eclipse.jdt.core.compiler.InvalidInputException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,6 +31,7 @@ class MemberServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @DisplayName("회원정보검색")
     @Test
     void getMemberTest() {
         Member member = Member.builder()
@@ -45,6 +47,7 @@ class MemberServiceTest {
         assertThat(result.getEmail()).isEqualTo("member@mail.com");
     }
 
+    @DisplayName("회원가입")
     @Test
     void signupTest() {
 
@@ -72,7 +75,7 @@ class MemberServiceTest {
         assertThat(result.getEmail()).isEqualTo("member@mail.com");
     }
 
-
+    @DisplayName("회원정보수정")
     @Test
     void updateMemberTest() throws InvalidInputException {
         LocalDate date = LocalDate.now();
@@ -88,6 +91,7 @@ class MemberServiceTest {
         verify(memberRepository, times(1)).findById(1L);
     }
 
+    @DisplayName("회원탈퇴")
     @Test
     void withdrawalTest() {
         Member member = Member.builder()
