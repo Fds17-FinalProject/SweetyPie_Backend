@@ -18,7 +18,7 @@
 ### 백엔드 목표
 - RESTful 한 API 구현
 - 각 기능에 적합한 TEST 구현
-- 도메인 분석 및 DB 설
+- 도메인 분석 및 DB 설계
 
 ## Skills & Tools
 - Java
@@ -42,3 +42,6 @@
 - Slack
 - Notion
 - Zoom
+
+## DB 구조 (ERD)
+![ERD](img/SweetyPie_ERD.png)
