@@ -31,7 +31,7 @@ public class Reservation {
     @Column(nullable = false)
     private LocalDate checkoutDate;
 
-    private int guestNum;
+    private int totalGuestNum;
 
     private int adults;
 
