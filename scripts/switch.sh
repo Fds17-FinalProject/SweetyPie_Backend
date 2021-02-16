@@ -8,7 +8,6 @@ TARGET_PORT=0
 
 echo "> Nginx currently proxies to ${CURRENT_PORT}."
 
-CURRENT_PID=$(lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
 # Toggle port number
 if [ ${CURRENT_PORT} -eq 8081 ]; then
   TARGET_PORT=8082

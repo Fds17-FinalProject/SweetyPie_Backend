@@ -45,7 +45,8 @@ class AccommodationControllerTest {
     @Test
     void getAllAccommodations() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)));
     }
 
     @DisplayName("도시 명으로 숙박 검색")
