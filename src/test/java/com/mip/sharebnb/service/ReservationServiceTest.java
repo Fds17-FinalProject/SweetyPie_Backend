@@ -5,7 +5,6 @@ import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.exception.DuplicateValueExeption;
 import com.mip.sharebnb.model.*;
 import com.mip.sharebnb.repository.AccommodationRepository;
-import com.mip.sharebnb.repository.BookedDateRepository;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicReservationRepository;
@@ -39,9 +38,6 @@ class ReservationServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
-
-    @Mock
-    private BookedDateRepository bookedDateRepository;
 
     @Mock
     private DynamicReservationRepository dynamicReservationRepository;
@@ -94,7 +90,7 @@ class ReservationServiceTest {
 
         assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2020, 3, 20));
         assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2020, 3, 22));
-        assertThat(reservation.getGuestNum()).isEqualTo(3);
+        assertThat(reservation.getTotalGuestNum()).isEqualTo(3);
         assertThat(reservation.getTotalPrice()).isEqualTo(30000);
         assertThat(reservation.getReservationCode()).isEqualTo("202102070000100001");
 
@@ -124,7 +120,7 @@ class ReservationServiceTest {
 
         assertThat(reservation.getCheckInDate()).isEqualTo(dto.getCheckInDate());
         assertThat(reservation.getCheckoutDate()).isEqualTo(dto.getCheckoutDate());
-        assertThat(reservation.getGuestNum()).isEqualTo(dto.getGuestNum());
+        assertThat(reservation.getTotalGuestNum()).isEqualTo(dto.getTotalGuestNum());
         assertThat(reservation.getTotalPrice()).isEqualTo(dto.getTotalPrice());
 
     }
@@ -180,7 +176,7 @@ class ReservationServiceTest {
         reservation.setCheckInDate(checkInDate);
         reservation.setCheckoutDate(checkoutDate);
         reservation.setTotalPrice(50000);
-        reservation.setGuestNum(5);
+        reservation.setTotalGuestNum(5);
         reservation.setIsWrittenReview(false);
         reservation.setAccommodation(accommodation);
 
@@ -231,7 +227,7 @@ class ReservationServiceTest {
 
         reservation.setCheckInDate(LocalDate.of(2020, 3, 20));
         reservation.setCheckoutDate(LocalDate.of(2020, 3, 22));
-        reservation.setGuestNum(3);
+        reservation.setTotalGuestNum(3);
         reservation.setTotalPrice(30000);
         reservation.setReservationCode("202102070000100001");
 
@@ -245,7 +241,7 @@ class ReservationServiceTest {
         dto.setAccommodationId(1L);
         dto.setCheckInDate(LocalDate.of(2020, 3, 20));
         dto.setCheckoutDate(LocalDate.of(2020, 3, 22));
-        dto.setGuestNum(3);
+        dto.setTotalGuestNum(3);
         dto.setTotalPrice(30000);
 
         return dto;
@@ -266,7 +262,7 @@ class ReservationServiceTest {
         reservation.setCheckInDate(checkInDate);
         reservation.setCheckoutDate(checkoutDate);
         reservation.setTotalPrice(50000);
-        reservation.setGuestNum(5);
+        reservation.setTotalGuestNum(5);
         reservation.setAccommodation(accommodation);
         reservation.setBookedDates(mockBookedDate());
 

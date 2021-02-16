@@ -1,6 +1,7 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.GoogleMemberDto;
+import com.mip.sharebnb.dto.LoginDto;
 import com.mip.sharebnb.exception.InvalidTokenException;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -19,21 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest(properties = "spring.config.location="
-        + "classpath:application.yml,"
-        + "classpath:datasource.yml")
-
+        + "classpath:test.yml")
+@Transactional
 class AuthServiceTest {
 
+    @Autowired
     AuthService authService;
+    @Autowired
     TokenProvider tokenProvider;
     @Autowired
     RedisTemplate<String, String> redisTemplate;
-
-    @Autowired
-    public AuthServiceTest(AuthService authService, TokenProvider tokenProvider) {
-        this.authService = authService;
-        this.tokenProvider = tokenProvider;
-    }
 
     @Test
     void signupBeforeGoogleLoginTest() {
@@ -77,4 +74,17 @@ class AuthServiceTest {
         assertThrows(InvalidTokenException.class, () -> authService.isInTheInvalidTokenList(request));
     }
 
+    @Test
+    void loginServiceTest() {
+
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test123@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        String token = authService.login(loginDto);
+
+        Authentication authentication = tokenProvider.getAuthentication(token);
+
+        assertThat(authentication.getName()).isEqualTo(loginDto.getEmail());
+    }
 }

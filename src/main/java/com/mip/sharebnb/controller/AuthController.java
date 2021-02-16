@@ -1,11 +1,10 @@
 package com.mip.sharebnb.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mip.sharebnb.dto.GoogleMemberDto;
-import com.mip.sharebnb.dto.LoginDto;
-import com.mip.sharebnb.dto.TokenDto;
+import com.mip.sharebnb.dto.*;
 import com.mip.sharebnb.security.jwt.JwtFilter;
 import com.mip.sharebnb.service.AuthService;
+import com.mip.sharebnb.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin
@@ -24,16 +24,19 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final BookmarkService bookmarkService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<List<BookmarkDto>> login(@Valid @RequestBody LoginDto loginDto) {
 
         String jwt = authService.login(loginDto);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + jwt);
 
-        return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+        List<BookmarkDto> bookmarks = bookmarkService.findBookmarksByMemberEmail(loginDto.getEmail());
+
+        return new ResponseEntity<>(bookmarks, httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping("login/google")
