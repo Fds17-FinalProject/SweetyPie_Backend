@@ -137,7 +137,7 @@ class ReviewServiceTest {
         reservation.setCheckInDate(checkInDate);
         reservation.setCheckoutDate(checkoutDate);
         reservation.setTotalPrice(50000);
-        reservation.setGuestNum(5);
+        reservation.setTotalGuestNum(5);
         reservation.setIsWrittenReview(false);
         reservation.setAccommodation(mockAccommodation().get());
 
