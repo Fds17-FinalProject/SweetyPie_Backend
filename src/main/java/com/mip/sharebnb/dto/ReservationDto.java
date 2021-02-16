@@ -6,10 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Builder
@@ -30,7 +27,7 @@ public class ReservationDto {
     @FutureOrPresent(message = "체크아웃은 현재날짜 이후의 날짜이어야 합니다.")
     private LocalDate checkoutDate;
 
-    @Min(value = 1, message = "총 인원은 최소 1명입니다.") @Max(value = 8, message = "총 인원은 최대 8명입니다.")
+    @Size(min = 1, max = 8, message = "총 인원은 최소 1명에서 최대 8명입니다.")
     private int totalGuestNum;
 
     @Min(value = 1, message = "성인 인원은 최소 1명입니다.")
