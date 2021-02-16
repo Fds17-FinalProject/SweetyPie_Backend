@@ -4,7 +4,6 @@ import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Reservation;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +12,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sun.javaws.JnlpxArgs.verify;
-import static org.mockito.Mockito.times;
 
 @Transactional
 @SpringBootTest(properties = "spring.config.location="
