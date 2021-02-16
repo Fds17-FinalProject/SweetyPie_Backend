@@ -1,5 +1,5 @@
 
-insert into member(id, email, password, name, contact, birth_date, is_deleted) values(1, 'test123@gmail.com', '1234', 'tester', '01022223333', '19990911', false);
+insert into member(id, email, password, name, contact, birth_date, is_deleted, role ) values(1, 'test123@gmail.com', '$2a$10$l4Vp0DfrB7CkSqasVyVSOufyP9FCqWReCtYd7xJ1ZYXrYAjXuUXji', 'tester', '01022223333', '19990911', false, 'MEMBER');
 
 INSERT INTO accommodation (id, city, gu, title, accommodation_desc, accommodation_type, address, bathroom_num, bed_num,
                            bedroom_num, building_type, capacity, contact, host_desc, host_name, host_review_num,
