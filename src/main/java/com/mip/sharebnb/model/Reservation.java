@@ -33,11 +33,11 @@ public class Reservation {
 
     private int totalGuestNum;
 
-    private int adultsNum;
+    private int adultNum;
 
-    private int childrenNum;
+    private int childNum;
 
-    private int infantsNum;
+    private int infantNum;
 
     private int totalPrice;
 
