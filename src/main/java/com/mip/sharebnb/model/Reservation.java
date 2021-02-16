@@ -33,15 +33,13 @@ public class Reservation {
 
     private int totalGuestNum;
 
-    private int adults;
+    private int guestAdults;
 
-    private int children;
+    private int guestChildren;
 
-    private int infants;
+    private int guestInfants;
 
     private int totalPrice;
-
-    private boolean isCanceled;
 
     @ColumnDefault(value = "false")
     private Boolean isWrittenReview;
