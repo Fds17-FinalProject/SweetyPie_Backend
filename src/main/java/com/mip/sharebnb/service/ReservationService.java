@@ -84,9 +84,9 @@ public class ReservationService {
             reservationDto.setCheckInDate(reservation.getCheckInDate());
             reservationDto.setCheckoutDate(reservation.getCheckoutDate());
             reservationDto.setIsWrittenReview(reservation.getIsWrittenReview());
-            reservationDto.setAdults(reservation.getAdults());
-            reservationDto.setChildren(reservation.getChildren());
-            reservationDto.setInfants(reservation.getInfants());
+            reservationDto.setAdultNum(reservation.getAdultNum());
+            reservationDto.setChildNum(reservation.getChildNum());
+            reservationDto.setInfantNum(reservation.getInfantNum());
             reservationDto.setCity(reservation.getAccommodation().getCity());
             reservationDto.setGu(reservation.getAccommodation().getGu());
             reservationDto.setTitle(reservation.getAccommodation().getTitle());
@@ -140,7 +140,6 @@ public class ReservationService {
             reservation.setMember(member);
             reservation.setAccommodation(accommodation);
             reservation.setPaymentDate(LocalDate.now());
-            reservation.setCanceled(false);
             reservation.setReservationCode(setReservationCode(accommodation.getId(), member.getId()));
 
             for (LocalDate date = reservationDto.getCheckInDate(); date.isBefore(reservationDto.getCheckoutDate()); date = date.plusDays(1)) {
@@ -176,9 +175,9 @@ public class ReservationService {
         reservation.setCheckInDate(reservationDto.getCheckInDate());
         reservation.setCheckoutDate(reservationDto.getCheckoutDate());
         reservation.setTotalGuestNum(reservationDto.getTotalGuestNum());
-        reservation.setAdults(reservationDto.getAdults());
-        reservation.setChildren(reservationDto.getChildren());
-        reservation.setInfants(reservationDto.getInfants());
+        reservation.setAdultNum(reservationDto.getAdultNum());
+        reservation.setChildNum(reservationDto.getChildNum());
+        reservation.setInfantNum(reservationDto.getInfantNum());
         reservation.setTotalPrice(reservationDto.getTotalPrice());
     }
 }
