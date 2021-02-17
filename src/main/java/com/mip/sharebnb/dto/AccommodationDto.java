@@ -2,7 +2,9 @@ package com.mip.sharebnb.dto;
 
 import com.mip.sharebnb.model.AccommodationPicture;
 import com.mip.sharebnb.model.BookedDate;
+import com.mip.sharebnb.model.Bookmark;
 import com.mip.sharebnb.model.Review;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccommodationDto {
+
+    private long id;
 
     private String city;
 
@@ -58,9 +62,66 @@ public class AccommodationDto {
 
     private int hostReviewNum;
 
+    private boolean isBookmarked;
+
     private List<Review> reviews;
 
     private List<BookedDate> bookedDates;
 
     private List<AccommodationPicture> accommodationPictures;
+
+    @QueryProjection
+    public AccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int capacity, int price, String contact, float latitude, float longitude, String locationDesc, String transportationDesc, String accommodationDesc, float rating, int reviewNum, String accommodationType, String buildingType, String hostName, String hostDesc, int hostReviewNum) {
+        this.id = id;
+        this.city = city;
+        this.gu = gu;
+        this.address = address;
+        this.title = title;
+        this.bathroomNum = bathroomNum;
+        this.bedroomNum = bedroomNum;
+        this.bedNum = bedNum;
+        this.capacity = capacity;
+        this.price = price;
+        this.contact = contact;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.locationDesc = locationDesc;
+        this.transportationDesc = transportationDesc;
+        this.accommodationDesc = accommodationDesc;
+        this.rating = rating;
+        this.reviewNum = reviewNum;
+        this.accommodationType = accommodationType;
+        this.buildingType = buildingType;
+        this.hostName = hostName;
+        this.hostDesc = hostDesc;
+        this.hostReviewNum = hostReviewNum;
+    }
+
+    @QueryProjection
+    public AccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int capacity, int price, String contact, float latitude, float longitude, String locationDesc, String transportationDesc, String accommodationDesc, float rating, int reviewNum, String accommodationType, String buildingType, String hostName, String hostDesc, int hostReviewNum, Bookmark bookmark) {
+        this.id = id;
+        this.city = city;
+        this.gu = gu;
+        this.address = address;
+        this.title = title;
+        this.bathroomNum = bathroomNum;
+        this.bedroomNum = bedroomNum;
+        this.bedNum = bedNum;
+        this.capacity = capacity;
+        this.price = price;
+        this.contact = contact;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.locationDesc = locationDesc;
+        this.transportationDesc = transportationDesc;
+        this.accommodationDesc = accommodationDesc;
+        this.rating = rating;
+        this.reviewNum = reviewNum;
+        this.accommodationType = accommodationType;
+        this.buildingType = buildingType;
+        this.hostName = hostName;
+        this.hostDesc = hostDesc;
+        this.hostReviewNum = hostReviewNum;
+        this.isBookmarked = bookmark != null;
+    }
 }
