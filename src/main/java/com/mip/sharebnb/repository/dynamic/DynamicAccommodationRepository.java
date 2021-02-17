@@ -1,5 +1,7 @@
 package com.mip.sharebnb.repository.dynamic;
 
+import com.mip.sharebnb.dto.AccommodationDto;
+import com.mip.sharebnb.dto.QAccommodationDto;
 import com.mip.sharebnb.dto.QSearchAccommodationDto;
 import com.mip.sharebnb.dto.SearchAccommodationDto;
 import com.mip.sharebnb.model.QAccommodation;
@@ -26,6 +28,34 @@ public class DynamicAccommodationRepository {
     QAccommodation ac = new QAccommodation("ac");
     QBookedDate bd = new QBookedDate("bd");
     QBookmark bookmark = new QBookmark("bookmark");
+
+    public AccommodationDto findById(Long memberId, Long accommodationId) {
+        AccommodationDto result;
+
+        if (memberId != null) {
+            result = queryFactory
+                    .select(new QAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.capacity, ac.price, ac.contact, ac.latitude, ac.longitude, ac.locationDesc, ac.transportationDesc,
+                            ac.accommodationDesc, ac.rating, ac.reviewNum, ac.accommodationType, ac.buildingType, ac.hostName, ac.hostDesc,
+                            ac.hostReviewNum, bookmark))
+                    .from(ac)
+                    .where(ac.id.eq(accommodationId))
+                    .leftJoin(bookmark)
+                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
+                    .fetchOne();
+        } else {
+            result = queryFactory
+                    .select(new QAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.capacity, ac.price, ac.contact, ac.latitude, ac.longitude, ac.locationDesc, ac.transportationDesc,
+                            ac.accommodationDesc, ac.rating, ac.reviewNum, ac.accommodationType, ac.buildingType, ac.hostName, ac.hostDesc,
+                            ac.hostReviewNum))
+                    .from(ac)
+                    .where(ac.id.eq(accommodationId))
+                    .fetchOne();
+        }
+
+        return result;
+    }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Long memberId, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
