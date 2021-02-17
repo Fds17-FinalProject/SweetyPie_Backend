@@ -65,7 +65,7 @@ public class TokenProvider implements InitializingBean {
                 .compact();
     }
 
-    public long parseTokenToGetUserId(String token) {
+    public Long parseTokenToGetUserId(String token) {
         Claims claims = Jwts
                 .parserBuilder()
                 .setSigningKey(key)
