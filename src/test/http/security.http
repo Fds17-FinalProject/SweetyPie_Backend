@@ -38,7 +38,7 @@ Content-Type: application/json
 ### 회원정보찾기 테스트
 
 GET http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDY1NDkyfQ.9Zai4qqm2UHhxtrcl8H_k7Bd5gcOTF-loKTGuywXtgA0kdVeUvvPHbHSpWP83meGYigLP6L8WGFYf2r2ZFVLOQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTI3MDUzfQ.GVRaEk6tC0jmyBi_fexDp9ijOSO3OY_BEyk1MU8AdRIilT5PdOwNr5dtk7ajK_YpJuiQ0zGi4k0qRqOgIAgqsQ
 
 ### 회원정보수정 : 메일주소
 
@@ -91,4 +91,9 @@ Content-Type: application/json
   "birthDate": "2020-02-03",
   "contact":"010-9908-5511"
 }
+
+### 로그아웃 테스트
+GET http://localhost:8080/api/logout
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTI3MDUzfQ.GVRaEk6tC0jmyBi_fexDp9ijOSO3OY_BEyk1MU8AdRIilT5PdOwNr5dtk7ajK_YpJuiQ0zGi4k0qRqOgIAgqsQ
+
 
