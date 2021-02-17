@@ -127,4 +127,46 @@ public class DynamicAccommodationRepository {
 
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
+
+    public Page<SearchAccommodationDto> findByBuildingType(String buildingType, Long memberId, Pageable page) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(ac.buildingType.eq(buildingType));
+
+        QueryResults<SearchAccommodationDto> results = getQueryResults(builder, memberId, page);
+
+        return new PageImpl<>(results.getResults(), page, results.getTotal());
+    }
+
+    private QueryResults<SearchAccommodationDto> getQueryResults(BooleanBuilder builder, Long memberId, Pageable page) {
+        QueryResults<SearchAccommodationDto> results;
+
+        if (memberId != null) {
+            results = queryFactory
+                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
+                            ac.accommodationType, ac.buildingType, ac.hostName, bookmark))
+                    .from(ac)
+                    .where(builder)
+                    .leftJoin(bookmark)
+                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
+                    .orderBy(ac.randId.asc())
+                    .offset(page.getOffset())
+                    .limit(page.getPageSize())
+                    .fetchResults();
+        } else {
+            results = queryFactory
+                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
+                            ac.accommodationType, ac.buildingType, ac.hostName))
+                    .from(ac)
+                    .where(builder)
+                    .orderBy(ac.randId.asc())
+                    .offset(page.getOffset())
+                    .limit(page.getPageSize())
+                    .fetchResults();
+        }
+
+        return results;
+    }
 }
