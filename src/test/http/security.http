@@ -1,6 +1,7 @@
 ### 로그인 테스트
 
-POST http://localhost:8080/api/login
+#POST http://localhost:8080/api/login
+POST http://ec2-13-125-206-158.ap-northeast-2.compute.amazonaws.com/api/login
 Content-Type: application/json
 
 {
@@ -18,13 +19,30 @@ Content-Type: application/json
   "password":"12345678a!"
 }
 
+### 로그인 테스트- 서버
+
+POST http://3.34.122.155/api/login
+Content-Type: application/json
+
+{
+  "email":"test123@gmail.com",
+  "password":"12345678a!"
+}
+
+
+
 ### 로그아웃 테스트
 GET http://localhost:8080/api/logout
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDY1NDkyfQ.9Zai4qqm2UHhxtrcl8H_k7Bd5gcOTF-loKTGuywXtgA0kdVeUvvPHbHSpWP83meGYigLP6L8WGFYf2r2ZFVLOQ
 
+### 로그아웃 테스트 - 서버
+GET http://3.34.122.155/api/logout
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzQGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjoxLCJleHAiOjE2MTM1MzM0MDZ9.XmI9Vmfvc4FnH3Jv0pHgdZo6EG5d3ZPWpczWILksXTmmMjBmz8jSpI2UVcNQqWSXEkD_-17AnFc_yj-IqP-sww
+
 ### 회원가입 테스트
 
-POST http://localhost:8080/api/member
+#POST http://localhost:8080/api/member
+POST http://ec2-13-125-206-158.ap-northeast-2.compute.amazonaws.com/api/member
 Content-Type: application/json
 
 {
@@ -33,12 +51,18 @@ Content-Type: application/json
   "name":"한글",
   "birthDate": "2002-02-10",
   "contact":"01008551213"
-   }
+}
 
 ### 회원정보찾기 테스트
 
 GET http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTI3MDUzfQ.GVRaEk6tC0jmyBi_fexDp9ijOSO3OY_BEyk1MU8AdRIilT5PdOwNr5dtk7ajK_YpJuiQ0zGi4k0qRqOgIAgqsQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzQGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjoxLCJleHAiOjE2MTM1MzM0MDZ9.XmI9Vmfvc4FnH3Jv0pHgdZo6EG5d3ZPWpczWILksXTmmMjBmz8jSpI2UVcNQqWSXEkD_-17AnFc_yj-IqP-sww
+
+### 회원정보찾기 테스트 -서버
+
+GET http://3.34.122.155/api/member/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzQGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjoxLCJleHAiOjE2MTM1MzM0MDZ9.XmI9Vmfvc4FnH3Jv0pHgdZo6EG5d3ZPWpczWILksXTmmMjBmz8jSpI2UVcNQqWSXEkD_-17AnFc_yj-IqP-sww
+
 
 ### 회원정보수정 : 메일주소
 
@@ -48,7 +72,7 @@ Content-Type: application/json
 {
   "email":"member1@mail.com"
 
-   }
+}
 
 ### 회원정보수정 : 비밀번호변경
 
@@ -91,9 +115,4 @@ Content-Type: application/json
   "birthDate": "2020-02-03",
   "contact":"010-9908-5511"
 }
-
-### 로그아웃 테스트
-GET http://localhost:8080/api/logout
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTI3MDUzfQ.GVRaEk6tC0jmyBi_fexDp9ijOSO3OY_BEyk1MU8AdRIilT5PdOwNr5dtk7ajK_YpJuiQ0zGi4k0qRqOgIAgqsQ
-
 
