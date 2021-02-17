@@ -24,9 +24,7 @@ public class MemberController {
 
     @GetMapping("/member/{member_id}")
     @PreAuthorize("authenticated")
-    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id, HttpServletRequest request) {
-
-        authService.isInTheInvalidTokenList(request);
+    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
 
         Member member = memberService.getMember(member_id);
 
@@ -46,10 +44,7 @@ public class MemberController {
     @PreAuthorize("authenticated")
     public ResponseEntity<MemberDto> updateMember(
             @PathVariable Long member_id,
-            @Valid @RequestBody MemberDto memberDto,
-            HttpServletRequest request) throws InvalidInputException {
-
-        authService.isInTheInvalidTokenList(request);
+            @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
 
         Member member = memberService.updateMember(member_id, memberDto);
         return ResponseEntity.ok(mapToMemberDto(member));
@@ -57,9 +52,7 @@ public class MemberController {
 
     @DeleteMapping("/member/{member_id}")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Boolean> withdrawalMember(@PathVariable Long member_id, HttpServletRequest request) {
-
-        authService.isInTheInvalidTokenList(request);
+    public ResponseEntity<Boolean> withdrawalMember(@PathVariable Long member_id) {
 
         Member member = memberService.withdrawal(member_id);
         return ResponseEntity.ok(member.isDeleted());

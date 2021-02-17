@@ -1,5 +1,6 @@
 ### 로그인 테스트
 
+#POST http://localhost:8080/api/login
 POST http://localhost:8080/api/login
 Content-Type: application/json
 
@@ -18,27 +19,50 @@ Content-Type: application/json
   "password":"12345678a!"
 }
 
+### 로그인 테스트- 서버
+
+POST http://3.34.122.155/api/login
+Content-Type: application/json
+
+{
+  "email":"test123@gmail.com",
+  "password":"12345678a!"
+}
+
+
+
 ### 로그아웃 테스트
 GET http://localhost:8080/api/logout
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDY1NDkyfQ.9Zai4qqm2UHhxtrcl8H_k7Bd5gcOTF-loKTGuywXtgA0kdVeUvvPHbHSpWP83meGYigLP6L8WGFYf2r2ZFVLOQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTgwMDY1fQ.q6zut4omnOUtOm7RYMZOcReD_wB8ULG7LEvPxARCo6wiqJvZhgm3rWy37os-lUaTWr4O0LIeRJ9stefYXe9Gwg
+
+### 로그아웃 테스트 - 서버
+GET http://3.34.122.155/api/logout
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzQGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjoxLCJleHAiOjE2MTM1MzM0MDZ9.XmI9Vmfvc4FnH3Jv0pHgdZo6EG5d3ZPWpczWILksXTmmMjBmz8jSpI2UVcNQqWSXEkD_-17AnFc_yj-IqP-sww
 
 ### 회원가입 테스트
 
+#POST http://localhost:8080/api/member
 POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-  "email":"member@mail.com",
+  "email":"member1@mail.com",
   "password":"member33!@",
   "name":"한글",
   "birthDate": "2002-02-10",
   "contact":"01008551213"
-   }
+}
 
 ### 회원정보찾기 테스트
 
-GET http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDY1NDkyfQ.9Zai4qqm2UHhxtrcl8H_k7Bd5gcOTF-loKTGuywXtgA0kdVeUvvPHbHSpWP83meGYigLP6L8WGFYf2r2ZFVLOQ
+GET http://localhost:8080/api/member/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTgwMDY1fQ.q6zut4omnOUtOm7RYMZOcReD_wB8ULG7LEvPxARCo6wiqJvZhgm3rWy37os-lUaTWr4O0LIeRJ9stefYXe9Gwg
+
+### 회원정보찾기 테스트 -서버
+
+GET http://3.34.122.155/api/member/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzQGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjoxLCJleHAiOjE2MTM1MzM0MDZ9.XmI9Vmfvc4FnH3Jv0pHgdZo6EG5d3ZPWpczWILksXTmmMjBmz8jSpI2UVcNQqWSXEkD_-17AnFc_yj-IqP-sww
+
 
 ### 회원정보수정 : 메일주소
 
@@ -48,12 +72,12 @@ Content-Type: application/json
 {
   "email":"member1@mail.com"
 
-   }
+}
 
 ### 회원정보수정 : 비밀번호변경
 
-PUT http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEyOTY4MTgzfQ.VhKEZ-dc62IJ82dpYHRzJh8vmHvOfyrTmHCn1Khl-Y48hH2ijH3qVo6pJB8b-Z7PQLV1Lorjqe8SvutwfpmR_A
+PUT http://localhost:8080/api/member/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTgwMDY1fQ.q6zut4omnOUtOm7RYMZOcReD_wB8ULG7LEvPxARCo6wiqJvZhgm3rWy37os-lUaTWr4O0LIeRJ9stefYXe9Gwg
 Content-Type: application/json
 
 {
@@ -64,7 +88,7 @@ Content-Type: application/json
 ### 회원삭제 테스트
 
 DELETE http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6MSwiZXhwIjoxNjEzMDY1MzYwfQ.dT6ytAm_RBXTGTkZFfqzfTxe1LX3Y3ueACNCkoFx4_AZZRObzfcR9-MU-LSoNYUYQtGJ_lIB_6iVi7p3aXJbhA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTQyMzEyfQ.AiJMgt4jXbX4wnD78avHe16kYu8fS9J81uaWSR2ahoexi5LW8toznmKC9BUb7TrV4HdtFHKka9-snpgB-yPBGA
 
 ### 구글로그인
 
