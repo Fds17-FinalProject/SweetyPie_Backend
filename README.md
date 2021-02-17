@@ -1,3 +1,5 @@
+![Logo](/docs/img/logo.png)
+
 # SweetyPie, Airbnb Clone Project
 > 기존의 숙소 예약 사이트, airbnb를 클론하는 프로젝트입니다.
 

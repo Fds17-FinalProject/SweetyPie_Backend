@@ -70,12 +70,12 @@ class ReservationControllerTest {
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2100, 5, 11))
                         .checkoutDate(LocalDate.of(2100, 5, 12))
-                        .totalGuestNum(6)
                         .memberId(1L)
                         .accommodationId(1L)
-                        .adultNum(4)
-                        .childNum(2)
-                        .infantNum(0)
+                        .totalGuestNum(4)
+                        .adultNum(2)
+                        .childNum(1)
+                        .infantNum(1)
                         .totalPrice(30000)
                         .build())))
                 .andExpect(status().isOk());
@@ -99,7 +99,7 @@ class ReservationControllerTest {
                         .infantNum(0)
                         .totalPrice(11000)
                         .build())))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @DisplayName("totalGuestNum or totalPrice 값이 잘 못 들어왔을 때 예외")
@@ -166,7 +166,10 @@ class ReservationControllerTest {
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2027, 2, 25))
                         .checkoutDate(LocalDate.of(2027, 2, 28))
-                        .totalGuestNum(3)
+                        .totalGuestNum(4)
+                        .adultNum(2)
+                        .childNum(1)
+                        .infantNum(1)
                         .totalPrice(30000)
                         .build())))
                 .andExpect(status().isOk());
@@ -180,10 +183,13 @@ class ReservationControllerTest {
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2020, 2, 20))
                         .checkoutDate(LocalDate.of(2020, 2, 22))
-                        .totalGuestNum(3)
+                        .totalGuestNum(4)
+                        .adultNum(2)
+                        .childNum(1)
+                        .infantNum(1)
                         .totalPrice(30000)
                         .build())))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
 
     }
 
@@ -196,7 +202,10 @@ class ReservationControllerTest {
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2022, 2, 20))
                         .checkoutDate(LocalDate.of(2022, 2, 22))
-                        .totalGuestNum(3)
+                        .totalGuestNum(4)
+                        .adultNum(2)
+                        .childNum(1)
+                        .infantNum(1)
                         .totalPrice(30000)
                         .build())))
                 .andExpect(status().isBadRequest());

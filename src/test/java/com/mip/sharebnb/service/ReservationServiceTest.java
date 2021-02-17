@@ -5,6 +5,7 @@ import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.exception.DuplicateValueExeption;
 import com.mip.sharebnb.model.*;
 import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.repository.BookedDateRepository;
 import com.mip.sharebnb.repository.MemberRepository;
 import com.mip.sharebnb.repository.ReservationRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicReservationRepository;
@@ -38,6 +39,9 @@ class ReservationServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private BookedDateRepository bookedDateRepository;
 
     @Mock
     private DynamicReservationRepository dynamicReservationRepository;
@@ -75,21 +79,21 @@ class ReservationServiceTest {
         ReservationDto reservationDto = ReservationDto.builder()
                 .memberId(1L)
                 .accommodationId(1L)
-                .checkInDate(LocalDate.of(2020, 3, 20))
-                .checkoutDate(LocalDate.of(2020, 3, 22))
+                .checkInDate(LocalDate.of(2022, 3, 20))
+                .checkoutDate(LocalDate.of(2022, 3, 22))
                 .build();
 
         when(memberRepository.findById(reservationDto.getMemberId())).thenReturn(mockMember());
         when(accommodationRepository.findById(reservationDto.getAccommodationId())).thenReturn(mockAccommodation());
-        when(dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
 
         ReservationDto dto = mockReservationDto();
 
         Reservation reservation = reservationService.makeAReservation(dto);
 
-        assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2020, 3, 20));
-        assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2020, 3, 22));
+        assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2022, 3, 20));
+        assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2022, 3, 22));
         assertThat(reservation.getTotalGuestNum()).isEqualTo(3);
         assertThat(reservation.getTotalPrice()).isEqualTo(30000);
         assertThat(reservation.getReservationCode()).isEqualTo("202102070000100001");
@@ -110,8 +114,8 @@ class ReservationServiceTest {
     @DisplayName("예약수정 성공")
     @Test
     void updateReservationSuccess(){
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22)));
-        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(new ArrayList<>());
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
 
         ReservationDto dto = mockReservationDto();
@@ -129,7 +133,7 @@ class ReservationServiceTest {
     @Test
     void updateReservationFail(){
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22)));
-        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2020, 3, 20), LocalDate.of(2020, 3, 22))).thenReturn(mockBookedDate());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
 
         ReservationDto dto = mockReservationDto();
 
@@ -225,8 +229,8 @@ class ReservationServiceTest {
 
         Reservation reservation = new Reservation();
 
-        reservation.setCheckInDate(LocalDate.of(2020, 3, 20));
-        reservation.setCheckoutDate(LocalDate.of(2020, 3, 22));
+        reservation.setCheckInDate(LocalDate.of(2022, 3, 20));
+        reservation.setCheckoutDate(LocalDate.of(2022, 3, 22));
         reservation.setTotalGuestNum(3);
         reservation.setTotalPrice(30000);
         reservation.setReservationCode("202102070000100001");
@@ -239,9 +243,10 @@ class ReservationServiceTest {
         ReservationDto dto = new ReservationDto();
         dto.setMemberId(1L);
         dto.setAccommodationId(1L);
-        dto.setCheckInDate(LocalDate.of(2020, 3, 20));
-        dto.setCheckoutDate(LocalDate.of(2020, 3, 22));
+        dto.setCheckInDate(LocalDate.of(2022, 3, 20));
+        dto.setCheckoutDate(LocalDate.of(2022, 3, 22));
         dto.setTotalGuestNum(3);
+        dto.setAdultNum(1);
         dto.setTotalPrice(30000);
 
         return dto;
@@ -280,24 +285,19 @@ class ReservationServiceTest {
 
         BookedDate bookedDate1 = new BookedDate();
         bookedDate1.setId(1L);
-        bookedDate1.setDate(LocalDate.of(2020, 2, 20));
+        bookedDate1.setDate(LocalDate.of(2022, 2, 20));
         bookedDate1.setAccommodation(accommodation);
+        bookedDate1.setReservation(reservation);
 
         bookedDates.add(bookedDate1);
 
         BookedDate bookedDate2 = new BookedDate();
         bookedDate2.setId(2L);
-        bookedDate2.setDate(LocalDate.of(2020, 2, 21));
+        bookedDate2.setDate(LocalDate.of(2022, 2, 21));
         bookedDate2.setAccommodation(accommodation);
+        bookedDate2.setReservation(reservation);
 
         bookedDates.add(bookedDate2);
-
-        BookedDate bookedDate3 = new BookedDate();
-        bookedDate3.setDate(LocalDate.of(2020, 2, 22));
-        bookedDate3.setId(3L);
-        bookedDate3.setAccommodation(accommodation);
-
-        bookedDates.add(bookedDate3);
 
         return bookedDates;
 
