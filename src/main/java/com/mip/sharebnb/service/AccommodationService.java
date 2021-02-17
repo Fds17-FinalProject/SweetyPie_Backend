@@ -38,9 +38,9 @@ public class AccommodationService {
         return accRepository.findAccommodationsBy(pageable);
     }
 
-    public Page<Accommodation> findByCityContaining(String searchKeyword, Pageable page) {
+    public Page<SearchAccommodationDto> findByCity(HttpServletRequest request, String city, Pageable page) {
 
-        return accRepository.findByCityContainingOrderByRandId(searchKeyword, page);
+        return dynamicAccRepository.findByCity(city, parseRequestToMemberId(request), page);
     }
 
     public Page<SearchAccommodationDto> findByBuildingType(HttpServletRequest request, String buildingType, Pageable page) {
