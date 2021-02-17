@@ -17,12 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
     public Member signup(MemberDto memberDto) {
         checkDuplicateEmail(memberDto);
 
@@ -38,7 +38,6 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    @Transactional
     public Member signupGoogleMember(GoogleMemberDto memberDto) {
 
         Member member = Member.builder()
@@ -54,14 +53,12 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    @Transactional
     public Member getMember(Long id) {
         return memberRepository
                 .findById(id)
                 .orElseThrow(() -> new DataNotFoundException("조회하는 멤버가 존재하지 않습니다"));
     }
 
-    @Transactional
     public Member updateMember(Long id, MemberDto memberDto) throws InvalidInputException {
 
         Member member = memberRepository
@@ -87,7 +84,6 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    @Transactional
     public Member withdrawal(Long id) {
         Member member = memberRepository
                 .findById(id)
