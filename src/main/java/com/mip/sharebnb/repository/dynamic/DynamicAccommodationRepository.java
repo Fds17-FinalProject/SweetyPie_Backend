@@ -85,6 +85,16 @@ public class DynamicAccommodationRepository {
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
 
+    public Page<SearchAccommodationDto> findByCity(String city, Long memberId, Pageable page) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        builder.and(ac.city.eq(city));
+
+        QueryResults<SearchAccommodationDto> results = getQueryResults(builder, memberId, page);
+
+        return new PageImpl<>(results.getResults(), page, results.getTotal());
+    }
+
     private QueryResults<SearchAccommodationDto> getQueryResults(BooleanBuilder builder, Long memberId, Pageable page) {
         QueryResults<SearchAccommodationDto> results;
 
