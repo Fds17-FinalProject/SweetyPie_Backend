@@ -1,6 +1,7 @@
 package com.mip.sharebnb.controller;
 
 import com.mip.sharebnb.dto.AccommodationDto;
+import com.mip.sharebnb.dto.SearchAccommodationDto;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.service.AccommodationService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 
 @CrossOrigin
@@ -50,20 +52,20 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations/search")
-    public Page<Accommodation> getAccommodationsBySearch(
-            @RequestParam(required = false) String searchKeyword,
+    public Page<SearchAccommodationDto> getAccommodationsBySearch(
+            HttpServletRequest request, @RequestParam(required = false) String searchKeyword,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
             @RequestParam(required = false, defaultValue = "1") int guestNum, @PageableDefault(size = 20) Pageable page) {
 
-        return accommodationService.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
+        return accommodationService.findAccommodationsBySearch(request, searchKeyword, checkIn, checkout, guestNum, page);
     }
 
     @GetMapping("/accommodations/mapSearch")
-    public Page<Accommodation> getAccommodationsByMapSearch(@RequestParam float minLatitude, @RequestParam float maxLatitude,
+    public Page<SearchAccommodationDto> getAccommodationsByMapSearch(@RequestParam float minLatitude, @RequestParam float maxLatitude,
                                                             @RequestParam float minLongitude, @RequestParam float maxLongitude,
-                                                            @PageableDefault(size = 20) Pageable page) {
+                                                            HttpServletRequest request, @PageableDefault(size = 20) Pageable page) {
 
-        return accommodationService.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);
+        return accommodationService.findAccommodationsByMapSearch(request, minLatitude, maxLatitude, minLongitude, maxLongitude, page);
     }
 }
