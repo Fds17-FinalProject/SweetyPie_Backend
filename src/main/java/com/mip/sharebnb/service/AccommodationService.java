@@ -61,29 +61,19 @@ public class AccommodationService {
                                                                    LocalDate checkIn, LocalDate checkout,
                                                                    int guestNum, Pageable page) {
 
-        if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
-            throw new InvalidInputException("Checkout time is before check-in time");
-        }
-
-        if (checkout != null && checkout.isBefore(LocalDate.now())) {
-            throw new InvalidInputException("Checkout time has passed");
-        }
-
-        if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            throw new InvalidInputException("Check-in time has passed");
-        }
-
-        if (checkIn == null) {
-            checkIn = LocalDate.now();
-        }
+        checkIn = validateCheckInCheckout(checkIn, checkout);
 
         return dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(HttpServletRequest request, float minLatitude, float maxLatitude,
-                                                                      float minLongitude, float maxLongitude, Pageable page) {
+                                                                      float minLongitude, float maxLongitude,
+                                                                      LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
 
-        return dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, parseRequestToMemberId(request), page);
+        checkIn = validateCheckInCheckout(checkIn, checkout);
+
+        return dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
+                checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
     }
 
     private AccommodationDto setListObjects(AccommodationDto acc) {
@@ -107,5 +97,26 @@ public class AccommodationService {
         }
 
         return memberId;
+    }
+
+    private LocalDate validateCheckInCheckout(LocalDate checkIn, LocalDate checkout) {
+
+        if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
+            throw new InvalidInputException("Checkout time is before check-in time");
+        }
+
+        if (checkout != null && checkout.isBefore(LocalDate.now())) {
+            throw new InvalidInputException("Checkout time has passed");
+        }
+
+        if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
+            throw new InvalidInputException("Check-in time has passed");
+        }
+
+        if (checkIn == null) {
+            checkIn = LocalDate.now();
+        }
+
+        return checkIn;
     }
 }
