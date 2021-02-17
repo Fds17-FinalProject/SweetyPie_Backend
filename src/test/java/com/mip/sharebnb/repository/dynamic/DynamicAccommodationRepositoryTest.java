@@ -96,7 +96,7 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("지도 범위(좌표 기준) 내 검색")
     @Test
     void searchByCoordinate() {
-        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f, null, PageRequest.of(1, 10));
+        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f, LocalDate.now(), null, 0, null, PageRequest.of(1, 10));
 
         for (SearchAccommodationDto accommodation : accommodations) {
             assertThat(accommodation.getLatitude()).isGreaterThan(37f);
