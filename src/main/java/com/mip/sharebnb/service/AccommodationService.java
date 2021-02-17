@@ -5,7 +5,10 @@ import com.mip.sharebnb.dto.SearchAccommodationDto;
 import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.exception.InvalidInputException;
 import com.mip.sharebnb.model.Accommodation;
+import com.mip.sharebnb.repository.AccommodationPictureRepository;
 import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.repository.BookedDateRepository;
+import com.mip.sharebnb.repository.ReviewRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,15 +25,21 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AccommodationService {
 
+    private final AccommodationPictureRepository accommodationPictureRepository;
     private final DynamicAccommodationRepository dynamicAccRepository;
+    private final BookedDateRepository bookedDateRepository;
     private final AccommodationRepository accRepository;
+    private final ReviewRepository reviewRepository;
     private final TokenProvider tokenProvider;
 
-    public AccommodationDto findById(Long id) {
-        Accommodation accommodation = accRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
+    public AccommodationDto findById(HttpServletRequest request, Long id) {
+        AccommodationDto accommodationDto = dynamicAccRepository.findById(parseRequestToMemberId(request), id);
 
-        return mappingAccommodationDto(accommodation);
+        if (accommodationDto == null) {
+            throw new DataNotFoundException("Accommodation Not Found");
+        }
+
+        return setListObjects(accommodationDto);
     }
 
     public Page<Accommodation> findAccommodations(Pageable pageable) {
@@ -77,21 +86,13 @@ public class AccommodationService {
         return dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, parseRequestToMemberId(request), page);
     }
 
-    private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
+    private AccommodationDto setListObjects(AccommodationDto acc) {
 
-        return new AccommodationDto(accommodation.getCity(),
-                accommodation.getGu(), accommodation.getAddress(), accommodation.getTitle(),
-                accommodation.getBathroomNum(), accommodation.getBedroomNum(),
-                accommodation.getBedNum(), accommodation.getCapacity(),
-                accommodation.getPrice(), accommodation.getContact(),
-                accommodation.getLatitude(), accommodation.getLongitude(),
-                accommodation.getLocationDesc(), accommodation.getTransportationDesc(),
-                accommodation.getAccommodationDesc(), accommodation.getRating(),
-                accommodation.getReviewNum(), accommodation.getAccommodationType(),
-                accommodation.getBuildingType(), accommodation.getHostName(),
-                accommodation.getHostDesc(), accommodation.getHostReviewNum(),
-                accommodation.getReviews(), accommodation.getBookedDates(),
-                accommodation.getAccommodationPictures());
+        acc.setAccommodationPictures(accommodationPictureRepository.findByAccommodationId(acc.getId()));
+        acc.setBookedDates(bookedDateRepository.findBookedDatesByAccommodationId(acc.getId()));
+        acc.setReviews(reviewRepository.findReviewsByAccommodationId(acc.getId()));
+
+        return acc;
     }
 
     private Long parseRequestToMemberId(HttpServletRequest request) {
