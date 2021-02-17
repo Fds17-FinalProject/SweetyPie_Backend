@@ -1,8 +1,10 @@
 package com.mip.sharebnb.repository.dynamic;
 
-import com.mip.sharebnb.model.Accommodation;
+import com.mip.sharebnb.dto.QSearchAccommodationDto;
+import com.mip.sharebnb.dto.SearchAccommodationDto;
 import com.mip.sharebnb.model.QAccommodation;
 import com.mip.sharebnb.model.QBookedDate;
+import com.mip.sharebnb.model.QBookmark;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPAExpressions;
@@ -23,8 +25,9 @@ public class DynamicAccommodationRepository {
 
     QAccommodation ac = new QAccommodation("ac");
     QBookedDate bd = new QBookedDate("bd");
+    QBookmark bookmark = new QBookmark("bookmark");
 
-    public Page<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
+    public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Long memberId, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
@@ -39,7 +42,7 @@ public class DynamicAccommodationRepository {
                 if (keyword.charAt(keyword.length() - 1) == '시') {
                     keyword = keyword.substring(0, keyword.length() - 1);
                 }
-                acBuilder.and(ac.city.contains(keyword).or(ac.gu.contains(keyword)));
+                acBuilder.and(ac.city.startsWith(keyword).or(ac.gu.startsWith(keyword)));
             }
         }
 
@@ -56,33 +59,71 @@ public class DynamicAccommodationRepository {
                 .from(bd)
                 .where(bdBuilder)));
 
-        QueryResults<Accommodation> results = queryFactory
-                .select(ac)
-                .from(ac)
-                .where(acBuilder)
-                .orderBy(ac.randId.asc())
-                .offset(page.getOffset())
-                .limit(page.getPageSize())
-                .fetchResults();
+        QueryResults<SearchAccommodationDto> results;
+
+        if (memberId != null) {
+            results = queryFactory
+                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
+                            ac.accommodationType, ac.buildingType, ac.hostName, bookmark))
+                    .from(ac)
+                    .where(acBuilder)
+                    .leftJoin(bookmark)
+                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
+                    .orderBy(ac.randId.asc())
+                    .offset(page.getOffset())
+                    .limit(page.getPageSize())
+                    .fetchResults();
+        } else {
+            results = queryFactory
+                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
+                            ac.accommodationType, ac.buildingType, ac.hostName))
+                    .from(ac)
+                    .where(acBuilder)
+                    .orderBy(ac.randId.asc())
+                    .offset(page.getOffset())
+                    .limit(page.getPageSize())
+                    .fetchResults();
+        }
 
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
 
-    public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
-                                                             float minLongitude, float maxLongitude, Pageable page) {
+    public Page<SearchAccommodationDto> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
+                                                             float minLongitude, float maxLongitude, Long memberId, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(ac.latitude.between(minLatitude, maxLatitude));
         builder.and(ac.longitude.between(minLongitude, maxLongitude));
 
-        QueryResults<Accommodation> results = queryFactory
-                .select(ac)
-                .from(ac)
-                .where(builder)
-                .orderBy(ac.randId.asc())
-                .offset(page.getOffset())
-                .limit(page.getPageSize())
-                .fetchResults();
+        QueryResults<SearchAccommodationDto> results;
+
+        if (memberId != null) {
+            results = queryFactory
+                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
+                            ac.accommodationType, ac.buildingType, ac.hostName, bookmark))
+                    .from(ac)
+                    .where(builder)
+                    .leftJoin(bookmark)
+                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
+                    .orderBy(ac.randId.asc())
+                    .offset(page.getOffset())
+                    .limit(page.getPageSize())
+                    .fetchResults();
+        } else {
+            results = queryFactory
+                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
+                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
+                            ac.accommodationType, ac.buildingType, ac.hostName))
+                    .from(ac)
+                    .where(builder)
+                    .orderBy(ac.randId.asc())
+                    .offset(page.getOffset())
+                    .limit(page.getPageSize())
+                    .fetchResults();
+        }
 
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
