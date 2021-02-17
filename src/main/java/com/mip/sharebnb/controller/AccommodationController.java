@@ -30,7 +30,7 @@ public class AccommodationController {
     @GetMapping("/accommodation/{id}")
     public AccommodationDto getAccommodation(HttpServletRequest request, @PathVariable Long id) {
 
-        return accommodationService.findById(id);
+        return accommodationService.findById(request, id);
     }
 
     @GetMapping("/accommodations")
