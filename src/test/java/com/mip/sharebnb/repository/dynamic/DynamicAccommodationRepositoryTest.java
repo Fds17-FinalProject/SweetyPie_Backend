@@ -1,5 +1,6 @@
 package com.mip.sharebnb.repository.dynamic;
 
+import com.mip.sharebnb.dto.SearchAccommodationDto;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Member;
@@ -45,16 +46,16 @@ class DynamicAccommodationRepositoryTest {
             accommodationRepository.save(accommodation);
         }
 
-        Page<Accommodation> accommodations = dynamicAccommodationRepository.
+        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.
                 findAccommodationsBySearch("대구",
                         LocalDate.of(2022, 3, 3),
                         LocalDate.of(2022, 3, 4), 1,
-                        PageRequest.of(0, 10));
+                        null, PageRequest.of(0, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
 
         if (!accommodations.isEmpty()) {
-            for (Accommodation ac : accommodations) {
+            for (SearchAccommodationDto ac : accommodations) {
                 assertThat(ac.getCity()).isEqualTo("대구광역시");
             }
         }
@@ -67,11 +68,11 @@ class DynamicAccommodationRepositoryTest {
         setBookDates(accommodation);
         accommodationRepository.save(accommodation);
 
-        Page<Accommodation> accommodations = dynamicAccommodationRepository.
+        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.
                 findAccommodationsBySearch("대구",
                         LocalDate.of(2022, 3, 3),
                         LocalDate.of(2022, 3, 7), 1,
-                        PageRequest.of(0, 10));
+                        null, PageRequest.of(0, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
     }
@@ -83,11 +84,11 @@ class DynamicAccommodationRepositoryTest {
         setBookDates(accommodation);
         accommodationRepository.save(accommodation);
 
-        Page<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.now(), null, 0, PageRequest.of(1, 10));
+        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.now(), null, 0, null, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
 
-        for (Accommodation acc : accommodations) {
+        for (SearchAccommodationDto acc : accommodations) {
             assertThat(acc.getCapacity()).isGreaterThanOrEqualTo(3);
         }
     }
@@ -95,9 +96,9 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("지도 범위(좌표 기준) 내 검색")
     @Test
     void searchByCoordinate() {
-        Page<Accommodation> accommodations = dynamicAccommodationRepository.findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f, PageRequest.of(1, 10));
+        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f, null, PageRequest.of(1, 10));
 
-        for (Accommodation accommodation : accommodations) {
+        for (SearchAccommodationDto accommodation : accommodations) {
             assertThat(accommodation.getLatitude()).isGreaterThan(37f);
             assertThat(accommodation.getLatitude()).isLessThan(37.5f);
             assertThat(accommodation.getLongitude()).isGreaterThan(126f);
