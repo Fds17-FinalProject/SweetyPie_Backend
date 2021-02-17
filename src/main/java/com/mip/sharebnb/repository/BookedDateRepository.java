@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface BookedDateRepository extends JpaRepository<BookedDate, Long> {
 
-    List<BookedDate> findBookedDatesByAccommodation_Id(Long accommodationId);
+    List<BookedDate> findBookedDatesByAccommodationId(Long accommodationId);
 
     @Transactional // 일단 검색해보다가 방법이 생겨서 써봤는데 됬다 동작원리에 대해서 더 알아봐야 해 그리고 이 방법이 아닌 다른 쉬운 방법은 뭐가 있을까
     @Modifying //
