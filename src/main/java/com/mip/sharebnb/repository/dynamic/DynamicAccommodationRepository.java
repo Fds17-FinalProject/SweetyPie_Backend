@@ -88,7 +88,14 @@ public class DynamicAccommodationRepository {
     public Page<SearchAccommodationDto> findByCity(String city, Long memberId, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        builder.and(ac.city.eq(city));
+        city = city.replace("특별시", "")
+                .replace("광역시", "");
+
+        if (city.charAt(city.length() - 1) == '시') {
+            city = city.substring(0, city.length() - 1);
+        }
+
+        builder.and(ac.city.startsWith(city));
 
         QueryResults<SearchAccommodationDto> results = getQueryResults(builder, memberId, page);
 
