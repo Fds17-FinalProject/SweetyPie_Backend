@@ -34,21 +34,21 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations")
-    public Page<Accommodation> getAllAccommodations(HttpServletRequest request, @PageableDefault(size = 20) Pageable page) {
+    public Page<Accommodation> getAllAccommodations(@PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findAccommodations(page);
     }
 
     @GetMapping("/accommodations/city/{city}")
-    public Page<Accommodation> getAccommodationsByCity(HttpServletRequest request, @PathVariable String city, @PageableDefault(size = 20) Pageable page) {
+    public Page<SearchAccommodationDto> getAccommodationsByCity(HttpServletRequest request, @PathVariable String city, @PageableDefault(size = 20) Pageable page) {
 
-        return accommodationService.findByCityContaining(city, page);
+        return accommodationService.findByCity(request, city, page);
     }
 
     @GetMapping("/accommodations/buildingType/{buildingType}")
-    public Page<Accommodation> getAccommodationsByBuildingType(HttpServletRequest request, @PathVariable String buildingType, @PageableDefault(size = 20) Pageable page) {
+    public Page<SearchAccommodationDto> getAccommodationsByBuildingType(HttpServletRequest request, @PathVariable String buildingType, @PageableDefault(size = 20) Pageable page) {
 
-        return accommodationService.findByBuildingTypeContaining(buildingType, page);
+        return accommodationService.findByBuildingType(request, buildingType, page);
     }
 
     @GetMapping("/accommodations/search")
