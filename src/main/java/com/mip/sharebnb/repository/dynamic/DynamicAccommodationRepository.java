@@ -64,7 +64,7 @@ public class DynamicAccommodationRepository {
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
-                                                             float minLongitude, float maxLongitude, Long memberId, Pageable page) {
+                                                                      float minLongitude, float maxLongitude, Long memberId, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
         builder.and(ac.latitude.between(minLatitude, maxLatitude));
