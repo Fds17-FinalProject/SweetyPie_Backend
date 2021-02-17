@@ -57,7 +57,8 @@ public class DynamicAccommodationRepository {
         return result;
     }
 
-    public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout, int guestNum, Long memberId, Pageable page) {
+    public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout,
+                                                                   int guestNum, Long memberId, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
@@ -94,13 +95,28 @@ public class DynamicAccommodationRepository {
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
-                                                                      float minLongitude, float maxLongitude, Long memberId, Pageable page) {
-        BooleanBuilder builder = new BooleanBuilder();
+                                                                      float minLongitude, float maxLongitude,
+                                                                      LocalDate checkIn, LocalDate checkout,
+                                                                      int guestNum, Long memberId, Pageable page) {
+        BooleanBuilder bdBuilder = new BooleanBuilder();
+        BooleanBuilder acBuilder = new BooleanBuilder();
 
-        builder.and(ac.latitude.between(minLatitude, maxLatitude));
-        builder.and(ac.longitude.between(minLongitude, maxLongitude));
+        acBuilder.and(ac.capacity.goe(guestNum));
+        bdBuilder.and(bd.date.goe(checkIn));
 
-        QueryResults<SearchAccommodationDto> results = getQueryResults(builder, memberId, page);
+        if (checkout != null) {
+            bdBuilder.and(bd.date.before(checkout));
+        }
+
+        acBuilder.andNot(ac.id.in(JPAExpressions
+                .select(bd.accommodation.id)
+                .from(bd)
+                .where(bdBuilder)));
+
+        acBuilder.and(ac.latitude.between(minLatitude, maxLatitude));
+        acBuilder.and(ac.longitude.between(minLongitude, maxLongitude));
+
+        QueryResults<SearchAccommodationDto> results = getQueryResults(acBuilder, memberId, page);
 
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
