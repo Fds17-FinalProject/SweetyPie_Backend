@@ -47,7 +47,6 @@ public class DynamicAccommodationRepository {
         }
 
         acBuilder.and(ac.capacity.goe(guestNum));
-
         bdBuilder.and(bd.date.goe(checkIn));
 
         if (checkout != null) {
@@ -59,33 +58,7 @@ public class DynamicAccommodationRepository {
                 .from(bd)
                 .where(bdBuilder)));
 
-        QueryResults<SearchAccommodationDto> results;
-
-        if (memberId != null) {
-            results = queryFactory
-                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
-                            ac.accommodationType, ac.buildingType, ac.hostName, bookmark))
-                    .from(ac)
-                    .where(acBuilder)
-                    .leftJoin(bookmark)
-                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
-                    .orderBy(ac.randId.asc())
-                    .offset(page.getOffset())
-                    .limit(page.getPageSize())
-                    .fetchResults();
-        } else {
-            results = queryFactory
-                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
-                            ac.accommodationType, ac.buildingType, ac.hostName))
-                    .from(ac)
-                    .where(acBuilder)
-                    .orderBy(ac.randId.asc())
-                    .offset(page.getOffset())
-                    .limit(page.getPageSize())
-                    .fetchResults();
-        }
+        QueryResults<SearchAccommodationDto> results = getQueryResults(acBuilder, memberId, page);
 
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
@@ -97,33 +70,7 @@ public class DynamicAccommodationRepository {
         builder.and(ac.latitude.between(minLatitude, maxLatitude));
         builder.and(ac.longitude.between(minLongitude, maxLongitude));
 
-        QueryResults<SearchAccommodationDto> results;
-
-        if (memberId != null) {
-            results = queryFactory
-                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
-                            ac.accommodationType, ac.buildingType, ac.hostName, bookmark))
-                    .from(ac)
-                    .where(builder)
-                    .leftJoin(bookmark)
-                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
-                    .orderBy(ac.randId.asc())
-                    .offset(page.getOffset())
-                    .limit(page.getPageSize())
-                    .fetchResults();
-        } else {
-            results = queryFactory
-                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
-                            ac.accommodationType, ac.buildingType, ac.hostName))
-                    .from(ac)
-                    .where(builder)
-                    .orderBy(ac.randId.asc())
-                    .offset(page.getOffset())
-                    .limit(page.getPageSize())
-                    .fetchResults();
-        }
+        QueryResults<SearchAccommodationDto> results = getQueryResults(builder, memberId, page);
 
         return new PageImpl<>(results.getResults(), page, results.getTotal());
     }
