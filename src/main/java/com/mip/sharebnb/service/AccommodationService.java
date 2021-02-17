@@ -22,12 +22,12 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AccommodationService {
 
-    private final DynamicAccommodationRepository dynamicAccommodationRepository;
-    private final AccommodationRepository accommodationRepository;
+    private final DynamicAccommodationRepository dynamicAccRepository;
+    private final AccommodationRepository accRepository;
     private final TokenProvider tokenProvider;
 
     public AccommodationDto findById(Long id) {
-        Accommodation accommodation = accommodationRepository.findById(id)
+        Accommodation accommodation = accRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
 
         return mappingAccommodationDto(accommodation);
@@ -35,17 +35,17 @@ public class AccommodationService {
 
     public Page<Accommodation> findAccommodations(Pageable pageable) {
 
-        return accommodationRepository.findAccommodationsBy(pageable);
+        return accRepository.findAccommodationsBy(pageable);
     }
 
     public Page<Accommodation> findByCityContaining(String searchKeyword, Pageable page) {
 
-        return accommodationRepository.findByCityContainingOrderByRandId(searchKeyword, page);
+        return accRepository.findByCityContainingOrderByRandId(searchKeyword, page);
     }
 
-    public Page<Accommodation> findByBuildingTypeContaining(String buildingType, Pageable page) {
+    public Page<SearchAccommodationDto> findByBuildingType(HttpServletRequest request, String buildingType, Pageable page) {
 
-        return accommodationRepository.findByBuildingTypeContainingOrderByRandId(buildingType, page);
+        return dynamicAccRepository.findByBuildingType(buildingType, parseRequestToMemberId(request), page);
     }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(HttpServletRequest request, String searchKeyword,
@@ -68,13 +68,13 @@ public class AccommodationService {
             checkIn = LocalDate.now();
         }
 
-        return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
+        return dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(HttpServletRequest request, float minLatitude, float maxLatitude,
                                                                       float minLongitude, float maxLongitude, Pageable page) {
 
-        return dynamicAccommodationRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, parseRequestToMemberId(request), page);
+        return dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, parseRequestToMemberId(request), page);
     }
 
     private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
