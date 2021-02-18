@@ -39,7 +39,7 @@ public class AuthController {
         return new ResponseEntity<>(bookmarks, httpHeaders, HttpStatus.OK);
     }
 
-    @GetMapping("login/google")
+    @GetMapping("/login/google")
     public ResponseEntity<Map<String, String>> googleLogin(@RequestParam(value = "code") String authCode) throws JsonProcessingException {
 
         Map<String, String> map;
@@ -55,7 +55,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping ("login/google")
+    @PostMapping ("/login/google")
     public ResponseEntity<TokenDto> signupBeforeGoogleLogin(@Valid @RequestBody GoogleMemberDto memberDto) {
 
         String token = authService.signupBeforeGoogleLogin(memberDto);
@@ -63,10 +63,9 @@ public class AuthController {
         return ResponseEntity.ok(new TokenDto(token));
     }
 
-    @GetMapping("logout")
+    @GetMapping("/logout")
     @PreAuthorize("authenticated")
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        authService.isInTheInvalidTokenList(request);
         authService.logout(request);
 
         return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);

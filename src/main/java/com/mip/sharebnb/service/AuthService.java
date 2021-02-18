@@ -102,15 +102,6 @@ public class AuthService {
         valueOperations.set(token, token, Duration.ofSeconds(tokenValidityInSeconds));
     }
 
-    public void isInTheInvalidTokenList(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-
-        if (StringUtils.hasText(valueOperations.get(token))) {
-            throw new InvalidTokenException("유효하지 않은 토큰으로 접근했습니다.");
-        }
-    }
-
     private Map<String, String> getGoogleUserInfo(String authCode) throws JsonProcessingException {
 
         //HTTP Request를 위한 RestTemplate

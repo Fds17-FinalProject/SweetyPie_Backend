@@ -1,7 +1,9 @@
 package com.mip.sharebnb.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mip.sharebnb.dto.LoginDto;
 import com.mip.sharebnb.dto.MemberDto;
+import com.mip.sharebnb.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,11 @@ class MemberControllerTest {
 
     private MockMvc mockMvc;
 
+    private String token;
+
+    @Autowired
+    AuthService authService;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -37,12 +44,20 @@ class MemberControllerTest {
                 .alwaysDo(print())
                 .build();
     }
+    @BeforeEach
+    void getToken() {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test123@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token = authService.login(loginDto);
+    }
 
     @DisplayName("회원정보검색")
     @Test
     void getMemberTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/member/1")
-                .header("Authorization", "token"))
+                .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test123@gmail.com"));
     }
@@ -66,7 +81,7 @@ class MemberControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("eamil형식에러")
+    @DisplayName("회원가입-eamil형식에러")
     @Test
     void signupValidationTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
@@ -85,7 +100,7 @@ class MemberControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("회원가입비밀번호형식에러")
+    @DisplayName("회원가입-비밀번호형식에러")
     @Test
     void signupPasswordValidationTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
@@ -104,7 +119,7 @@ class MemberControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("이름&연락처형식에러")
+    @DisplayName("회원가입- 이름&연락처형식에러")
     @Test
     void signupNameContactValidationTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
@@ -127,7 +142,7 @@ class MemberControllerTest {
     @Test
     void updateMemberTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.put("/api/member/1")
-                .header("Authorization", "token")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
                         objectMapper.writeValueAsString(
