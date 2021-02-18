@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +44,11 @@ public class ReservationService {
 
         handleCheckoutBeforeCheckInInputException(reservationDto);
 
-        Member member = memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new DataNotFoundException("등록된 회원 정보를 찾을 수 없습니다"));
+        Member member = memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new DataNotFoundException("등록된 회원 정보를 찾을 수 없습니다."));
 
-        Accommodation accommodation = accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new DataNotFoundException("등록된 숙박 정보를 찾을 수 없습니다"));
+        Accommodation accommodation = accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new DataNotFoundException("등록된 숙박 정보를 찾을 수 없습니다."));
+
+        validateTotalPrice(reservationDto, accommodation.getPrice());
 
         List<BookedDate> bookedDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodation.getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
@@ -57,6 +60,8 @@ public class ReservationService {
         handleCheckoutBeforeCheckInInputException(reservationDto);
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new DataNotFoundException("예약 내역을 찾을 수 없습니다."));
+
+        validateTotalPrice(reservationDto, reservation.getAccommodation().getPrice());
 
         bookedDateRepository.deleteBookedDateByReservationId(reservationId);
 
@@ -74,7 +79,7 @@ public class ReservationService {
     private void handleCheckoutBeforeCheckInInputException(ReservationDto reservationDto){
         if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate())) {
 
-            throw new InvalidInputException("예약기간이 잘 못 되었습니다");
+            throw new InvalidInputException("예약기간이 잘 못 되었습니다.");
         }
     }
 
@@ -172,5 +177,19 @@ public class ReservationService {
         reservation.setChildNum(reservationDto.getChildNum());
         reservation.setInfantNum(reservationDto.getInfantNum());
         reservation.setTotalPrice(reservationDto.getTotalPrice());
+    }
+
+    private void validateTotalPrice(ReservationDto reservationDto, int pricePerDay) {
+
+        long night = ChronoUnit.DAYS.between(reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
+
+        int totalNightPrice = pricePerDay * (int) night;
+        int servicePrice = (int) Math.round(totalNightPrice * 0.07);
+
+        int validTotalPrice = totalNightPrice + 10000 + servicePrice;
+
+        if (reservationDto.getTotalPrice() != validTotalPrice) {
+            throw new InvalidInputException("총 가격이 맞지 않습니다.");
+        }
     }
 }
