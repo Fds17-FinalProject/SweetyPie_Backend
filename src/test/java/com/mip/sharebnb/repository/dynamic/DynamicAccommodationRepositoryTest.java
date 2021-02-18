@@ -27,10 +27,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DynamicAccommodationRepositoryTest {
 
     @Autowired
-    private DynamicAccommodationRepository dynamicAccommodationRepository;
+    private DynamicAccommodationRepository dynamicAccRepository;
 
     @Autowired
-    private AccommodationRepository accommodationRepository;
+    private AccommodationRepository accRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -43,14 +43,14 @@ class DynamicAccommodationRepositoryTest {
     void search() {
         for (int i = 0; i < 10; i++) {
             Accommodation accommodation = givenAccommodation();
-            accommodationRepository.save(accommodation);
+            accRepository.save(accommodation);
         }
 
-        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.
+        Page<SearchAccommodationDto> accommodations = dynamicAccRepository.
                 findAccommodationsBySearch("대구",
                         LocalDate.of(2022, 3, 3),
                         LocalDate.of(2022, 3, 4), 1,
-                        null, PageRequest.of(0, 10));
+                        null, null, PageRequest.of(0, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
 
@@ -66,13 +66,13 @@ class DynamicAccommodationRepositoryTest {
     void search2() {
         Accommodation accommodation = givenAccommodation();
         setBookDates(accommodation);
-        accommodationRepository.save(accommodation);
+        accRepository.save(accommodation);
 
-        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.
+        Page<SearchAccommodationDto> accommodations = dynamicAccRepository.
                 findAccommodationsBySearch("대구",
                         LocalDate.of(2022, 3, 3),
                         LocalDate.of(2022, 3, 7), 1,
-                        null, PageRequest.of(0, 10));
+                        null, null, PageRequest.of(0, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
     }
@@ -82,9 +82,11 @@ class DynamicAccommodationRepositoryTest {
     void searchIfSearchKeywordIsEmpty() {
         Accommodation accommodation = givenAccommodation();
         setBookDates(accommodation);
-        accommodationRepository.save(accommodation);
+        accRepository.save(accommodation);
 
-        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.now(), null, 0, null, PageRequest.of(1, 10));
+        Page<SearchAccommodationDto> accommodations = dynamicAccRepository
+                .findAccommodationsBySearch(null, LocalDate.now(), null, 0, null,
+                        null, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
 
@@ -96,7 +98,9 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("지도 범위(좌표 기준) 내 검색")
     @Test
     void searchByCoordinate() {
-        Page<SearchAccommodationDto> accommodations = dynamicAccommodationRepository.findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f, LocalDate.now(), null, 0, null, PageRequest.of(1, 10));
+        Page<SearchAccommodationDto> accommodations = dynamicAccRepository
+                .findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f,
+                        LocalDate.now(), null, 0, null, null, PageRequest.of(1, 10));
 
         for (SearchAccommodationDto accommodation : accommodations) {
             assertThat(accommodation.getLatitude()).isGreaterThan(37f);
@@ -108,7 +112,11 @@ class DynamicAccommodationRepositoryTest {
 
     private Accommodation givenAccommodation() {
 
-        return new Accommodation(null, 0, "대구광역시", "수성구", "대구광역시 수성구 xx로", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, null, new ArrayList<>(), null);
+        return new Accommodation(null, 0, "대구광역시", "수성구", "대구광역시 수성구 xx로", "원룸",
+                1, 1, 1, 40000, 2, "010-1234-5678", 36.141f,
+                126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요",
+                "착해요", 4.56f, 125, "전체", "원룸", "이재복",
+                543, null, null, new ArrayList<>(), null);
     }
 
     private Member givenMember() {
