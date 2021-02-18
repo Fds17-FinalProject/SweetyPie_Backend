@@ -28,6 +28,6 @@ public class BookedDateController {
     @GetMapping("/bookDates/{accommodationId}")
     public List<BookedDate> findBookedDatesByAccommodation_Id(@PathVariable Long accommodationId) {
 
-        return bookedDateRepository.findBookedDatesByAccommodation_Id(accommodationId);
+        return bookedDateRepository.findBookedDatesByAccommodationId(accommodationId);
     }
 }

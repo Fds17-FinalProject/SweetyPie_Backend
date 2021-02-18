@@ -1,17 +1,23 @@
 package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.AccommodationDto;
+import com.mip.sharebnb.dto.SearchAccommodationDto;
 import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.exception.InvalidInputException;
 import com.mip.sharebnb.model.Accommodation;
+import com.mip.sharebnb.repository.AccommodationPictureRepository;
 import com.mip.sharebnb.repository.AccommodationRepository;
+import com.mip.sharebnb.repository.BookedDateRepository;
+import com.mip.sharebnb.repository.ReviewRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
+import com.mip.sharebnb.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 
 @Transactional
@@ -19,34 +25,81 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class AccommodationService {
 
-    private final DynamicAccommodationRepository dynamicAccommodationRepository;
-    private final AccommodationRepository accommodationRepository;
+    private final AccommodationPictureRepository accommodationPictureRepository;
+    private final DynamicAccommodationRepository dynamicAccRepository;
+    private final BookedDateRepository bookedDateRepository;
+    private final AccommodationRepository accRepository;
+    private final ReviewRepository reviewRepository;
+    private final TokenProvider tokenProvider;
 
-    public AccommodationDto findById(Long id) {
-        Accommodation accommodation = accommodationRepository.findById(id)
-                .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
+    public AccommodationDto findById(HttpServletRequest request, Long id) {
+        AccommodationDto accommodationDto = dynamicAccRepository.findById(parseRequestToMemberId(request), id);
 
-        return mappingAccommodationDto(accommodation);
+        if (accommodationDto == null) {
+            throw new DataNotFoundException("Accommodation Not Found");
+        }
+
+        return setListObjects(accommodationDto);
     }
 
     public Page<Accommodation> findAccommodations(Pageable pageable) {
 
-        return accommodationRepository.findAccommodationsBy(pageable);
+        return accRepository.findAccommodationsBy(pageable);
     }
 
-    public Page<Accommodation> findByCityContaining(String searchKeyword, Pageable page) {
+    public Page<SearchAccommodationDto> findByCity(HttpServletRequest request, String city, Pageable page) {
 
-        return accommodationRepository.findByCityContainingOrderByRandId(searchKeyword, page);
+        return dynamicAccRepository.findByCity(city, parseRequestToMemberId(request), page);
     }
 
-    public Page<Accommodation> findByBuildingTypeContaining(String buildingType, Pageable page) {
+    public Page<SearchAccommodationDto> findByBuildingType(HttpServletRequest request, String buildingType, Pageable page) {
 
-        return accommodationRepository.findByBuildingTypeContainingOrderByRandId(buildingType, page);
+        return dynamicAccRepository.findByBuildingType(buildingType, parseRequestToMemberId(request), page);
     }
 
-    public Page<Accommodation> findAccommodationsBySearch(String searchKeyword,
-                                                          LocalDate checkIn, LocalDate checkout,
-                                                          int guestNum, Pageable page) {
+    public Page<SearchAccommodationDto> findAccommodationsBySearch(HttpServletRequest request, String searchKeyword,
+                                                                   LocalDate checkIn, LocalDate checkout,
+                                                                   int guestNum, Pageable page) {
+
+        checkIn = validateCheckInCheckout(checkIn, checkout);
+
+        return dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
+    }
+
+    public Page<SearchAccommodationDto> findAccommodationsByMapSearch(HttpServletRequest request, float minLatitude, float maxLatitude,
+                                                                      float minLongitude, float maxLongitude,
+                                                                      LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
+
+        checkIn = validateCheckInCheckout(checkIn, checkout);
+
+        return dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
+                checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
+    }
+
+    private AccommodationDto setListObjects(AccommodationDto acc) {
+
+        acc.setAccommodationPictures(accommodationPictureRepository.findByAccommodationId(acc.getId()));
+        acc.setBookedDates(bookedDateRepository.findBookedDatesByAccommodationId(acc.getId()));
+        acc.setReviews(reviewRepository.findReviewsByAccommodationId(acc.getId()));
+
+        return acc;
+    }
+
+    private Long parseRequestToMemberId(HttpServletRequest request) {
+        Long memberId = null;
+
+        if (request != null) {
+            String token = request.getHeader("Authorization");
+
+            if (token != null) {
+                memberId = tokenProvider.parseTokenToGetUserId(token);
+            }
+        }
+
+        return memberId;
+    }
+
+    private LocalDate validateCheckInCheckout(LocalDate checkIn, LocalDate checkout) {
 
         if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
             throw new InvalidInputException("Checkout time is before check-in time");
@@ -64,29 +117,6 @@ public class AccommodationService {
             checkIn = LocalDate.now();
         }
 
-        return dynamicAccommodationRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, page);
-    }
-
-    public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
-                                                             float minLongitude, float maxLongitude, Pageable page) {
-
-        return dynamicAccommodationRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude, page);
-    }
-
-    private AccommodationDto mappingAccommodationDto(Accommodation accommodation) {
-
-        return new AccommodationDto(accommodation.getCity(),
-                accommodation.getGu(), accommodation.getAddress(), accommodation.getTitle(),
-                accommodation.getBathroomNum(), accommodation.getBedroomNum(),
-                accommodation.getBedNum(), accommodation.getCapacity(),
-                accommodation.getPrice(), accommodation.getContact(),
-                accommodation.getLatitude(), accommodation.getLongitude(),
-                accommodation.getLocationDesc(), accommodation.getTransportationDesc(),
-                accommodation.getAccommodationDesc(), accommodation.getRating(),
-                accommodation.getReviewNum(), accommodation.getAccommodationType(),
-                accommodation.getBuildingType(), accommodation.getHostName(),
-                accommodation.getHostDesc(), accommodation.getHostReviewNum(),
-                accommodation.getReviews(), accommodation.getBookedDates(),
-                accommodation.getAccommodationPictures());
+        return checkIn;
     }
 }
