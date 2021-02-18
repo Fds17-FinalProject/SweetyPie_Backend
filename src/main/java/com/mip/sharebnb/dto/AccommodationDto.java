@@ -1,7 +1,6 @@
 package com.mip.sharebnb.dto;
 
 import com.mip.sharebnb.model.AccommodationPicture;
-import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Bookmark;
 import com.mip.sharebnb.model.Review;
 import com.querydsl.core.annotations.QueryProjection;
@@ -66,7 +65,7 @@ public class AccommodationDto {
 
     private List<Review> reviews;
 
-    private List<BookedDate> bookedDates;
+    private List<BookedDateDto> bookedDateDtos;
 
     private List<AccommodationPicture> accommodationPictures;
 
