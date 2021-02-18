@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -179,12 +180,10 @@ public class ReservationService {
     }
 
     private void validateTotalPrice(ReservationDto reservationDto, int pricePerDay) {
-        int night = 0;
 
-        for (LocalDate localDate = reservationDto.getCheckInDate(); localDate.isBefore(reservationDto.getCheckoutDate()); localDate = localDate.plusDays(1)) {
-            night++;
-        }
-        int totalNightPrice = pricePerDay * night;
+        long night = ChronoUnit.DAYS.between(reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
+
+        int totalNightPrice = pricePerDay * (int) night;
         int servicePrice = (int) Math.round(totalNightPrice * 0.07);
 
         int validTotalPrice = totalNightPrice + 10000 + servicePrice;
