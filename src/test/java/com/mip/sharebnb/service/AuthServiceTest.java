@@ -65,19 +65,6 @@ class AuthServiceTest {
         assertThat(result).isEqualTo(token);
     }
 
-    @DisplayName("토큰")
-    @Test
-    void isInTheInvalidTokenListTest() {
-        String token = "isInTheInvalidTokenListTest1234";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", token);
-
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(token, token, Duration.ofSeconds(10));
-
-        assertThrows(InvalidTokenException.class, () -> authService.isInTheInvalidTokenList(request));
-    }
-
     @Test
     void loginServiceTest() {
 
