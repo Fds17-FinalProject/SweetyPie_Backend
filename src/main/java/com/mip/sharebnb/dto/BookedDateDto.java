@@ -1,16 +1,20 @@
 package com.mip.sharebnb.dto;
 
-import lombok.AllArgsConstructor;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class BookedDateDto {
 
-    private LocalDate date;
+    private LocalDate startDate;
 
+    private LocalDate endDate;
+
+    @QueryProjection
+    public BookedDateDto(LocalDate startDate, LocalDate endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }
