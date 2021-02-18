@@ -1,16 +1,15 @@
 package com.mip.sharebnb.repository;
 
-import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.model.BookedDate;
-import com.mip.sharebnb.model.Reservation;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 
 @Transactional
@@ -21,20 +20,17 @@ class BookedDateRepositoryTest {
     @Autowired
     private BookedDateRepository bookedDateRepository;
 
-    @Autowired
-    private ReservationRepository reservationRepository;
-
     @Test
-    void deleteByAccommodationIdAndDateIn() {
-        Reservation reservation = reservationRepository.findById(1L).orElseThrow(() -> new DataNotFoundException("예약 정보를 찾을 수 없습니다."));
+    void deleteByReservationId() {
 
-        List<BookedDate> bookedDates =  reservation.getBookedDates();
-        List<LocalDate> dates = new ArrayList<>();
+        bookedDateRepository.deleteBookedDateByReservationId(1L);
 
-        for (BookedDate bookedDate : bookedDates) {
-            dates.add(bookedDate.getDate());
-        }
+        Optional<BookedDate> optionalBookedDate = bookedDateRepository.findById(1L);
+        Optional<BookedDate> optionalBookedDate1 = bookedDateRepository.findById(2L);
+        Optional<BookedDate> optionalBookedDate2 = bookedDateRepository.findById(3L);
 
-        bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(1L, dates);
+        assertThat(optionalBookedDate.isPresent()).isFalse();
+        assertThat(optionalBookedDate1.isPresent()).isFalse();
+        assertThat(optionalBookedDate2.get().getDate()).isEqualTo(LocalDate.of(2022,2,20));
     }
 }

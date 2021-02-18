@@ -127,6 +127,8 @@ class ReservationServiceTest {
         assertThat(reservation.getTotalGuestNum()).isEqualTo(dto.getTotalGuestNum());
         assertThat(reservation.getTotalPrice()).isEqualTo(dto.getTotalPrice());
 
+        verify(bookedDateRepository, times(1)).deleteBookedDateByReservationId(1L);
+
     }
 
     @DisplayName("예약 날짜 중복으로 예약수정 실패")
