@@ -1,21 +1,14 @@
 package com.mip.sharebnb.dto;
 
 import com.mip.sharebnb.model.AccommodationPicture;
-import com.mip.sharebnb.model.BookedDate;
 import com.mip.sharebnb.model.Bookmark;
-import com.mip.sharebnb.model.Review;
 import com.querydsl.core.annotations.QueryProjection;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class AccommodationDto {
-
+public class SearchAccommodationDto {
     private long id;
 
     private String city;
@@ -32,21 +25,15 @@ public class AccommodationDto {
 
     private int bedNum;
 
-    private int capacity;
-
     private int price;
+
+    private int capacity;
 
     private String contact;
 
     private float latitude;
 
     private float longitude;
-
-    private String locationDesc;
-
-    private String transportationDesc;
-
-    private String accommodationDesc;
 
     private float rating;
 
@@ -58,20 +45,12 @@ public class AccommodationDto {
 
     private String hostName;
 
-    private String hostDesc;
-
-    private int hostReviewNum;
-
     private boolean isBookmarked;
-
-    private List<Review> reviews;
-
-    private List<BookedDate> bookedDates;
 
     private List<AccommodationPicture> accommodationPictures;
 
     @QueryProjection
-    public AccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int capacity, int price, String contact, float latitude, float longitude, String locationDesc, String transportationDesc, String accommodationDesc, float rating, int reviewNum, String accommodationType, String buildingType, String hostName, String hostDesc, int hostReviewNum) {
+    public SearchAccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int price, int capacity, String contact, float latitude, float longitude, float rating, int reviewNum, String accommodationType, String buildingType, String hostName, Bookmark isBookmarked/*, List<AccommodationPicture> accommodationPictures*/) {
         this.id = id;
         this.city = city;
         this.gu = gu;
@@ -80,25 +59,21 @@ public class AccommodationDto {
         this.bathroomNum = bathroomNum;
         this.bedroomNum = bedroomNum;
         this.bedNum = bedNum;
-        this.capacity = capacity;
         this.price = price;
+        this.capacity = capacity;
         this.contact = contact;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.locationDesc = locationDesc;
-        this.transportationDesc = transportationDesc;
-        this.accommodationDesc = accommodationDesc;
         this.rating = rating;
         this.reviewNum = reviewNum;
         this.accommodationType = accommodationType;
         this.buildingType = buildingType;
         this.hostName = hostName;
-        this.hostDesc = hostDesc;
-        this.hostReviewNum = hostReviewNum;
+        this.isBookmarked = isBookmarked != null;
     }
 
     @QueryProjection
-    public AccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int capacity, int price, String contact, float latitude, float longitude, String locationDesc, String transportationDesc, String accommodationDesc, float rating, int reviewNum, String accommodationType, String buildingType, String hostName, String hostDesc, int hostReviewNum, Bookmark bookmark) {
+    public SearchAccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int price, int capacity, String contact, float latitude, float longitude, float rating, int reviewNum, String accommodationType, String buildingType, String hostName) {
         this.id = id;
         this.city = city;
         this.gu = gu;
@@ -107,21 +82,15 @@ public class AccommodationDto {
         this.bathroomNum = bathroomNum;
         this.bedroomNum = bedroomNum;
         this.bedNum = bedNum;
-        this.capacity = capacity;
         this.price = price;
+        this.capacity = capacity;
         this.contact = contact;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.locationDesc = locationDesc;
-        this.transportationDesc = transportationDesc;
-        this.accommodationDesc = accommodationDesc;
         this.rating = rating;
         this.reviewNum = reviewNum;
         this.accommodationType = accommodationType;
         this.buildingType = buildingType;
         this.hostName = hostName;
-        this.hostDesc = hostDesc;
-        this.hostReviewNum = hostReviewNum;
-        this.isBookmarked = bookmark != null;
     }
 }
