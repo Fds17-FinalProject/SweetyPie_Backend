@@ -49,12 +49,12 @@ public class AccommodationService {
 
     public Page<SearchAccommodationDto> findByCity(HttpServletRequest request, String city, Pageable page) {
 
-        return dynamicAccRepository.findByCity(city, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findByCity(city, parseRequestToMemberId(request), page));
     }
 
     public Page<SearchAccommodationDto> findByBuildingType(HttpServletRequest request, String buildingType, Pageable page) {
 
-        return dynamicAccRepository.findByBuildingType(buildingType, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findByBuildingType(buildingType, parseRequestToMemberId(request), page));
     }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(HttpServletRequest request, String searchKeyword,
@@ -63,7 +63,7 @@ public class AccommodationService {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), page));
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(HttpServletRequest request, float minLatitude, float maxLatitude,
@@ -72,8 +72,8 @@ public class AccommodationService {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
-                checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
+                checkIn, checkout, guestNum, parseRequestToMemberId(request), page));
     }
 
     private AccommodationDto setListObjects(AccommodationDto acc) {
@@ -83,6 +83,15 @@ public class AccommodationService {
         acc.setReviews(reviewRepository.findReviewsByAccommodationId(acc.getId()));
 
         return acc;
+    }
+
+    private Page<SearchAccommodationDto> setPictures(Page<SearchAccommodationDto> searchAccommodationDtos) {
+
+        for (SearchAccommodationDto acc : searchAccommodationDtos) {
+            acc.setAccommodationPictures(accommodationPictureRepository.findByAccommodationId(acc.getId()));
+        }
+
+        return searchAccommodationDtos;
     }
 
     private Long parseRequestToMemberId(HttpServletRequest request) {
