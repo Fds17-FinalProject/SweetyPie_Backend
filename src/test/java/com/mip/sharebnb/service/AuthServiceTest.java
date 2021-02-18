@@ -2,7 +2,6 @@ package com.mip.sharebnb.service;
 
 import com.mip.sharebnb.dto.GoogleMemberDto;
 import com.mip.sharebnb.dto.LoginDto;
-import com.mip.sharebnb.exception.InvalidTokenException;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 @SpringBootTest(properties = "spring.config.location="
@@ -65,18 +62,18 @@ class AuthServiceTest {
         assertThat(result).isEqualTo(token);
     }
 
-    @DisplayName("토큰")
-    @Test
-    void isInTheInvalidTokenListTest() {
-        String token = "isInTheInvalidTokenListTest1234";
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", token);
-
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(token, token, Duration.ofSeconds(10));
-
-        assertThrows(InvalidTokenException.class, () -> authService.isInTheInvalidTokenList(request));
-    }
+//    @DisplayName("토큰")
+//    @Test
+//    void isInTheInvalidTokenListTest() {
+//        String token = "isInTheInvalidTokenListTest1234";
+//        MockHttpServletRequest request = new MockHttpServletRequest();
+//        request.addHeader("Authorization", token);
+//
+//        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+//        valueOperations.set(token, token, Duration.ofSeconds(10));
+//
+//        assertThrows(InvalidTokenException.class, () -> authService.isInTheInvalidTokenList(request));
+//    }
 
     @Test
     void loginServiceTest() {

@@ -58,7 +58,7 @@ public class ReservationService {
 
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new DataNotFoundException("예약 내역을 찾을 수 없습니다."));
 
-        deleteBookedDate(reservation);
+        bookedDateRepository.deleteBookedDateByReservationId(reservationId);
 
         List<BookedDate> duplicateBookedDate = dynamicReservationRepository.findByAccommodationIdAndDate(reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
@@ -107,18 +107,6 @@ public class ReservationService {
             reservationDtoList.add(reservationDto);
         }
         return reservationDtoList;
-    }
-
-    private void deleteBookedDate(Reservation reservation){
-        List<BookedDate> bookedDates = reservation.getBookedDates();
-        List<LocalDate> localDates = new ArrayList<>();
-
-        for (BookedDate bookedDate : bookedDates) {
-
-            localDates.add(bookedDate.getDate());
-        }
-
-        bookedDateRepository.deleteBookedDateByAccommodationIdAndDateIn(reservation.getAccommodation().getId(), localDates);
     }
 
     private Reservation updateCheckDuplicateBookedDate(List<BookedDate> duplicateBookedDate, Reservation reservation, ReservationDto reservationDto){
