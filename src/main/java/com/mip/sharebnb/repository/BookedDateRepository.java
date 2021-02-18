@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BookedDateRepository extends JpaRepository<BookedDate, Long> {
 
-    List<BookedDate> findBookedDatesByAccommodation_Id(Long accommodationId);
+    List<BookedDate> findBookedDatesByAccommodationId(Long accommodationId);
 
     void deleteBookedDateByReservationId(Long reservationId);
 }
