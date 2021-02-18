@@ -70,7 +70,6 @@ public class SearchAccommodationDto {
         this.buildingType = buildingType;
         this.hostName = hostName;
         this.isBookmarked = isBookmarked != null;
-//        this.accommodationPictures = accommodationPictures;
     }
 
     @QueryProjection
@@ -93,7 +92,5 @@ public class SearchAccommodationDto {
         this.accommodationType = accommodationType;
         this.buildingType = buildingType;
         this.hostName = hostName;
-//        this.isBookmarked = isBookmarked != null;
-//        this.accommodationPictures = accommodationPictures;
     }
 }

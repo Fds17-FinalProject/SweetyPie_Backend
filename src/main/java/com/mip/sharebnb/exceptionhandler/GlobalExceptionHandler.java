@@ -52,14 +52,6 @@ public class GlobalExceptionHandler {
 
         return ErrorDto.of(builder.toString());
     }
-
-    @ExceptionHandler(InvalidTokenException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    public ErrorDto handleInvalidInputException(InvalidTokenException ex) {
-
-        return ErrorDto.of(ex.getMessage());
-    }
-
 }
 
 
