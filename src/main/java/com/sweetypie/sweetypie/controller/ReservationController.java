@@ -24,14 +24,14 @@ public class ReservationController {
 
     @GetMapping("/reservation")
     @PreAuthorize("authenticated")
-    public List<ReservationDto> getReservations(@RequestHeader("Authorization") String token) {
+    public List<ReservationDto> getReservations(@RequestHeader(value = "Authorization") String token) {
 
         return reservationService.getReservations(tokenProvider.parseTokenToGetUserId(token));
     }
 
     @PostMapping("/reservation")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Reservation> makeAReservation(@RequestHeader("Authorization") String token, @Valid @RequestBody ReservationDto reservationDto){
+    public ResponseEntity<Reservation> makeAReservation(@RequestHeader(value = "Authorization") String token, @Valid @RequestBody ReservationDto reservationDto){
 
         Reservation reservation = reservationService.makeAReservation(tokenProvider.parseTokenToGetUserId(token), reservationDto);
 
@@ -39,6 +39,7 @@ public class ReservationController {
     }
 
     @PatchMapping("/reservation/{id}")
+    @PreAuthorize("authenticated")
     public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @Valid @RequestBody ReservationDto reservationDto) {
 
         Reservation reservation = reservationService.updateReservation(id, reservationDto);
@@ -47,6 +48,7 @@ public class ReservationController {
     }
 
     @DeleteMapping("/reservation/{id}")
+    @PreAuthorize("authenticated")
     public ResponseEntity<Object> cancelReservation(@PathVariable Long id) {
 
         reservationService.deleteReservation(id);
