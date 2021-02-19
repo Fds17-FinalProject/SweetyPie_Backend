@@ -4,11 +4,11 @@ import com.sweetypie.sweetypie.dto.GoogleMemberDto;
 import com.sweetypie.sweetypie.dto.MemberDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
+import com.sweetypie.sweetypie.exception.InvalidInputException;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.model.MemberRole;
 import com.sweetypie.sweetypie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +24,7 @@ public class MemberService {
 
     public Member signup(MemberDto memberDto) {
         checkDuplicateEmail(memberDto);
+        confirmPassword(memberDto);
 
         Member member = Member.builder()
                 .email(memberDto.getEmail())
@@ -64,19 +65,16 @@ public class MemberService {
                 .findById(id)
                 .orElseThrow(() -> new DataNotFoundException("수정할 멤버가 존재하지 않습니다"));
 
-        if (memberDto.getEmail() != null) {
-            checkDuplicateEmail(memberDto);
-            member.setEmail(memberDto.getEmail());
-        } else if (memberDto.getName() != null) {
+        if (memberDto.getName() != null) {
             member.setName(memberDto.getName());
         } else if (memberDto.getBirthDate() != null) {
             member.setBirthDate(memberDto.getBirthDate());
         } else if (memberDto.getContact() != null) {
             member.setContact(memberDto.getContact());
-        } else if (memberDto.getPassword() != null && memberDto.getPrePassword() != null) {
-            if (!passwordEncoder.matches(memberDto.getPrePassword(), member.getPassword())) {
-                throw new InvalidInputException("이전 비밀번호가 일치하지 않습니다");
-            }
+        } else if (memberDto.getPassword() != null) {
+//            if (!passwordEncoder.matches(memberDto.getPrePassword(), member.getPassword())) {
+//                throw new InvalidInputException("이전 비밀번호가 일치하지 않습니다");
+//            } // 추후 구현
             member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         }
 
@@ -95,6 +93,12 @@ public class MemberService {
     private void checkDuplicateEmail(MemberDto memberDto) {
         if (memberRepository.findByEmail(memberDto.getEmail()).orElse(null) != null) {
             throw new DuplicateValueExeption("이미 가입되어 있는 유저입니다.");
+        }
+    }
+
+    private void confirmPassword(MemberDto memberDto)  {
+        if(!memberDto.getPassword().equals(memberDto.getPasswordConfirm())){
+            throw new InvalidInputException("비밀 번호 확인이 일치하지 않습니다.");
         }
     }
 
