@@ -56,7 +56,7 @@ class MemberControllerTest {
     @DisplayName("회원정보검색")
     @Test
     void getMemberTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/member/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/member")
                 .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test123@gmail.com"));
@@ -141,7 +141,7 @@ class MemberControllerTest {
     @DisplayName("회원정보수정-email")
     @Test
     void updateMemberTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/member/1")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/member")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
@@ -157,8 +157,8 @@ class MemberControllerTest {
     @DisplayName("회원탈퇴")
     @Test
     void withdrawalTest() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/member/1")
-                .header("Authorization", "token"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/member")
+                .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
     }

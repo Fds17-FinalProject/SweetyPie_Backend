@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -35,7 +36,7 @@ public class TokenProvider implements InitializingBean {
 
     private final String secret;
 
-    private final long tokenValidityInMilliseconds;
+    private final long tokenValidityInSeconds;
 
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -46,7 +47,7 @@ public class TokenProvider implements InitializingBean {
             @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
             RedisTemplate<String, String> redisTemplate) {
         this.secret = secret;
-        this.tokenValidityInMilliseconds = tokenValidityInSeconds * 1000;
+        this.tokenValidityInSeconds = tokenValidityInSeconds;
         this.redisTemplate = redisTemplate;
     }
 
@@ -62,7 +63,7 @@ public class TokenProvider implements InitializingBean {
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
+        Date validity = Date.from(ZonedDateTime.now().plusSeconds(tokenValidityInSeconds).toInstant());
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
@@ -73,9 +74,10 @@ public class TokenProvider implements InitializingBean {
                 .compact();
     }
 
-    public Long parseTokenToGetUserId(String bearerToken) {
-
-        String token = bearerToken.substring(JwtFilter.HEADER_PREFIX.length());
+    public Long parseTokenToGetUserId(String token) {
+        if (token.startsWith("B")) {
+            token = token.substring(JwtFilter.HEADER_PREFIX.length());
+        }
 
         Claims claims = Jwts
                 .parserBuilder()
