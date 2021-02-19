@@ -5,8 +5,10 @@ import com.sweetypie.sweetypie.dto.SearchAccommodationDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.InvalidInputException;
 import com.sweetypie.sweetypie.model.Accommodation;
+import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.repository.AccommodationPictureRepository;
 import com.sweetypie.sweetypie.repository.AccommodationRepository;
+import com.sweetypie.sweetypie.repository.MemberRepository;
 import com.sweetypie.sweetypie.repository.ReviewRepository;
 import com.sweetypie.sweetypie.repository.dynamic.DynamicAccommodationRepository;
 import com.sweetypie.sweetypie.repository.dynamic.DynamicBookedDateRepository;
@@ -17,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 
 @Transactional
@@ -28,12 +29,14 @@ public class AccommodationService {
     private final AccommodationPictureRepository accommodationPictureRepository;
     private final DynamicBookedDateRepository dynamicBookedDateRepository;
     private final DynamicAccommodationRepository dynamicAccRepository;
+    private final MemberRepository memberRepository;
     private final AccommodationRepository accRepository;
     private final ReviewRepository reviewRepository;
     private final TokenProvider tokenProvider;
 
-    public AccommodationDto findById(HttpServletRequest request, Long id) {
-        AccommodationDto accommodationDto = dynamicAccRepository.findById(parseRequestToMemberId(request), id);
+    public AccommodationDto findById(String token, Long id) {
+
+        AccommodationDto accommodationDto = dynamicAccRepository.findById(parseTokenToMemberId(token), id);
 
         if (accommodationDto == null) {
             throw new DataNotFoundException("Accommodation Not Found");
@@ -47,33 +50,33 @@ public class AccommodationService {
         return accRepository.findAccommodationsBy(pageable);
     }
 
-    public Page<SearchAccommodationDto> findByCity(HttpServletRequest request, String city, Pageable page) {
+    public Page<SearchAccommodationDto> findByCity(String token, String city, Pageable page) {
 
-        return setPictures(dynamicAccRepository.findByCity(city, parseRequestToMemberId(request), page));
+        return setPictures(dynamicAccRepository.findByCity(city, parseTokenToMemberId(token), page));
     }
 
-    public Page<SearchAccommodationDto> findByBuildingType(HttpServletRequest request, String buildingType, Pageable page) {
+    public Page<SearchAccommodationDto> findByBuildingType(String token, String buildingType, Pageable page) {
 
-        return setPictures(dynamicAccRepository.findByBuildingType(buildingType, parseRequestToMemberId(request), page));
+        return setPictures(dynamicAccRepository.findByBuildingType(buildingType, parseTokenToMemberId(token), page));
     }
 
-    public Page<SearchAccommodationDto> findAccommodationsBySearch(HttpServletRequest request, String searchKeyword,
+    public Page<SearchAccommodationDto> findAccommodationsBySearch(String token, String searchKeyword,
                                                                    LocalDate checkIn, LocalDate checkout,
                                                                    int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return setPictures(dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), types, page));
+        return setPictures(dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token), types, page));
     }
 
-    public Page<SearchAccommodationDto> findAccommodationsByMapSearch(HttpServletRequest request, float minLatitude, float maxLatitude,
+    public Page<SearchAccommodationDto> findAccommodationsByMapSearch(String token, float minLatitude, float maxLatitude,
                                                                       float minLongitude, float maxLongitude,
                                                                       LocalDate checkIn, LocalDate checkout, int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
         return setPictures(dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
-                checkIn, checkout, guestNum, parseRequestToMemberId(request), types, page));
+                checkIn, checkout, guestNum, parseTokenToMemberId(token), types, page));
     }
 
     private AccommodationDto setListObjects(AccommodationDto acc) {
@@ -94,15 +97,12 @@ public class AccommodationService {
         return searchAccommodationDtos;
     }
 
-    private Long parseRequestToMemberId(HttpServletRequest request) {
+    private Long parseTokenToMemberId(String token) {
         Long memberId = null;
 
-        if (request != null) {
-            String token = request.getHeader("Authorization");
-
-            if (token != null) {
-                memberId = tokenProvider.parseTokenToGetUserId(token);
-            }
+        if (token != null) {
+            Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
+                    .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
         }
 
         return memberId;
