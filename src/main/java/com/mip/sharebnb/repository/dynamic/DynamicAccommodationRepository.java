@@ -58,7 +58,7 @@ public class DynamicAccommodationRepository {
     }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout,
-                                                                   int guestNum, Long memberId, String type, Pageable page) {
+                                                                   int guestNum, Long memberId, String types, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
@@ -77,8 +77,13 @@ public class DynamicAccommodationRepository {
             }
         }
 
-        if (type != null) {
-            acBuilder.and(ac.accommodationType.eq(type));
+        if (types != null) {
+            BooleanBuilder typeBuilder = new BooleanBuilder();
+
+            for (String type : types.split(" ")) {
+                typeBuilder.or(ac.accommodationType.eq(type));
+            }
+            acBuilder.and(typeBuilder);
         }
 
         acBuilder.and(ac.capacity.goe(guestNum));
@@ -101,15 +106,20 @@ public class DynamicAccommodationRepository {
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
                                                                       float minLongitude, float maxLongitude,
                                                                       LocalDate checkIn, LocalDate checkout,
-                                                                      int guestNum, Long memberId, String type, Pageable page) {
+                                                                      int guestNum, Long memberId, String types, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
         acBuilder.and(ac.capacity.goe(guestNum));
         bdBuilder.and(bd.date.goe(checkIn));
 
-        if (type != null) {
-            acBuilder.and(ac.accommodationType.eq(type));
+        if (types != null) {
+            BooleanBuilder typeBuilder = new BooleanBuilder();
+
+            for (String type : types.split(" ")) {
+                typeBuilder.or(ac.accommodationType.eq(type));
+            }
+            acBuilder.and(typeBuilder);
         }
 
         if (checkout != null) {
