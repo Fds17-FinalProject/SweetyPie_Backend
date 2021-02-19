@@ -2,6 +2,7 @@ package com.sweetypie.sweetypie.controller;
 
 import com.sweetypie.sweetypie.dto.MemberDto;
 import com.sweetypie.sweetypie.model.Member;
+import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import com.sweetypie.sweetypie.service.AuthService;
 import com.sweetypie.sweetypie.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +20,17 @@ import javax.validation.Valid;
 public class MemberController {
 
     private final MemberService memberService;
-    private final AuthService authService;
+    private final TokenProvider tokenProvider;
 
-    @GetMapping("/member/{member_id}")
+    @GetMapping("/member")
     @PreAuthorize("authenticated")
-    public ResponseEntity<MemberDto> getMember(@PathVariable Long member_id) {
+    public ResponseEntity<MemberDto> getMember(@RequestHeader("Authorization") String token) {
 
-        Member member = memberService.getMember(member_id);
+        Member member = memberService.getMember(tokenProvider.parseTokenToGetUserId(token));
 
         return ResponseEntity.ok(mapToMemberDto(member));
     }
+
 
     @PostMapping("/member")
     public ResponseEntity<MemberDto> signup(
@@ -39,21 +41,22 @@ public class MemberController {
         return ResponseEntity.ok(mapToMemberDto(member));
     }
 
-    @PutMapping("/member/{member_id}")
+    @PutMapping("/member")
     @PreAuthorize("authenticated")
     public ResponseEntity<MemberDto> updateMember(
-            @PathVariable Long member_id,
+            @RequestHeader("Authorization") String token,
             @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
 
-        Member member = memberService.updateMember(member_id, memberDto);
+        Member member = memberService.updateMember(tokenProvider.parseTokenToGetUserId(token),
+                                                     memberDto);
         return ResponseEntity.ok(mapToMemberDto(member));
     }
 
-    @DeleteMapping("/member/{member_id}")
+    @DeleteMapping("/member")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Boolean> withdrawalMember(@PathVariable Long member_id) {
+    public ResponseEntity<Boolean> withdrawalMember(@RequestHeader("Authorization") String token) {
 
-        Member member = memberService.withdrawal(member_id);
+        Member member = memberService.withdrawal(tokenProvider.parseTokenToGetUserId(token));
         return ResponseEntity.ok(member.isDeleted());
     }
 
