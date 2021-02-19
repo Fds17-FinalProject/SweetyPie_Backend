@@ -85,7 +85,7 @@ class ReservationServiceTest {
 
         ReservationDto dto = mockReservationDto();
 
-        Reservation reservation = reservationService.makeAReservation(dto);
+        Reservation reservation = reservationService.makeAReservation(1L, dto);
 
         assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2022, 3, 20));
         assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2022, 3, 22));
@@ -101,7 +101,7 @@ class ReservationServiceTest {
     void makeAReservationDataNotFoundException(){
         lenient().when(accommodationRepository.findById(1L)).thenReturn(Optional.of(new Accommodation()));
 
-        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(mockReservationDto()));
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(1L, mockReservationDto()));
 
         assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 회원 정보를 찾을 수 없습니다.");
     }
@@ -113,7 +113,6 @@ class ReservationServiceTest {
                 .checkInDate(LocalDate.of(2022,5,11))
                 .checkoutDate(LocalDate.of(2022,5,13))
                 .accommodationId(1L)
-                .memberId(1L)
                 .totalPrice(117989)
                 .totalGuestNum(4)
                 .adultNum(2)
@@ -123,7 +122,7 @@ class ReservationServiceTest {
         when(memberRepository.findById(1L)).thenReturn(mockMember());
         when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
 
-        InvalidInputException invalidInputException = assertThrows(InvalidInputException.class, () -> reservationService.makeAReservation(reservationDto));
+        InvalidInputException invalidInputException = assertThrows(InvalidInputException.class, () -> reservationService.makeAReservation(1L, reservationDto));
 
         assertThat(invalidInputException.getMessage()).isEqualTo("총 가격이 맞지 않습니다.");
 
@@ -266,7 +265,6 @@ class ReservationServiceTest {
     // updateReservation
     private ReservationDto mockReservationDto() {
         ReservationDto dto = new ReservationDto();
-        dto.setMemberId(1L);
         dto.setAccommodationId(1L);
         dto.setCheckInDate(LocalDate.of(2022, 3, 20));
         dto.setCheckoutDate(LocalDate.of(2022, 3, 22));
