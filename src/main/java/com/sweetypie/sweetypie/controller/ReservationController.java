@@ -30,9 +30,10 @@ public class ReservationController {
     }
 
     @PostMapping("/reservation")
-    public ResponseEntity<Reservation> makeAReservation(@Valid @RequestBody ReservationDto reservationDto){
+    @PreAuthorize("authenticated")
+    public ResponseEntity<Reservation> makeAReservation(@RequestHeader("Authorization") String token, @Valid @RequestBody ReservationDto reservationDto){
 
-        Reservation reservation = reservationService.makeAReservation(reservationDto);
+        Reservation reservation = reservationService.makeAReservation(tokenProvider.parseTokenToGetUserId(token), reservationDto);
 
         return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
