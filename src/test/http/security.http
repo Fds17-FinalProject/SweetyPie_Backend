@@ -55,8 +55,8 @@ Content-Type: application/json
 
 ### 회원정보찾기 테스트
 
-GET http://localhost:8080/api/member/2
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTgwMDY1fQ.q6zut4omnOUtOm7RYMZOcReD_wB8ULG7LEvPxARCo6wiqJvZhgm3rWy37os-lUaTWr4O0LIeRJ9stefYXe9Gwg
+GET http://localhost:8080/api/member
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzODc2MjQxfQ._apLF6_4KQfO3b_YXN_p_H7BxS5zre5RBDNxax9Dr-JrYgc6w87NHTDimebOz1y-kJ7_DNnEXzvmWoiwCgqxHQ
 
 ### 회원정보찾기 테스트 -서버
 
