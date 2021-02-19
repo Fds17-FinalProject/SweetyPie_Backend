@@ -77,16 +77,10 @@ class ReservationServiceTest {
     @DisplayName("예약하기 성공")
     @Test
     void makeAReservation(){
-        ReservationDto reservationDto = ReservationDto.builder()
-                .memberId(1L)
-                .accommodationId(1L)
-                .checkInDate(LocalDate.of(2022, 3, 20))
-                .checkoutDate(LocalDate.of(2022, 3, 22))
-                .build();
 
-        when(memberRepository.findById(reservationDto.getMemberId())).thenReturn(mockMember());
-        when(accommodationRepository.findById(reservationDto.getAccommodationId())).thenReturn(mockAccommodation());
-        when(dynamicReservationRepository.findByAccommodationIdAndDate(reservationDto.getAccommodationId(), LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
 
         ReservationDto dto = mockReservationDto();
@@ -96,7 +90,7 @@ class ReservationServiceTest {
         assertThat(reservation.getCheckInDate()).isEqualTo(LocalDate.of(2022, 3, 20));
         assertThat(reservation.getCheckoutDate()).isEqualTo(LocalDate.of(2022, 3, 22));
         assertThat(reservation.getTotalGuestNum()).isEqualTo(3);
-        assertThat(reservation.getTotalPrice()).isEqualTo(30000);
+        assertThat(reservation.getTotalPrice()).isEqualTo(95600);
         assertThat(reservation.getReservationCode()).isEqualTo("202102070000100001");
 
         verify(reservationRepository, times(1)).save(any(Reservation.class));
@@ -109,7 +103,7 @@ class ReservationServiceTest {
 
         DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(mockReservationDto()));
 
-        assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 회원 정보를 찾을 수 없습니다");
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 회원 정보를 찾을 수 없습니다.");
     }
 
     @DisplayName("예약하기 총 가격 Validation 실패 예외")
@@ -260,7 +254,10 @@ class ReservationServiceTest {
         reservation.setCheckInDate(LocalDate.of(2022, 3, 20));
         reservation.setCheckoutDate(LocalDate.of(2022, 3, 22));
         reservation.setTotalGuestNum(3);
-        reservation.setTotalPrice(30000);
+        reservation.setAdultNum(2);
+        reservation.setChildNum(1);
+        reservation.setInfantNum(0);
+        reservation.setTotalPrice(95600);
         reservation.setReservationCode("202102070000100001");
 
         return reservation;
@@ -274,8 +271,10 @@ class ReservationServiceTest {
         dto.setCheckInDate(LocalDate.of(2022, 3, 20));
         dto.setCheckoutDate(LocalDate.of(2022, 3, 22));
         dto.setTotalGuestNum(3);
-        dto.setAdultNum(1);
-        dto.setTotalPrice(30000);
+        dto.setAdultNum(2);
+        dto.setChildNum(1);
+        dto.setInfantNum(0);
+        dto.setTotalPrice(95600);
 
         return dto;
     }
@@ -286,6 +285,7 @@ class ReservationServiceTest {
         accommodation.setId(1L);
         accommodation.setBathroomNum(2);
         accommodation.setBedroomNum(2);
+        accommodation.setPrice(40000);
         accommodation.setAccommodationType("집전체");
         accommodation.setBuildingType("아파트");
 
