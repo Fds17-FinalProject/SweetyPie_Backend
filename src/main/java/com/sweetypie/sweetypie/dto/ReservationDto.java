@@ -15,8 +15,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ReservationDto {
 
-    private Long memberId;
-
     private Long accommodationId;
 
     private Long reservationId;
