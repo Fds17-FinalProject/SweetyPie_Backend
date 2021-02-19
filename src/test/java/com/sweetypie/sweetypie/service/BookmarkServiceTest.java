@@ -6,6 +6,7 @@ import com.sweetypie.sweetypie.model.Bookmark;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.repository.BookmarkRepository;
 import com.sweetypie.sweetypie.repository.MemberRepository;
+import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,13 +36,16 @@ class BookmarkServiceTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @Mock
+    private TokenProvider tokenProvider;
+
     @DisplayName("북마크 리스트 조회")
     @Test
     void findBookmarks() {
         when(bookmarkRepository.findBookmarksByMemberId(1L)).thenReturn(mockBookmarks());
-        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
 
-        List<BookmarkDto> bookmarkDtos = bookmarkService.findBookmarksByMemberId(1L);
+        List<BookmarkDto> bookmarkDtos = bookmarkService.findBookmarksByToken("token");
 
         assertThat(bookmarkDtos.size()).isEqualTo(2);
 
@@ -59,7 +63,9 @@ class BookmarkServiceTest {
     void deleteBookmarkById() {
         when(bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(1, 1))
                 .thenReturn(mockBookmark());
-        bookmarkService.deleteBookmark(1, 1);
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
+
+        bookmarkService.deleteBookmark("token", 1);
 
         verify(bookmarkRepository, times(1)).delete(mockBookmark().get());
     }
