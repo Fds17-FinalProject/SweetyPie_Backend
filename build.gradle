@@ -5,7 +5,7 @@ plugins {
     id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 }
 
-group = 'com.mip'
+group = 'com.sweetypie'
 version = '0.0.2-SNAPSHOT'
 sourceCompatibility = '1.8'
 
