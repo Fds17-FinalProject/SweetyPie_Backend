@@ -103,6 +103,8 @@ public class AccommodationService {
         if (token != null) {
             Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                     .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
+
+            memberId = member.getId();
         }
 
         return memberId;
