@@ -76,7 +76,7 @@ class ReservationControllerTest {
                         .adultNum(2)
                         .childNum(1)
                         .infantNum(1)
-                        .totalPrice(30000)
+                        .totalPrice(52800)
                         .build())))
                 .andExpect(status().isOk());
     }
@@ -170,7 +170,7 @@ class ReservationControllerTest {
                         .adultNum(2)
                         .childNum(1)
                         .infantNum(1)
-                        .totalPrice(30000)
+                        .totalPrice(138400)
                         .build())))
                 .andExpect(status().isOk());
     }
