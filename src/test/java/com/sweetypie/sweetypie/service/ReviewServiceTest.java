@@ -8,6 +8,7 @@ import com.sweetypie.sweetypie.model.Review;
 import com.sweetypie.sweetypie.repository.MemberRepository;
 import com.sweetypie.sweetypie.repository.ReservationRepository;
 import com.sweetypie.sweetypie.repository.ReviewRepository;
+import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +43,9 @@ class ReviewServiceTest {
     @Mock
     private ReservationRepository reservationRepository;
 
+    @Mock
+    private TokenProvider provider;
+
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void findReviewByAccommodation_IdAndMember_Id() {
@@ -57,9 +61,9 @@ class ReviewServiceTest {
     @Test
     void postReview() {
         when(reservationRepository.findById(0L)).thenReturn(mockReservation());
-        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
 
-        reviewService.writeReview(mockReviewDto());
+        reviewService.writeReview("token", mockReviewDto());
 
         verify(reviewRepository, times(1)).save(any(Review.class));
     }
@@ -69,9 +73,9 @@ class ReviewServiceTest {
     void updateReview() {
         when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview());
         when(reservationRepository.findById(0L)).thenReturn(mockReservation());
-        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
 
-        reviewService.updateReview(mockReviewDto());
+        reviewService.updateReview("token", mockReviewDto());
 
         Review review = reviewService.findReviewByReservationId(0);
 
@@ -107,7 +111,6 @@ class ReviewServiceTest {
                 .content("변경")
                 .rating(4)
                 .accommodationId(mockAccommodation().get().getId())
-                .memberId(mockMember().get().getId())
                 .build();
     }
 

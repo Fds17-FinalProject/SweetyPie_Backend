@@ -11,6 +11,7 @@ import com.sweetypie.sweetypie.model.Review;
 import com.sweetypie.sweetypie.repository.MemberRepository;
 import com.sweetypie.sweetypie.repository.ReservationRepository;
 import com.sweetypie.sweetypie.repository.ReviewRepository;
+import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,13 +29,15 @@ public class ReviewService {
 
     private final MemberRepository memberRepository;
 
+    private final TokenProvider tokenProvider;
+
     public Review findReviewByReservationId(long reservationId) {
 
         return reviewRepository.findReviewByReservationId(reservationId)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
     }
 
-    public void writeReview(ReviewDto reviewDto) {
+    public void writeReview(String token, ReviewDto reviewDto) {
 
         Reservation reservation = reservationRepository.findById(reviewDto.getReservationId())
                 .orElseThrow(() -> new DataNotFoundException("Reservation Not Found"));
@@ -52,8 +55,8 @@ public class ReviewService {
         if (accommodation.getId() != reviewDto.getAccommodationId()) {
             throw new InvalidInputException("Accommodation Not Matched");
         }
-      
-        Member member = memberRepository.findById(reviewDto.getMemberId())
+
+        Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
         int newReviewNum = accommodation.getReviewNum() + 1;
@@ -75,7 +78,7 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void updateReview(ReviewDto reviewDto) {
+    public void updateReview(String token, ReviewDto reviewDto) {
         Review originReview = reviewRepository
                 .findReviewByReservationId(reviewDto.getReservationId())
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
@@ -92,7 +95,7 @@ public class ReviewService {
             throw new InvalidInputException("Accommodation Not Matched");
         }
 
-        memberRepository.findById(reviewDto.getMemberId())
+        memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
         float originRating = accommodation.getRating();

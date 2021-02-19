@@ -67,7 +67,7 @@ public class ReservationService {
 
         List<BookedDate> duplicateBookedDate = dynamicReservationRepository.findByAccommodationIdAndDate(reservation.getAccommodation().getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
-        return  updateCheckDuplicateBookedDate(duplicateBookedDate, reservation, reservationDto);
+        return updateCheckDuplicateBookedDate(duplicateBookedDate, reservation, reservationDto);
 
     }
 
@@ -76,7 +76,7 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 
-    private void handleCheckoutBeforeCheckInInputException(ReservationDto reservationDto){
+    private void handleCheckoutBeforeCheckInInputException(ReservationDto reservationDto) {
         if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate())) {
 
             throw new InvalidInputException("예약기간이 잘 못 되었습니다.");
@@ -114,7 +114,7 @@ public class ReservationService {
         return reservationDtoList;
     }
 
-    private Reservation updateCheckDuplicateBookedDate(List<BookedDate> duplicateBookedDate, Reservation reservation, ReservationDto reservationDto){
+    private Reservation updateCheckDuplicateBookedDate(List<BookedDate> duplicateBookedDate, Reservation reservation, ReservationDto reservationDto) {
         if (duplicateBookedDate.isEmpty()) {
 
             setReservation(reservation, reservationDto);
@@ -169,7 +169,7 @@ public class ReservationService {
         return today + strAccommodationId + strMemberId;
     }
 
-    private void setReservation(Reservation reservation, ReservationDto reservationDto){
+    private void setReservation(Reservation reservation, ReservationDto reservationDto) {
         reservation.setCheckInDate(reservationDto.getCheckInDate());
         reservation.setCheckoutDate(reservationDto.getCheckoutDate());
         reservation.setTotalGuestNum(reservationDto.getTotalGuestNum());
