@@ -54,25 +54,24 @@ public class AccommodationController {
     }
 
     @GetMapping("/accommodations/search")
-    public Page<SearchAccommodationDto> getAccommodationsBySearch(
-            HttpServletRequest request, @RequestParam(required = false) String searchKeyword,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-            @RequestParam(required = false, defaultValue = "1") int guestNum, @PageableDefault(size = 20) Pageable page) {
+    public Page<SearchAccommodationDto> getAccommodationsBySearch(HttpServletRequest request, @RequestParam(required = false) String searchKeyword,
+                                                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
+                                                                  @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
+                                                                  @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String types,
+                                                                  @PageableDefault(size = 20) Pageable page) {
 
-        return accommodationService.findAccommodationsBySearch(request, searchKeyword, checkIn, checkout, guestNum, page);
+        return accommodationService.findAccommodationsBySearch(request, searchKeyword, checkIn, checkout, guestNum, types, page);
     }
 
     @GetMapping("/accommodations/mapSearch")
-    public Page<SearchAccommodationDto> getAccommodationsByMapSearch(
-            @RequestParam float minLatitude, @RequestParam float maxLatitude,
-            @RequestParam float minLongitude, @RequestParam float maxLongitude,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
-            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-            @RequestParam(required = false, defaultValue = "1") int guestNum,
-            HttpServletRequest request, @PageableDefault(size = 20) Pageable page) {
+    public Page<SearchAccommodationDto> getAccommodationsByMapSearch(@RequestParam float minLatitude, @RequestParam float maxLatitude,
+                                                                     @RequestParam float minLongitude, @RequestParam float maxLongitude,
+                                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
+                                                                     @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
+                                                                     @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String types,
+                                                                     HttpServletRequest request, @PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findAccommodationsByMapSearch(request, minLatitude, maxLatitude, minLongitude,
-                maxLongitude, checkIn, checkout, guestNum, page);
+                maxLongitude, checkIn, checkout, guestNum, types, page);
     }
 }

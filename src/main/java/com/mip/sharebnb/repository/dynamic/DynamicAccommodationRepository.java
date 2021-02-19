@@ -25,9 +25,9 @@ public class DynamicAccommodationRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    QAccommodation ac = new QAccommodation("ac");
-    QBookedDate bd = new QBookedDate("bd");
-    QBookmark bookmark = new QBookmark("bookmark");
+    QAccommodation ac = QAccommodation.accommodation;
+    QBookedDate bd = QBookedDate.bookedDate;
+    QBookmark bookmark = QBookmark.bookmark;
 
     public AccommodationDto findById(Long memberId, Long accommodationId) {
         AccommodationDto result;
@@ -58,7 +58,7 @@ public class DynamicAccommodationRepository {
     }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout,
-                                                                   int guestNum, Long memberId, Pageable page) {
+                                                                   int guestNum, Long memberId, String types, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
@@ -75,6 +75,15 @@ public class DynamicAccommodationRepository {
                 }
                 acBuilder.and(ac.city.startsWith(keyword).or(ac.gu.startsWith(keyword)));
             }
+        }
+
+        if (types != null) {
+            BooleanBuilder typeBuilder = new BooleanBuilder();
+
+            for (String type : types.split(" ")) {
+                typeBuilder.or(ac.accommodationType.eq(type));
+            }
+            acBuilder.and(typeBuilder);
         }
 
         acBuilder.and(ac.capacity.goe(guestNum));
@@ -97,12 +106,21 @@ public class DynamicAccommodationRepository {
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
                                                                       float minLongitude, float maxLongitude,
                                                                       LocalDate checkIn, LocalDate checkout,
-                                                                      int guestNum, Long memberId, Pageable page) {
+                                                                      int guestNum, Long memberId, String types, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
         acBuilder.and(ac.capacity.goe(guestNum));
         bdBuilder.and(bd.date.goe(checkIn));
+
+        if (types != null) {
+            BooleanBuilder typeBuilder = new BooleanBuilder();
+
+            for (String type : types.split(" ")) {
+                typeBuilder.or(ac.accommodationType.eq(type));
+            }
+            acBuilder.and(typeBuilder);
+        }
 
         if (checkout != null) {
             bdBuilder.and(bd.date.before(checkout));

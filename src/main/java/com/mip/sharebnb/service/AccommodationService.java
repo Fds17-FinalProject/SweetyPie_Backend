@@ -7,9 +7,9 @@ import com.mip.sharebnb.exception.InvalidInputException;
 import com.mip.sharebnb.model.Accommodation;
 import com.mip.sharebnb.repository.AccommodationPictureRepository;
 import com.mip.sharebnb.repository.AccommodationRepository;
-import com.mip.sharebnb.repository.BookedDateRepository;
 import com.mip.sharebnb.repository.ReviewRepository;
 import com.mip.sharebnb.repository.dynamic.DynamicAccommodationRepository;
+import com.mip.sharebnb.repository.dynamic.DynamicBookedDateRepository;
 import com.mip.sharebnb.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,8 +26,8 @@ import java.time.LocalDate;
 public class AccommodationService {
 
     private final AccommodationPictureRepository accommodationPictureRepository;
+    private final DynamicBookedDateRepository dynamicBookedDateRepository;
     private final DynamicAccommodationRepository dynamicAccRepository;
-    private final BookedDateRepository bookedDateRepository;
     private final AccommodationRepository accRepository;
     private final ReviewRepository reviewRepository;
     private final TokenProvider tokenProvider;
@@ -49,40 +49,49 @@ public class AccommodationService {
 
     public Page<SearchAccommodationDto> findByCity(HttpServletRequest request, String city, Pageable page) {
 
-        return dynamicAccRepository.findByCity(city, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findByCity(city, parseRequestToMemberId(request), page));
     }
 
     public Page<SearchAccommodationDto> findByBuildingType(HttpServletRequest request, String buildingType, Pageable page) {
 
-        return dynamicAccRepository.findByBuildingType(buildingType, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findByBuildingType(buildingType, parseRequestToMemberId(request), page));
     }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(HttpServletRequest request, String searchKeyword,
                                                                    LocalDate checkIn, LocalDate checkout,
-                                                                   int guestNum, Pageable page) {
+                                                                   int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), types, page));
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(HttpServletRequest request, float minLatitude, float maxLatitude,
                                                                       float minLongitude, float maxLongitude,
-                                                                      LocalDate checkIn, LocalDate checkout, int guestNum, Pageable page) {
+                                                                      LocalDate checkIn, LocalDate checkout, int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
-                checkIn, checkout, guestNum, parseRequestToMemberId(request), page);
+        return setPictures(dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
+                checkIn, checkout, guestNum, parseRequestToMemberId(request), types, page));
     }
 
     private AccommodationDto setListObjects(AccommodationDto acc) {
 
         acc.setAccommodationPictures(accommodationPictureRepository.findByAccommodationId(acc.getId()));
-        acc.setBookedDates(bookedDateRepository.findBookedDatesByAccommodationId(acc.getId()));
+        acc.setBookedDateDtos(dynamicBookedDateRepository.findByAccommodationId(acc.getId()));
         acc.setReviews(reviewRepository.findReviewsByAccommodationId(acc.getId()));
 
         return acc;
+    }
+
+    private Page<SearchAccommodationDto> setPictures(Page<SearchAccommodationDto> searchAccommodationDtos) {
+
+        for (SearchAccommodationDto acc : searchAccommodationDtos) {
+            acc.setAccommodationPictures(accommodationPictureRepository.findByAccommodationId(acc.getId()));
+        }
+
+        return searchAccommodationDtos;
     }
 
     private Long parseRequestToMemberId(HttpServletRequest request) {

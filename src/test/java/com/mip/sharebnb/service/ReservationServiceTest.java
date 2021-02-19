@@ -3,6 +3,7 @@ package com.mip.sharebnb.service;
 import com.mip.sharebnb.dto.ReservationDto;
 import com.mip.sharebnb.exception.DataNotFoundException;
 import com.mip.sharebnb.exception.DuplicateValueExeption;
+import com.mip.sharebnb.exception.InvalidInputException;
 import com.mip.sharebnb.model.*;
 import com.mip.sharebnb.repository.AccommodationRepository;
 import com.mip.sharebnb.repository.BookedDateRepository;
@@ -111,9 +112,33 @@ class ReservationServiceTest {
         assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 회원 정보를 찾을 수 없습니다");
     }
 
+    @DisplayName("예약하기 총 가격 Validation 실패 예외")
+    @Test
+    void validateToTalPriceFail(){
+        ReservationDto reservationDto = ReservationDto.builder()
+                .checkInDate(LocalDate.of(2022,5,11))
+                .checkoutDate(LocalDate.of(2022,5,13))
+                .accommodationId(1L)
+                .memberId(1L)
+                .totalPrice(117989)
+                .totalGuestNum(4)
+                .adultNum(2)
+                .childNum(1)
+                .infantNum(1)
+                .build();
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+
+        InvalidInputException invalidInputException = assertThrows(InvalidInputException.class, () -> reservationService.makeAReservation(reservationDto));
+
+        assertThat(invalidInputException.getMessage()).isEqualTo("총 가격이 맞지 않습니다.");
+
+    }
+
     @DisplayName("예약수정 성공")
     @Test
-    void updateReservationSuccess(){
+    void updateReservationSuccess() {
+
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
@@ -126,6 +151,8 @@ class ReservationServiceTest {
         assertThat(reservation.getCheckoutDate()).isEqualTo(dto.getCheckoutDate());
         assertThat(reservation.getTotalGuestNum()).isEqualTo(dto.getTotalGuestNum());
         assertThat(reservation.getTotalPrice()).isEqualTo(dto.getTotalPrice());
+
+        verify(bookedDateRepository, times(1)).deleteBookedDateByReservationId(1L);
 
     }
 
@@ -217,6 +244,7 @@ class ReservationServiceTest {
         accommodation.setId(1L);
         accommodation.setBathroomNum(2);
         accommodation.setBedroomNum(2);
+        accommodation.setPrice(40000);
         accommodation.setAccommodationType("집전체");
         accommodation.setBuildingType("게스트하우스");
         accommodation.setBookedDates(bookedDates);
