@@ -28,9 +28,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/review/{reservationId}")
-    public Review getReview(@PathVariable long reservationId) {
+    public Review getReview(@RequestHeader("Authorization") String token, @PathVariable long reservationId) {
 
-        return reviewService.findReviewByReservationId(reservationId);
+        return reviewService.findReviewByReservationId(token, reservationId);
     }
 
     @PostMapping("/review")
