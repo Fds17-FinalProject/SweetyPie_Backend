@@ -5,7 +5,7 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email":"member@mail.com",
+  "email":"member1@mail.com",
   "password":"member33!@"
 }
 
@@ -56,7 +56,7 @@ Content-Type: application/json
 ### 회원정보찾기 테스트
 
 GET http://localhost:8080/api/member
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzODc2MjQxfQ._apLF6_4KQfO3b_YXN_p_H7BxS5zre5RBDNxax9Dr-JrYgc6w87NHTDimebOz1y-kJ7_DNnEXzvmWoiwCgqxHQ
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzODgwNDk0fQ.MRQls_oiIS1VKtvOwSrF_TAsriHpd09pfgnFSn6CvYoxEaaUFpAHs2QNVIdf4uC8xrV_PXgSDRUpYwtgcam4Bw
 
 ### 회원정보찾기 테스트 -서버
 
@@ -64,20 +64,11 @@ GET http://3.34.122.155/api/member/1
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzQGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjoxLCJleHAiOjE2MTM1MzM0MDZ9.XmI9Vmfvc4FnH3Jv0pHgdZo6EG5d3ZPWpczWILksXTmmMjBmz8jSpI2UVcNQqWSXEkD_-17AnFc_yj-IqP-sww
 
 
-### 회원정보수정 : 메일주소
-
-PUT http://localhost:8080/api/member/1
-Content-Type: application/json
-
-{
-  "email":"member1@mail.com"
-
-}
 
 ### 회원정보수정 : 비밀번호변경
 
-PUT http://localhost:8080/api/member/2
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTgwMDY1fQ.q6zut4omnOUtOm7RYMZOcReD_wB8ULG7LEvPxARCo6wiqJvZhgm3rWy37os-lUaTWr4O0LIeRJ9stefYXe9Gwg
+PUT http://localhost:8080/api/member
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzODgwNDk0fQ.MRQls_oiIS1VKtvOwSrF_TAsriHpd09pfgnFSn6CvYoxEaaUFpAHs2QNVIdf4uC8xrV_PXgSDRUpYwtgcam4Bw
 Content-Type: application/json
 
 {
@@ -87,8 +78,8 @@ Content-Type: application/json
 
 ### 회원삭제 테스트
 
-DELETE http://localhost:8080/api/member/1
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNTQyMzEyfQ.AiJMgt4jXbX4wnD78avHe16kYu8fS9J81uaWSR2ahoexi5LW8toznmKC9BUb7TrV4HdtFHKka9-snpgB-yPBGA
+DELETE http://localhost:8080/api/member
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXIxQG1haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjExLCJleHAiOjE2MTM4ODA2OTF9.MVnLS2vQf_LUB-rky4qzP82ZkONEoVk8bK8Ea4_98Rx9T-DmVOwoxUKMnnI07_S8vgsY3rLinh0XN9GQpznYVg
 
 ### 구글로그인
 
