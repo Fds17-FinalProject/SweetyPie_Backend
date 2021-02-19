@@ -46,20 +46,20 @@ class ReviewControllerTest {
     @DisplayName("리뷰 등록하기")
     @Test
     void postReview() throws Exception {
-                mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
-                        new ReviewDto(1L, 1L, 2L, 3, "좋아요"))))
-                .andExpect(status().isOk());
+                        new ReviewDto(1L, 2L, 3, "좋아요"))))
+                .andExpect(status().isBadRequest()); // 인증 불가
     }
 
     @DisplayName("리뷰 등록하기 (이미 작성)")
     @Test
     void postReview2() throws Exception {
-                mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
-                        new ReviewDto(1L, 1L, 1L, 3, "좋아요"))))
+                        new ReviewDto(1L, 1L, 3, "좋아요"))))
                 .andExpect(status().isBadRequest());
     }
 }

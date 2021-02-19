@@ -17,9 +17,6 @@ import javax.validation.constraints.Positive;
 public class ReviewDto {
 
     @Positive
-    private long memberId;
-
-    @Positive
     private long accommodationId;
 
     @Positive
