@@ -59,21 +59,21 @@ public class AccommodationService {
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(HttpServletRequest request, String searchKeyword,
                                                                    LocalDate checkIn, LocalDate checkout,
-                                                                   int guestNum, String type, Pageable page) {
+                                                                   int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return setPictures(dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), type, page));
+        return setPictures(dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseRequestToMemberId(request), types, page));
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(HttpServletRequest request, float minLatitude, float maxLatitude,
                                                                       float minLongitude, float maxLongitude,
-                                                                      LocalDate checkIn, LocalDate checkout, int guestNum, String type, Pageable page) {
+                                                                      LocalDate checkIn, LocalDate checkout, int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
         return setPictures(dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
-                checkIn, checkout, guestNum, parseRequestToMemberId(request), type, page));
+                checkIn, checkout, guestNum, parseRequestToMemberId(request), types, page));
     }
 
     private AccommodationDto setListObjects(AccommodationDto acc) {
