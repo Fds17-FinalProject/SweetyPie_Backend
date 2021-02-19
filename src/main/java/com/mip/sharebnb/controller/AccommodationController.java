@@ -57,10 +57,10 @@ public class AccommodationController {
     public Page<SearchAccommodationDto> getAccommodationsBySearch(HttpServletRequest request, @RequestParam(required = false) String searchKeyword,
                                                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
                                                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-                                                                  @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String type,
+                                                                  @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String types,
                                                                   @PageableDefault(size = 20) Pageable page) {
 
-        return accommodationService.findAccommodationsBySearch(request, searchKeyword, checkIn, checkout, guestNum, type, page);
+        return accommodationService.findAccommodationsBySearch(request, searchKeyword, checkIn, checkout, guestNum, types, page);
     }
 
     @GetMapping("/accommodations/mapSearch")
@@ -68,10 +68,10 @@ public class AccommodationController {
                                                                      @RequestParam float minLongitude, @RequestParam float maxLongitude,
                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
-                                                                     @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String type,
+                                                                     @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String types,
                                                                      HttpServletRequest request, @PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findAccommodationsByMapSearch(request, minLatitude, maxLatitude, minLongitude,
-                maxLongitude, checkIn, checkout, guestNum, type, page);
+                maxLongitude, checkIn, checkout, guestNum, types, page);
     }
 }
