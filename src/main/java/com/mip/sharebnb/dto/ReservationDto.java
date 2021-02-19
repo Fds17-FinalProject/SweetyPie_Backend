@@ -27,7 +27,7 @@ public class ReservationDto {
     @FutureOrPresent(message = "체크아웃은 현재날짜 이후의 날짜이어야 합니다.")
     private LocalDate checkoutDate;
 
-    @Min(value = 1, message = "총 인원은 최소 1명입니다.") @Max(value = 8, message = "총 인원은 최대 8명입니다.")
+    @Min(value = 1, message = "총 인원은 최소 1명입니다.") @Max(value = 15, message = "총 인원은 최대 15명입니다.")
     private int totalGuestNum;
 
     @Min(value = 1, message = "성인 인원은 최소 1명입니다.")
