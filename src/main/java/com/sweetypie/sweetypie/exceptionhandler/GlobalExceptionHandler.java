@@ -52,6 +52,13 @@ public class GlobalExceptionHandler {
 
         return ErrorDto.of(builder.toString());
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorDto handleRuntimeError(RuntimeException ex) {
+
+        return ErrorDto.of(ex.getMessage());
+    }
 }
 
 
