@@ -40,11 +40,7 @@ public class MemberDto {
     @Pattern(regexp="^[0-9]*$" , message = "연락처는 숫자로만 입력해주세요")
     private String contact;
 
-    @Past
+    @Past(message = "생년월일을 확인해주세요")
     private LocalDate birthDate;
-
-    private List<Review> reviews;
-
-    private List<Bookmark> bookmarks;
 
 }
