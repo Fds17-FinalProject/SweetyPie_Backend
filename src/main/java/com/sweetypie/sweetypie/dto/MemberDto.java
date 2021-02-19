@@ -29,8 +29,15 @@ public class MemberDto {
             message = "비밀번호는 영어와 숫자와 특수문자를 포함해서 8자이상 으로 입력해주세요.")
     private String password;
 
-    @Size(min = 8, max = 50, message = "이전 비밀번호는 8자 이상 50자 이하여야 합니다.")
-    private String prePassword;
+    @Size(min = 8, max = 50, message = "비밀번호는 8자 이상 50자 이하여야 합니다")
+    @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$",
+            message = "비밀번호는 영어와 숫자와 특수문자를 포함해서 8자이상 으로 입력해주세요.")
+    private String passwordConfirm;
+
+
+//   추후구현용 남겨놓기
+//    @Size(min = 8, max = 50, message = "이전 비밀번호는 8자 이상 50자 이하여야 합니다.")
+//    private String prePassword;
 
     @Size(min = 2, max = 50, message = "이름은 2자 이상 50자 이하여야 합니다.")
     @Pattern(regexp="^[가-힣]*$" , message = "이름은 한글로만 입력해주세요")
@@ -42,5 +49,7 @@ public class MemberDto {
 
     @Past(message = "생년월일을 확인해주세요")
     private LocalDate birthDate;
+
+    private boolean isSocialMember;
 
 }
