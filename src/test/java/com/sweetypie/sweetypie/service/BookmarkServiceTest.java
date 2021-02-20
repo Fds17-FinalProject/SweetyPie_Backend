@@ -1,11 +1,12 @@
 package com.sweetypie.sweetypie.service;
 
-import com.sweetypie.sweetypie.dto.BookmarkDto;
+import com.sweetypie.sweetypie.dto.BookmarkListDto;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Bookmark;
 import com.sweetypie.sweetypie.model.Member;
+import com.sweetypie.sweetypie.repository.AccommodationPictureRepository;
 import com.sweetypie.sweetypie.repository.BookmarkRepository;
-import com.sweetypie.sweetypie.repository.MemberRepository;
+import com.sweetypie.sweetypie.repository.dynamic.DynamicBookmarkRepository;
 import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +35,10 @@ class BookmarkServiceTest {
     private BookmarkRepository bookmarkRepository;
 
     @Mock
-    private MemberRepository memberRepository;
+    DynamicBookmarkRepository dynamicBookmarkRepository;
+
+    @Mock
+    AccommodationPictureRepository accommodationPictureRepository;
 
     @Mock
     private TokenProvider tokenProvider;
@@ -42,46 +46,42 @@ class BookmarkServiceTest {
     @DisplayName("북마크 리스트 조회")
     @Test
     void findBookmarks() {
-        when(bookmarkRepository.findBookmarksByMemberId(1L)).thenReturn(mockBookmarks());
-        when(memberRepository.findById(0L)).thenReturn(mockMember());
+        when(dynamicBookmarkRepository.findByMemberId(0L)).thenReturn(mockBookmarks());
 
-        List<BookmarkDto> bookmarkDtos = bookmarkService.findBookmarksByToken("token");
+        List<BookmarkListDto> bookmarks = bookmarkService.findBookmarksByToken("token");
 
-        assertThat(bookmarkDtos.size()).isEqualTo(2);
+        assertThat(bookmarks.size()).isEqualTo(2);
 
-        assertThat(bookmarkDtos.get(0).getBookmarkId()).isEqualTo(1);
-        assertThat(bookmarkDtos.get(0).getAccommodationId()).isEqualTo(1);
+        assertThat(bookmarks.get(0).getBookmarkId()).isEqualTo(1);
+        assertThat(bookmarks.get(0).getAccommodationId()).isEqualTo(1);
 
-        assertThat(bookmarkDtos.get(1).getBookmarkId()).isEqualTo(2);
-        assertThat(bookmarkDtos.get(1).getAccommodationId()).isEqualTo(2);
+        assertThat(bookmarks.get(1).getBookmarkId()).isEqualTo(2);
+        assertThat(bookmarks.get(1).getAccommodationId()).isEqualTo(2);
     }
 
     @DisplayName("북마크 제거")
     @Test
     void deleteBookmarkById() {
-        when(bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(1, 1))
+        when(bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(0, 1))
                 .thenReturn(mockBookmark());
-        when(memberRepository.findById(0L)).thenReturn(mockMember());
+        when(tokenProvider.parseTokenToGetUserId("token")).thenReturn(0L);
 
         bookmarkService.deleteBookmark("token", 1);
 
         verify(bookmarkRepository, times(1)).delete(mockBookmark().get());
     }
 
-    private List<Bookmark> mockBookmarks() {
-        List<Bookmark> bookmarks = new ArrayList<>();
-        Member member = mockMember().get();
+    private List<BookmarkListDto> mockBookmarks() {
+        List<BookmarkListDto> bookmarks = new ArrayList<>();
 
-        Bookmark bookmark = new Bookmark();
-        bookmark.setId(1L);
-        bookmark.setMember(member);
-        bookmark.setAccommodation(givenAccommodation(1L));
+        BookmarkListDto bookmark = new BookmarkListDto();
+        bookmark.setBookmarkId(1L);
+        bookmark.setAccommodationId(1L);
         bookmarks.add(bookmark);
 
-        Bookmark bookmark2 = new Bookmark();
-        bookmark2.setId(2L);
-        bookmark2.setMember(member);
-        bookmark2.setAccommodation(givenAccommodation(2L));
+        BookmarkListDto bookmark2 = new BookmarkListDto();
+        bookmark2.setBookmarkId(2L);
+        bookmark2.setAccommodationId(2L);
         bookmarks.add(bookmark2);
 
         return bookmarks;

@@ -1,6 +1,7 @@
 package com.sweetypie.sweetypie.controller;
 
 import com.sweetypie.sweetypie.dto.BookmarkDto;
+import com.sweetypie.sweetypie.dto.BookmarkListDto;
 import com.sweetypie.sweetypie.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +28,7 @@ public class BookmarkController {
     private final BookmarkService bookmarkService;
 
     @GetMapping("/bookmark")
-    public List<BookmarkDto> getBookmarksByMemberId(@RequestHeader("Authorization") String token) {
+    public List<BookmarkListDto> getBookmarksByMemberId(@RequestHeader("Authorization") String token) {
 
         return bookmarkService.findBookmarksByToken(token);
     }
