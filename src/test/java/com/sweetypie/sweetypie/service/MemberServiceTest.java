@@ -64,7 +64,8 @@ class MemberServiceTest {
 
         MemberDto memberDto = MemberDto.builder()
                 .email("member@mail.com")
-                .password("member")
+                .password("member123!")
+                .passwordConfirm("member123!")
                 .name("member")
                 .birthDate(LocalDate.now())
                 .contact("011-111-1111")
