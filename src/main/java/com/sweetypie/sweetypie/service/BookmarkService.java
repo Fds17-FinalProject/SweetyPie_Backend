@@ -40,8 +40,7 @@ public class BookmarkService {
         List<BookmarkDto> bookmarkDtos = new ArrayList<>();
 
         for (Bookmark bookmark : bookmarks) {
-            bookmarkDtos.add(new BookmarkDto(bookmark.getId(), bookmark.getMember().getId(),
-                    bookmark.getAccommodation().getId()));
+            bookmarkDtos.add(new BookmarkDto(bookmark.getId(), bookmark.getAccommodation().getId()));
         }
 
         return bookmarkDtos;
@@ -54,7 +53,7 @@ public class BookmarkService {
         Accommodation accommodation = accommodationRepository.findById(bookmarkDto.getAccommodationId())
                 .orElseThrow(() -> new DataNotFoundException("Accommodation Not Found"));
 
-        if (bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(bookmarkDto.getMemberId(),
+        if (bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(member.getId(),
                 bookmarkDto.getAccommodationId()).isPresent()) {
             throw new DuplicateValueExeption("Already Have a Bookmark");
         }
