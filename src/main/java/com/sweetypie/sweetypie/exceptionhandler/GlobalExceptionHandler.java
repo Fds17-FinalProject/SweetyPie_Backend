@@ -27,9 +27,9 @@ public class GlobalExceptionHandler {
         return ErrorDto.of(ex.getMessage());
     }
 
-    @ExceptionHandler(InvalidInputException.class)
+    @ExceptionHandler(InputNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorDto handleInvalidInputException(InvalidInputException ex){
+    public ErrorDto handleInvalidInputException(InputNotValidException ex){
 
         return ErrorDto.of(ex.getMessage());
     }

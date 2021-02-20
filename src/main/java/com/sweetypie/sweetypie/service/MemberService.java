@@ -4,7 +4,7 @@ import com.sweetypie.sweetypie.dto.GoogleMemberDto;
 import com.sweetypie.sweetypie.dto.MemberDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
-import com.sweetypie.sweetypie.exception.InvalidInputException;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.model.MemberRole;
 import com.sweetypie.sweetypie.repository.MemberRepository;
@@ -59,7 +59,7 @@ public class MemberService {
                 .orElseThrow(() -> new DataNotFoundException("조회하는 멤버가 존재하지 않습니다"));
     }
 
-    public Member updateMember(Long id, MemberDto memberDto) throws InvalidInputException {
+    public Member updateMember(Long id, MemberDto memberDto)  {
 
         Member member = memberRepository
                 .findById(id)
@@ -73,7 +73,7 @@ public class MemberService {
             member.setContact(memberDto.getContact());
         } else if (memberDto.getPassword() != null) {
 //            if (!passwordEncoder.matches(memberDto.getPrePassword(), member.getPassword())) {
-//                throw new InvalidInputException("이전 비밀번호가 일치하지 않습니다");
+//                throw new InputNotValidException("이전 비밀번호가 일치하지 않습니다");
 //            } // 추후 구현
             member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         }
@@ -98,7 +98,7 @@ public class MemberService {
 
     private void confirmPassword(MemberDto memberDto)  {
         if(!memberDto.getPassword().equals(memberDto.getPasswordConfirm())){
-            throw new InvalidInputException("비밀 번호 확인이 일치하지 않습니다.");
+            throw new InputNotValidException("비밀 번호 확인이 일치하지 않습니다.");
         }
     }
 
