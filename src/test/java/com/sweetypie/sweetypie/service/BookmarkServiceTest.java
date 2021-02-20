@@ -51,11 +51,9 @@ class BookmarkServiceTest {
 
         assertThat(bookmarkDtos.get(0).getBookmarkId()).isEqualTo(1);
         assertThat(bookmarkDtos.get(0).getAccommodationId()).isEqualTo(1);
-        assertThat(bookmarkDtos.get(0).getMemberId()).isEqualTo(1);
 
         assertThat(bookmarkDtos.get(1).getBookmarkId()).isEqualTo(2);
         assertThat(bookmarkDtos.get(1).getAccommodationId()).isEqualTo(2);
-        assertThat(bookmarkDtos.get(1).getMemberId()).isEqualTo(1);
     }
 
     @DisplayName("북마크 제거")
