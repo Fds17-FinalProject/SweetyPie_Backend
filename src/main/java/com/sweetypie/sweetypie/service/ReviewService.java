@@ -3,7 +3,7 @@ package com.sweetypie.sweetypie.service;
 import com.sweetypie.sweetypie.dto.ReviewDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
-import com.sweetypie.sweetypie.exception.InvalidInputException;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.model.Reservation;
@@ -55,7 +55,7 @@ public class ReviewService {
         }
 
         if (accommodation.getId() != reviewDto.getAccommodationId()) {
-            throw new InvalidInputException("Accommodation Not Matched");
+            throw new InputNotValidException("Accommodation Not Matched");
         }
 
         Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
@@ -94,7 +94,7 @@ public class ReviewService {
         }
 
         if (accommodation.getId() != reviewDto.getAccommodationId()) {
-            throw new InvalidInputException("Accommodation Not Matched");
+            throw new InputNotValidException("Accommodation Not Matched");
         }
 
         memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))

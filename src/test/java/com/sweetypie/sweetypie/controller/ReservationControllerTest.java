@@ -1,7 +1,9 @@
 package com.sweetypie.sweetypie.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sweetypie.sweetypie.dto.LoginDto;
 import com.sweetypie.sweetypie.dto.ReservationDto;
+import com.sweetypie.sweetypie.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,20 @@ class ReservationControllerTest {
 
     private MockMvc mockMvc;
 
+    private String token;
+
+    @Autowired
+    private AuthService authService;
+
+    @BeforeEach
+    void getToken() {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test123@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token = authService.login(loginDto);
+    }
+
     @Autowired
     ObjectMapper objectMapper;
 
@@ -43,7 +59,8 @@ class ReservationControllerTest {
     @DisplayName("예약 내역 조회")
     @Test
     void getReservations() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation")
+                .header("Authorization", token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$.[0].checkInDate").value("2022-02-10"))
@@ -57,7 +74,14 @@ class ReservationControllerTest {
     @DisplayName("예약 내역 조회시 없을 때")
     @Test
     void getReservationsIfNull() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation/10"))
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test12345@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token = authService.login(loginDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation")
+                .header("Authorization",token))
                 .andExpect(jsonPath("$", hasSize(0)))
                 .andExpect(status().isOk());
     }
@@ -66,11 +90,11 @@ class ReservationControllerTest {
     @Test
     void makeAReservation() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2100, 5, 11))
                         .checkoutDate(LocalDate.of(2100, 5, 12))
-                        .memberId(1L)
                         .accommodationId(1L)
                         .totalGuestNum(4)
                         .adultNum(2)
@@ -88,8 +112,7 @@ class ReservationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
-                        .memberId(0L) // 0인 객체가 없어서 에러발생
-                        .accommodationId(1L)
+                        .accommodationId(0L)// 0인 객체가 없어서 에러발생
                         .reservationId(1L)
                         .checkInDate(LocalDate.of(2022, 2, 20))
                         .checkoutDate(LocalDate.of(2022, 2, 20))
@@ -109,7 +132,6 @@ class ReservationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
-                        .memberId(1L)
                         .accommodationId(1L)
                         .reservationId(1L)
                         .checkInDate(LocalDate.of(2022, 2, 20))
@@ -132,7 +154,6 @@ class ReservationControllerTest {
                         .adultNum(4)
                         .childNum(2)
                         .infantNum(0)
-                        .memberId(1L)
                         .accommodationId(1L)
                         .totalPrice(30000)
                         .build())))
@@ -151,7 +172,6 @@ class ReservationControllerTest {
                         .adultNum(4)
                         .childNum(2)
                         .infantNum(0)
-                        .memberId(1L)
                         .accommodationId(1L)
                         .totalPrice(30000)
                         .build())))

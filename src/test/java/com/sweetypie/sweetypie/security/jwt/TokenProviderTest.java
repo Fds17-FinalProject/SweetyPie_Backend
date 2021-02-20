@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest(properties = "spring.config.location="
         + "classpath:test.yml")
 @Transactional
@@ -33,7 +35,7 @@ class TokenProviderTest {
     @Test
     void parseTokenToGetUserIdTest() {
         long userId = tokenProvider.parseTokenToGetUserId(token);
-        System.out.println("userID : >>>>>>" + userId);
+        assertThat(userId).isEqualTo(1L);
 
     }
 

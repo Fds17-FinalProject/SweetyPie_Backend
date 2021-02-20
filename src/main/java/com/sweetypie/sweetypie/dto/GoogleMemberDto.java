@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
@@ -28,9 +25,10 @@ public class GoogleMemberDto {
     @Pattern(regexp="^[0-9]*$" , message = "연락처는 숫자로만 입력해주세요")
     private String contact;
 
-    @Past
+    @Past(message = "생년월일을 확인해주세요")
     private LocalDate birthDate;
 
+    @NotEmpty(message = "socialId를 돌려주세요")
     private String socialId;
 
 }

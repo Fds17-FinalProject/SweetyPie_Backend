@@ -3,7 +3,7 @@ package com.sweetypie.sweetypie.service;
 import com.sweetypie.sweetypie.dto.ReservationDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
-import com.sweetypie.sweetypie.exception.InvalidInputException;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.BookedDate;
 import com.sweetypie.sweetypie.model.Member;
@@ -40,11 +40,11 @@ public class ReservationService {
         return makeReservationDtoList(reservations);
     }
 
-    public Reservation makeAReservation(ReservationDto reservationDto) throws RuntimeException {
+    public Reservation makeAReservation(Long memberId, ReservationDto reservationDto) throws RuntimeException {
 
         handleCheckoutBeforeCheckInInputException(reservationDto);
 
-        Member member = memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new DataNotFoundException("등록된 회원 정보를 찾을 수 없습니다."));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException("등록된 회원 정보를 찾을 수 없습니다."));
 
         Accommodation accommodation = accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new DataNotFoundException("등록된 숙박 정보를 찾을 수 없습니다."));
 
@@ -79,7 +79,7 @@ public class ReservationService {
     private void handleCheckoutBeforeCheckInInputException(ReservationDto reservationDto) {
         if (reservationDto.getCheckoutDate().isBefore(reservationDto.getCheckInDate())) {
 
-            throw new InvalidInputException("예약기간이 잘 못 되었습니다.");
+            throw new InputNotValidException("예약기간이 잘 못 되었습니다.");
         }
     }
 
@@ -189,7 +189,7 @@ public class ReservationService {
         int validTotalPrice = totalNightPrice + 10000 + servicePrice;
 
         if (reservationDto.getTotalPrice() != validTotalPrice) {
-            throw new InvalidInputException("총 가격이 맞지 않습니다.");
+            throw new InputNotValidException("총 가격이 맞지 않습니다.");
         }
     }
 }
