@@ -6,7 +6,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.sweetypie.sweetypie.dto.*;
+import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.repository.MemberRepository;
 import com.sweetypie.sweetypie.security.jwt.TokenProvider;
@@ -52,6 +54,8 @@ public class AuthService {
 
     public String login(LoginDto loginDto) {
 
+        checkMemberStatus(loginDto);
+
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
 
@@ -59,6 +63,21 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         return tokenProvider.createToken(authentication);
+    }
+
+    private void checkMemberStatus(LoginDto loginDto) {
+        Member member = memberRepository
+                .findByEmail(loginDto.getEmail())
+                .orElseThrow(() -> new DataNotFoundException("로그인할 멤버가 존재하지 않습니다."));
+
+        if (member.isDeleted()) {
+            throw new InputNotValidException("탈퇴된 회원 입니다");
+        }
+        // 추후구현
+//        else if (member.isSocialMember()) {
+//            throw new InputNotValidException("구글회원은 구글로 로그인하기를 이용해주세요");
+//        }
+
     }
 
     public Map<String, String> googleLogin(String authCode) throws JsonProcessingException {

@@ -3,7 +3,7 @@ package com.sweetypie.sweetypie.service;
 import com.sweetypie.sweetypie.dto.AccommodationDto;
 import com.sweetypie.sweetypie.dto.SearchAccommodationDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
-import com.sweetypie.sweetypie.exception.InvalidInputException;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.repository.AccommodationPictureRepository;
@@ -113,15 +113,15 @@ public class AccommodationService {
     private LocalDate validateCheckInCheckout(LocalDate checkIn, LocalDate checkout) {
 
         if (checkIn != null && checkout != null && checkout.isBefore(checkIn)) {
-            throw new InvalidInputException("Checkout time is before check-in time");
+            throw new InputNotValidException("Checkout time is before check-in time");
         }
 
         if (checkout != null && checkout.isBefore(LocalDate.now())) {
-            throw new InvalidInputException("Checkout time has passed");
+            throw new InputNotValidException("Checkout time has passed");
         }
 
         if (checkIn != null && checkIn.isBefore(LocalDate.now())) {
-            throw new InvalidInputException("Check-in time has passed");
+            throw new InputNotValidException("Check-in time has passed");
         }
 
         if (checkIn == null) {

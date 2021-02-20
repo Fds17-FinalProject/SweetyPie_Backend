@@ -46,8 +46,9 @@ POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-  "email":"member1@mail.com",
+  "email":"member4@mail.com",
   "password":"member33!@",
+  "passwordConfirm":"member33!@",
   "name":"한글",
   "birthDate": "2002-02-10",
   "contact":"01008551213"
@@ -72,8 +73,17 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhd
 Content-Type: application/json
 
 {
-  "prePassword":"member33!@",
   "password": "member33!@@"
+}
+
+### 회원정보수정 : 생년월일변경
+
+PUT http://localhost:8080/api/member
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzODgwNDk0fQ.MRQls_oiIS1VKtvOwSrF_TAsriHpd09pfgnFSn6CvYoxEaaUFpAHs2QNVIdf4uC8xrV_PXgSDRUpYwtgcam4Bw
+Content-Type: application/json
+
+{
+"birthDate": "1988-02-22"
 }
 
 ### 회원삭제 테스트

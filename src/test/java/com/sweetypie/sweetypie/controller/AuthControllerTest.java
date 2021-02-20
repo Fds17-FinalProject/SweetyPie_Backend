@@ -16,10 +16,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(properties = "spring.config.location="
         + "classpath:test.yml")
@@ -39,7 +37,7 @@ class AuthControllerTest {
                 .build();
     }
 
-    @DisplayName("login")
+    @DisplayName("로그인")
     @Test
     void loginTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
@@ -52,9 +50,24 @@ class AuthControllerTest {
                                 .build()
                         )
                 ))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$.[0].accommodationId").value(1L));
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("로그인 -탈퇴된 회원")
+    @Test
+    void withdrawalMemberLoginTest() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                LoginDto.builder()
+                                        .email("withdrawaltest@gmail.com")
+                                        .password("12345678a!")
+                                        .build()
+                        )
+                ))
+                .andExpect(status().isBadRequest());
     }
 
 }

@@ -3,7 +3,7 @@ package com.sweetypie.sweetypie.service;
 import com.sweetypie.sweetypie.dto.ReservationDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
-import com.sweetypie.sweetypie.exception.InvalidInputException;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.*;
 import com.sweetypie.sweetypie.repository.AccommodationRepository;
 import com.sweetypie.sweetypie.repository.BookedDateRepository;
@@ -122,9 +122,9 @@ class ReservationServiceTest {
         when(memberRepository.findById(1L)).thenReturn(mockMember());
         when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
 
-        InvalidInputException invalidInputException = assertThrows(InvalidInputException.class, () -> reservationService.makeAReservation(1L, reservationDto));
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.makeAReservation(1L, reservationDto));
 
-        assertThat(invalidInputException.getMessage()).isEqualTo("총 가격이 맞지 않습니다.");
+        assertThat(inputNotValidException.getMessage()).isEqualTo("총 가격이 맞지 않습니다.");
 
     }
 
