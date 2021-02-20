@@ -16,8 +16,5 @@ public class BookmarkDto {
     private long bookmarkId;
 
     @Positive
-    private long memberId;
-
-    @Positive
     private long accommodationId;
 }
