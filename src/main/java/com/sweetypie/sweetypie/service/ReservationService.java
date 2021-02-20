@@ -40,11 +40,11 @@ public class ReservationService {
         return makeReservationDtoList(reservations);
     }
 
-    public Reservation makeAReservation(ReservationDto reservationDto) throws RuntimeException {
+    public Reservation makeAReservation(Long memberId, ReservationDto reservationDto) throws RuntimeException {
 
         handleCheckoutBeforeCheckInInputException(reservationDto);
 
-        Member member = memberRepository.findById(reservationDto.getMemberId()).orElseThrow(() -> new DataNotFoundException("등록된 회원 정보를 찾을 수 없습니다."));
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new DataNotFoundException("등록된 회원 정보를 찾을 수 없습니다."));
 
         Accommodation accommodation = accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new DataNotFoundException("등록된 숙박 정보를 찾을 수 없습니다."));
 
