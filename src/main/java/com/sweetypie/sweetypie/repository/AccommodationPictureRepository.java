@@ -8,4 +8,6 @@ import java.util.List;
 public interface AccommodationPictureRepository extends JpaRepository<AccommodationPicture, Long> {
 
     List<AccommodationPicture> findByAccommodationId(long accommodationId);
+
+    AccommodationPicture findFirstByAccommodationId(long accommodationId);
 }
