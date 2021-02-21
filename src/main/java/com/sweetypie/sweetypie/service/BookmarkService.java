@@ -1,20 +1,22 @@
 package com.sweetypie.sweetypie.service;
 
 import com.sweetypie.sweetypie.dto.BookmarkDto;
+import com.sweetypie.sweetypie.dto.BookmarkListDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Bookmark;
 import com.sweetypie.sweetypie.model.Member;
+import com.sweetypie.sweetypie.repository.AccommodationPictureRepository;
 import com.sweetypie.sweetypie.repository.AccommodationRepository;
 import com.sweetypie.sweetypie.repository.BookmarkRepository;
 import com.sweetypie.sweetypie.repository.MemberRepository;
+import com.sweetypie.sweetypie.repository.dynamic.DynamicBookmarkRepository;
 import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -28,22 +30,21 @@ public class BookmarkService {
 
     private final AccommodationRepository accommodationRepository;
 
+    private final AccommodationPictureRepository accPictureRepository;
+
+    private final DynamicBookmarkRepository dynamicBookmarkRepository;
+
     private final TokenProvider tokenProvider;
 
-    public List<BookmarkDto> findBookmarksByToken(String token) {
+    public List<BookmarkListDto> findBookmarksByToken(String token) {
 
-        Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
-                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
+        List<BookmarkListDto> bookmarks = dynamicBookmarkRepository.findByMemberId(tokenProvider.parseTokenToGetUserId(token));
 
-        List<Bookmark> bookmarks = bookmarkRepository.findBookmarksByMemberId(member.getId());
-
-        List<BookmarkDto> bookmarkDtos = new ArrayList<>();
-
-        for (Bookmark bookmark : bookmarks) {
-            bookmarkDtos.add(new BookmarkDto(bookmark.getId(), bookmark.getAccommodation().getId()));
+        for (BookmarkListDto bookmark : bookmarks) {
+            bookmark.setAccommodationPicture(accPictureRepository.findFirstByAccommodationId(bookmark.getAccommodationId()));
         }
 
-        return bookmarkDtos;
+        return bookmarks;
     }
 
     public void postBookmark(String token, BookmarkDto bookmarkDto) {
@@ -66,10 +67,8 @@ public class BookmarkService {
     }
 
     public void deleteBookmark(String token, long accommodationId) {
-        Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
-                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
-        Bookmark bookmark = bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(member.getId(), accommodationId)
+        Bookmark bookmark = bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(tokenProvider.parseTokenToGetUserId(token), accommodationId)
                 .orElseThrow(() -> new DataNotFoundException("Bookmark Not Found"));
 
         bookmarkRepository.delete(bookmark);

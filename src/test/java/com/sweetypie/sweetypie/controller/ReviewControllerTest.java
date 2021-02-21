@@ -1,7 +1,9 @@
 package com.sweetypie.sweetypie.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sweetypie.sweetypie.dto.LoginDto;
 import com.sweetypie.sweetypie.dto.ReviewDto;
+import com.sweetypie.sweetypie.service.AuthService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,18 +30,30 @@ class ReviewControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    AuthService authService;
+
+    private String token;
+
     @BeforeEach
     void before(WebApplicationContext was) {
         mockMvc = MockMvcBuilders.webAppContextSetup(was)
                 .alwaysDo(print())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true))
                 .build();
+
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test123@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token = authService.login(loginDto);
     }
 
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void getReview() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/review/1"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/review/1")
+                .header("Authorization", token))
                 .andExpect(status().isOk());
     }
 
@@ -47,16 +61,18 @@ class ReviewControllerTest {
     @Test
     void postReview() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
                         new ReviewDto(1L, 2L, 3, "좋아요"))))
-                .andExpect(status().isBadRequest()); // 인증 불가
+                .andExpect(status().isOk());
     }
 
     @DisplayName("리뷰 등록하기 (이미 작성)")
     @Test
     void postReview2() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
                         new ReviewDto(1L, 1L, 3, "좋아요"))))

@@ -31,7 +31,9 @@ public class ReviewService {
 
     private final TokenProvider tokenProvider;
 
-    public Review findReviewByReservationId(long reservationId) {
+    public Review findReviewByReservationId(String token, long reservationId) {
+        memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
+                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
         return reviewRepository.findReviewByReservationId(reservationId)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
