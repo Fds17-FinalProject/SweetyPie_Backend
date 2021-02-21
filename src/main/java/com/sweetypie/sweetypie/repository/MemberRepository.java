@@ -13,6 +13,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmail(String email);
 
-    @Query(value = "select * from Member where email=:email", nativeQuery = true)
+    @Query(value = "select * from member where email=:email", nativeQuery = true)
     Optional<Member> findMemberIncludeDeletedMember(@Param("email") String email);
 }

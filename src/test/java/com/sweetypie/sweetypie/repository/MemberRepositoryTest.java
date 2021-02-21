@@ -13,6 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest(properties = "spring.config.location="
+//         +"classpath:application.yml,"+
+//                 "classpath:datasource.yml")
         + "classpath:test.yml")
 class MemberRepositoryTest {
 
@@ -36,5 +38,14 @@ class MemberRepositoryTest {
         assertThat(result.isPresent()).isTrue();
     }
 
+    //MySQL 테스트용
+//    @DisplayName("email로탈퇴한회원포함해서찾기2")
+//    @Test
+//    void findByEmailIncludeDeleted2Test() {
+//        Optional<Member> result = memberRepository.findMemberIncludeDeletedMember("member7@mail.com");
+//
+//        assertThat(result.isPresent()).isTrue();
+//    }
+//
 
 }
