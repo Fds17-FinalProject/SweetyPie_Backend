@@ -37,12 +37,12 @@ public class AuthController {
 
         Map<String, String> map;
             map = authService.googleLogin(authCode);
-        // 로그인 되면 200과 token 리턴
+        // 로그인 되면 token 리턴
         if (map.get("token")!=null) {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + map.get("token"));
             return new ResponseEntity<>(map, httpHeaders,  HttpStatus.OK);
-        // 로그인 안되면 203과 회원정보를 리턴
+        // 로그인 안되면 회원정보를 리턴
         } else {
             return ResponseEntity.ok(map);
         }
