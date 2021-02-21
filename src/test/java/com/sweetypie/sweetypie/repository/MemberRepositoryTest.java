@@ -1,12 +1,13 @@
 package com.sweetypie.sweetypie.repository;
 
 import com.sweetypie.sweetypie.model.Member;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,25 +19,22 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
+    @DisplayName("email로Member찾기")
     @Test
     void findByEmailTest() {
-        Member member = givenMember("findByEmailTest@mail.com");
-        memberRepository.save(member);
 
-        Member result = memberRepository.findByEmail("findByEmailTest@mail.com").get();
+        Member result = memberRepository.findByEmail("test123@gmail.com").get();
 
-        assertThat(result.getEmail()).isEqualTo("findByEmailTest@mail.com");
+        assertThat(result.getEmail()).isEqualTo("test123@gmail.com");
     }
 
-    private Member givenMember(String email) {
-        Member member = new Member();
-        member.setEmail(email);
-        member.setName("이재복");
-        member.setPassword("1234");
-        member.setContact("01055442211");
-        member.setBirthDate(LocalDate.now());
+    @DisplayName("email로탈퇴한회원포함해서찾기")
+    @Test
+    void findByEmailIncludeDeletedTest() {
+        Optional<Member> result = memberRepository.findMemberIncludeDeletedMember("withdrawaltest@gmail.com");
 
-        return member;
+        assertThat(result.isPresent()).isTrue();
     }
+
 
 }

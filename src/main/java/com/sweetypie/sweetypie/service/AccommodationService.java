@@ -63,21 +63,23 @@ public class AccommodationService {
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(String token, String searchKeyword,
                                                                    LocalDate checkIn, LocalDate checkout,
-                                                                   int guestNum, String types, Pageable page) {
+                                                                   int guestNum, Integer minPrice, Integer maxPrice, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return setPictures(dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token), types, page));
+        return setPictures(dynamicAccRepository
+                .findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token),
+                        minPrice, maxPrice, types, page));
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(String token, float minLatitude, float maxLatitude,
-                                                                      float minLongitude, float maxLongitude,
+                                                                      float minLongitude, float maxLongitude, Integer minPrice, Integer maxPrice,
                                                                       LocalDate checkIn, LocalDate checkout, int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
         return setPictures(dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
-                checkIn, checkout, guestNum, parseTokenToMemberId(token), types, page));
+                checkIn, checkout, minPrice, maxPrice, guestNum, parseTokenToMemberId(token), types, page));
     }
 
     public List<Integer> findPricesBySearch(String searchKeyword, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude,

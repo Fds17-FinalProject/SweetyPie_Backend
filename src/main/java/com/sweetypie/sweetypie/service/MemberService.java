@@ -1,5 +1,6 @@
 package com.sweetypie.sweetypie.service;
 
+import com.sweetypie.sweetypie.dto.ErrorDto;
 import com.sweetypie.sweetypie.dto.GoogleMemberDto;
 import com.sweetypie.sweetypie.dto.MemberDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
@@ -9,9 +10,13 @@ import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.model.MemberRole;
 import com.sweetypie.sweetypie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 @Service
@@ -35,7 +40,7 @@ public class MemberService {
                 .role(MemberRole.MEMBER)
                 .build();
 
-        return memberRepository.save(member);
+            return memberRepository.save(member);
     }
 
     public Member signupGoogleMember(GoogleMemberDto memberDto) {
@@ -91,8 +96,8 @@ public class MemberService {
     }
 
     private void checkDuplicateEmail(MemberDto memberDto) {
-        if (memberRepository.findByEmail(memberDto.getEmail()).orElse(null) != null) {
-            throw new DuplicateValueExeption("이미 가입되어 있는 유저입니다.");
+        if (memberRepository.findMemberIncludeDeletedMember(memberDto.getEmail()).orElse(null) != null) {
+            throw new DuplicateValueExeption("이미 사용되고 있는 Email 입니다.");
         }
     }
 
