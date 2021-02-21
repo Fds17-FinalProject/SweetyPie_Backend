@@ -63,12 +63,12 @@ class AccommodationServiceTest {
     @Test
     void searchAccommodationsByQueryDsl1() {
         when(dynamicAccommodationRepository
-                .findAccommodationsBySearch("서울", LocalDate.now(), null, 1, null, null, PageRequest.of(1, 10)))
+                .findAccommodationsBySearch("서울", LocalDate.now(), null, 1, null, null, null, null, PageRequest.of(1, 10)))
                 .thenReturn(mockAccommodationPage());
         when(accPictureRepository.findByAccommodationId(1)).thenReturn(mockAccPictures());
 
         Page<SearchAccommodationDto> accommodations = accommodationService
-                .findAccommodationsBySearch(null, "서울", null, null, 1, null, PageRequest.of(1, 10));
+                .findAccommodationsBySearch(null, "서울", null, null, 1, null, null, null, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
         assertThat(accommodations.toList().get(0).getBuildingType()).isEqualTo("아파트");
@@ -80,12 +80,12 @@ class AccommodationServiceTest {
     @Test
     void searchAccommodationsByQueryDsl2() {
         when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 3, 5)
-                , LocalDate.of(2022, 3, 10), 0, null, null, PageRequest.of(1, 10)))
+                , LocalDate.of(2022, 3, 10), 0, null, null, null, null, PageRequest.of(1, 10)))
                 .thenReturn(mockAccommodationPage());
         when(accPictureRepository.findByAccommodationId(1)).thenReturn(mockAccPictures());
 
         Page<SearchAccommodationDto> accommodations = accommodationService.findAccommodationsBySearch(null, null, LocalDate.of(2022, 3, 5),
-                LocalDate.of(2022, 3, 10), 0, null, PageRequest.of(1, 10));
+                LocalDate.of(2022, 3, 10), 0, null, null, null, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
         assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
@@ -96,12 +96,12 @@ class AccommodationServiceTest {
     @Test
     void searchAccommodationsByQueryDsl4() {
         when(dynamicAccommodationRepository.findAccommodationsBySearch(null, LocalDate.of(2022, 5, 1),
-                null, 0, null, null, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
+                null, 0, null, null, null, null, PageRequest.of(1, 10))).thenReturn(mockAccommodationPage());
         when(accPictureRepository.findByAccommodationId(1)).thenReturn(mockAccPictures());
 
         Page<SearchAccommodationDto> accommodations = accommodationService
                 .findAccommodationsBySearch(null, null, LocalDate.of(2022, 5, 1),
-                        null, 0, null, PageRequest.of(1, 10));
+                        null, 0, null, null, null, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
         assertThat(accommodations.toList().get(0).getAccommodationPictures().size()).isEqualTo(5);
