@@ -36,14 +36,15 @@ public class DynamicAccommodationRepository {
     }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout,
-                                                                   int guestNum, Long memberId, String types, Pageable page) {
+                                                                   int guestNum, Long memberId, Integer minPrice, Integer maxPrice, String types, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
         acBuilder.and(ac.capacity.goe(guestNum));
 
-        setSearchKeywordQuery(searchKeyword, acBuilder);
+        setPriceQuery(minPrice, maxPrice, acBuilder);
         setAccommodationTypesQuery(types, acBuilder);
+        setSearchKeywordQuery(searchKeyword, acBuilder);
         setCheckInCheckOutQuery(checkIn, checkout, bdBuilder);
 
         acBuilder.andNot(ac.id.in(JPAExpressions
@@ -59,12 +60,14 @@ public class DynamicAccommodationRepository {
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
                                                                       float minLongitude, float maxLongitude,
                                                                       LocalDate checkIn, LocalDate checkout,
+                                                                      Integer minPrice, Integer maxPrice,
                                                                       int guestNum, Long memberId, String types, Pageable page) {
         BooleanBuilder bdBuilder = new BooleanBuilder();
         BooleanBuilder acBuilder = new BooleanBuilder();
 
         acBuilder.and(ac.capacity.goe(guestNum));
 
+        setPriceQuery(minPrice, maxPrice, acBuilder);
         setAccommodationTypesQuery(types, acBuilder);
         setCheckInCheckOutQuery(checkIn, checkout, bdBuilder);
         setCoordinate(minLatitude, maxLatitude, minLongitude, maxLongitude, acBuilder);
@@ -234,6 +237,13 @@ public class DynamicAccommodationRepository {
         if (minLatitude != null && maxLatitude != null && minLongitude != null && maxLongitude != null) {
             builder.and(ac.latitude.between(minLatitude, maxLatitude));
             builder.and(ac.longitude.between(minLongitude, maxLongitude));
+        }
+    }
+
+    private void setPriceQuery(Integer minPrice, Integer maxPrice, BooleanBuilder builder) {
+
+        if (minPrice != null && maxPrice != null) {
+            builder.and(ac.price.between(minPrice, maxPrice));
         }
     }
 }

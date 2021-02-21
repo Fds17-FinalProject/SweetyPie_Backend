@@ -50,7 +50,7 @@ class DynamicAccommodationRepositoryTest {
                 findAccommodationsBySearch("대구",
                         LocalDate.of(2022, 3, 3),
                         LocalDate.of(2022, 3, 4), 1,
-                        null, null, PageRequest.of(0, 10));
+                        null, null, null, null, PageRequest.of(0, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(10);
 
@@ -72,7 +72,7 @@ class DynamicAccommodationRepositoryTest {
                 findAccommodationsBySearch("대구",
                         LocalDate.of(2022, 3, 3),
                         LocalDate.of(2022, 3, 7), 1,
-                        null, null, PageRequest.of(0, 10));
+                        null, null, null, null, PageRequest.of(0, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
     }
@@ -86,7 +86,7 @@ class DynamicAccommodationRepositoryTest {
 
         Page<SearchAccommodationDto> accommodations = dynamicAccRepository
                 .findAccommodationsBySearch(null, LocalDate.now(), null, 0, null,
-                        null, PageRequest.of(1, 10));
+                        null, null, null, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
 
@@ -100,7 +100,7 @@ class DynamicAccommodationRepositoryTest {
     void searchByCoordinate() {
         Page<SearchAccommodationDto> accommodations = dynamicAccRepository
                 .findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f,
-                        LocalDate.now(), null, 0, null, null, PageRequest.of(1, 10));
+                        LocalDate.now(), null, null, null, 0, null, null, PageRequest.of(1, 10));
 
         for (SearchAccommodationDto accommodation : accommodations) {
             assertThat(accommodation.getLatitude()).isGreaterThan(37f);
