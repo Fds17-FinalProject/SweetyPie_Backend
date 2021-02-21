@@ -71,7 +71,7 @@ public class AuthService {
                 .findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new DataNotFoundException("로그인할 멤버가 존재하지 않습니다."));
 //         추후구현
-        if (member.isSocialMember()) {
+        if (member.isSocialMember() & !loginDto.isSocialMember()) {
             throw new InputNotValidException("구글회원은 구글로 로그인하기를 이용해주세요");
         }
 
@@ -85,7 +85,7 @@ public class AuthService {
 
         // 로그인이 가능할 때 로그인을 해서 JWT 토큰을 리턴한다
         if (isLoginPossible(memberDto, googleUserInfo)) {
-            LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
+            LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId(), true);
             Map<String, String> map = new HashMap<>();
             map.put("token", login(loginDto));
 
@@ -105,7 +105,8 @@ public class AuthService {
     public String signupBeforeGoogleLogin(GoogleMemberDto memberDto) {
 
         memberService.signupGoogleMember(memberDto);
-        LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
+        LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId(), true);
+
         return login(loginDto);
 
     }
