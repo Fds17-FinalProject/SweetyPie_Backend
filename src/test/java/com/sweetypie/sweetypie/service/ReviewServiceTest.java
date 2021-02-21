@@ -50,8 +50,9 @@ class ReviewServiceTest {
     @Test
     void findReviewByAccommodation_IdAndMember_Id() {
         when(reviewRepository.findReviewByReservationId(1)).thenReturn(mockReview());
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
 
-        Review review = reviewService.findReviewByReservationId(1);
+        Review review = reviewService.findReviewByReservationId("token", 1);
 
         assertThat(review.getContent()).isEqualTo("좋아요");
         assertThat(review.getRating()).isEqualTo(3);
@@ -77,7 +78,7 @@ class ReviewServiceTest {
 
         reviewService.updateReview("token", mockReviewDto());
 
-        Review review = reviewService.findReviewByReservationId(0);
+        Review review = reviewService.findReviewByReservationId("token", 0);
 
         assertThat(review.getContent()).isEqualTo("변경");
         assertThat(review.getRating()).isEqualTo(4);
