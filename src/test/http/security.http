@@ -5,18 +5,8 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email":"member@mail.com",
+  "email":"fovena@gmail.com",
   "password":"member33!@"
-}
-
-### 로그인 테스트-testDB
-
-POST http://localhost:8080/api/login
-Content-Type: application/json
-
-{
-  "email":"test123@gmail.com",
-  "password":"12345678a!"
 }
 
 ### 로그인 테스트- 서버
@@ -25,8 +15,8 @@ POST http://3.34.122.155/api/login
 Content-Type: application/json
 
 {
-  "email":"test123@gmail.com",
-  "password":"12345678a!"
+  "email":"member8@mail.com",
+  "password":"member33!@"
 }
 
 
@@ -37,16 +27,15 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhd
 
 ### 로그아웃 테스트 - 서버
 GET http://3.34.122.155/api/logout
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0MTIzQGdtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjoxLCJleHAiOjE2MTM1MzM0MDZ9.XmI9Vmfvc4FnH3Jv0pHgdZo6EG5d3ZPWpczWILksXTmmMjBmz8jSpI2UVcNQqWSXEkD_-17AnFc_yj-IqP-sww
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXI4QG1haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjUxLCJleHAiOjE2MTM4MTY2Mzd9.MPF49mw8y6qEWmI5N1ZulXPgIHN_TyYjCby0KtX0gpCfx85vQIdOMblqqtMwdet2ytXmmNpJmYx-YQ18ZWcupA
 
 ### 회원가입 테스트
 
-#POST http://localhost:8080/api/member
-POST http://localhost:8080/api/member
+POST http://3.34.122.155/api/member
 Content-Type: application/json
 
 {
-  "email":"member4@mail.com",
+  "email":"member9@mail.com",
   "password":"member33!@",
   "passwordConfirm":"member33!@",
   "name":"한글",
@@ -54,10 +43,23 @@ Content-Type: application/json
   "contact":"01008551213"
 }
 
+###
+POST http://localhost:8080/api/member
+Content-Type: application/json
+
+{
+"email":"member11@mail.com",
+"password":"password123",
+"passwordConfirm":"password123",
+"name":"테스터",
+"birthDate": "1999-02-3",
+"contact":"01008551213"
+}
+
 ### 회원정보찾기 테스트
 
 GET http://localhost:8080/api/member
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzNzQ5NDU4fQ._pvzJif01xSqtjBPjduJNzL71cH6KLWpdMun7cjbjaD-6E-XQgldeh40T9RgXXFyhHfH9wurwx8PvCedYOIuGA
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXIxMEBtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjo2MCwiZXhwIjoxNjEzODc0Mjg1fQ.9XF2bjJeK2p1ymHJ5TNRyaEZJSLTxg5mkAvEspZJoImShOuPQ-NteWlQF0d-k6CujQ3gyApTKnSTMPqgKldz2g
 
 ### 회원정보찾기 테스트 -서버
 
@@ -86,10 +88,10 @@ Content-Type: application/json
 "birthDate": "1988-02-22"
 }
 
-### 회원삭제 테스트
+### 회원탈퇴 테스트
 
-DELETE http://localhost:8080/api/member
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXIxQG1haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjExLCJleHAiOjE2MTM4ODA2OTF9.MVnLS2vQf_LUB-rky4qzP82ZkONEoVk8bK8Ea4_98Rx9T-DmVOwoxUKMnnI07_S8vgsY3rLinh0XN9GQpznYVg
+DELETE http://3.34.122.155/api/member
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXI4QG1haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjUxLCJleHAiOjE2MTM4MTY3NTF9.52XzCklUC_R8sYD2Y8gDUx_hnpXfJLvslBleytzYdd7m5gWj78RV0cQGRIK30NuAiFfsX27hMT-kfzJHIpvT0g
 
 ### 구글로그인
 

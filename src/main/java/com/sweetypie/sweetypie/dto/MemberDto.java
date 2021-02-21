@@ -1,18 +1,13 @@
 package com.sweetypie.sweetypie.dto;
 
-import com.sweetypie.sweetypie.model.Bookmark;
-import com.sweetypie.sweetypie.model.Review;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -24,11 +19,13 @@ public class MemberDto {
     @Size(min = 5, max = 50, message = "이메일 길이를 확인해주세요")
     private String email;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(min = 8, max = 50, message = "비밀번호는 8자 이상 50자 이하여야 합니다")
     @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$",
             message = "비밀번호는 영어와 숫자와 특수문자를 포함해서 8자이상 으로 입력해주세요.")
     private String password;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(min = 8, max = 50, message = "비밀번호는 8자 이상 50자 이하여야 합니다")
     @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$",
             message = "비밀번호는 영어와 숫자와 특수문자를 포함해서 8자이상 으로 입력해주세요.")

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sweetypie.sweetypie.dto.*;
 import com.sweetypie.sweetypie.security.jwt.JwtFilter;
 import com.sweetypie.sweetypie.service.AuthService;
-import com.sweetypie.sweetypie.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,9 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -45,9 +42,9 @@ public class AuthController {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + map.get("token"));
             return new ResponseEntity<>(map, httpHeaders,  HttpStatus.OK);
-        // 로그인 안되면 203과 memberDto 리턴
+        // 로그인 안되면 203과 회원정보를 리턴
         } else {
-            return new ResponseEntity<>(map, HttpStatus.NON_AUTHORITATIVE_INFORMATION);
+            return ResponseEntity.ok(map);
         }
     }
 
@@ -61,8 +58,8 @@ public class AuthController {
 
     @GetMapping("/logout")
     @PreAuthorize("authenticated")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
-        authService.logout(request);
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+        authService.logout(token);
 
         return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }

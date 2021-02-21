@@ -26,4 +26,6 @@ public class LoginDto {
     @Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,}$",
             message = "비밀번호는 영어와 숫자와 특수문자를 포함해서 8자이상 으로 입력해주세요.")
     private String password;
+
+    private boolean isSocialMember;
 }
