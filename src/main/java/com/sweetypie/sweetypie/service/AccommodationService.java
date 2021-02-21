@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Transactional
 @Service
@@ -77,6 +78,14 @@ public class AccommodationService {
 
         return setPictures(dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
                 checkIn, checkout, guestNum, parseTokenToMemberId(token), types, page));
+    }
+
+    public List<Integer> findPricesBySearch(String searchKeyword, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude,
+                                            LocalDate checkIn, LocalDate checkout, int guestNum, String types) {
+
+        checkIn = validateCheckInCheckout(checkIn, checkout);
+
+        return dynamicAccRepository.findPricesBySearch(searchKeyword, minLatitude, maxLatitude, minLongitude, maxLongitude, checkIn, checkout, guestNum, types);
     }
 
     private AccommodationDto setListObjects(AccommodationDto acc) {
