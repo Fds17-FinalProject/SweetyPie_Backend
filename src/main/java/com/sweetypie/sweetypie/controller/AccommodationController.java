@@ -59,9 +59,10 @@ public class AccommodationController {
                                                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
                                                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
                                                                   @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String types,
+                                                                  @RequestParam(required = false) Integer minPrice, @RequestParam(required = false) Integer maxPrice,
                                                                   @PageableDefault(size = 20) Pageable page) {
 
-        return accommodationService.findAccommodationsBySearch(token, searchKeyword, checkIn, checkout, guestNum, types, page);
+        return accommodationService.findAccommodationsBySearch(token, searchKeyword, checkIn, checkout, guestNum, minPrice, maxPrice, types, page);
     }
 
     @GetMapping("/accommodations/mapSearch")
@@ -70,10 +71,11 @@ public class AccommodationController {
                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
                                                                      @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkout,
                                                                      @RequestParam(required = false, defaultValue = "1") int guestNum, @RequestParam(required = false) String types,
+                                                                     @RequestParam(required = false) Integer minPrice, @RequestParam(required = false) Integer maxPrice,
                                                                      @RequestHeader(value = "Authorization", required = false) String token, @PageableDefault(size = 20) Pageable page) {
 
         return accommodationService.findAccommodationsByMapSearch(token, minLatitude, maxLatitude, minLongitude,
-                maxLongitude, checkIn, checkout, guestNum, types, page);
+                maxLongitude, minPrice, maxPrice, checkIn, checkout, guestNum, types, page);
     }
 
     @GetMapping("/accommodations/price")
