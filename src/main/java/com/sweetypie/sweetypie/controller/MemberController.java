@@ -21,6 +21,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final TokenProvider tokenProvider;
+    private final AuthService authService;
 
     @GetMapping("/member")
     @PreAuthorize("authenticated")
@@ -33,31 +34,33 @@ public class MemberController {
 
 
     @PostMapping("/member")
-    public ResponseEntity<MemberDto> signup(
+    public ResponseEntity<String> signup(
             @Valid @RequestBody MemberDto memberDto) {
 
-        Member member = memberService.signup(memberDto);
+        memberService.signup(memberDto);
 
-        return ResponseEntity.ok(mapToMemberDto(member));
+        return ResponseEntity.ok("회원가입이 정상적으로 완료되었습니다");
     }
 
     @PutMapping("/member")
     @PreAuthorize("authenticated")
-    public ResponseEntity<MemberDto> updateMember(
+    public ResponseEntity<String> updateMember(
             @RequestHeader("Authorization") String token,
-            @Valid @RequestBody MemberDto memberDto) throws InvalidInputException {
+            @Valid @RequestBody MemberDto memberDto) {
 
-        Member member = memberService.updateMember(tokenProvider.parseTokenToGetUserId(token),
+        memberService.updateMember(tokenProvider.parseTokenToGetUserId(token),
                                                      memberDto);
-        return ResponseEntity.ok(mapToMemberDto(member));
+        return ResponseEntity.ok("회원정보가 정상적으로 수정되었습니다");
     }
 
     @DeleteMapping("/member")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Boolean> withdrawalMember(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<String> withdrawalMember(@RequestHeader("Authorization") String token) {
 
-        Member member = memberService.withdrawal(tokenProvider.parseTokenToGetUserId(token));
-        return ResponseEntity.ok(member.isDeleted());
+        memberService.withdrawal(tokenProvider.parseTokenToGetUserId(token));
+        //회원 탈퇴후 접근한 토큰 만료시키기
+        authService.logout(token);
+        return ResponseEntity.ok("회원 탈퇴가 정상적으로 완료되었습니다");
     }
 
     private MemberDto mapToMemberDto(Member member) {
@@ -67,6 +70,7 @@ public class MemberController {
                 .name(member.getName())
                 .contact(member.getContact())
                 .birthDate(member.getBirthDate())
+                .isSocialMember(member.isSocialMember())
                 .build();
     }
 }

@@ -70,4 +70,21 @@ class AuthControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("일반로그인 - 구글회원")
+    @Test
+    void googleMemberTryNormalLoginTest() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                LoginDto.builder()
+                                        .email("google@gmail.com")
+                                        .password("12345678a!")
+                                        .build()
+                        )
+                ))
+                .andExpect(status().isBadRequest());
+    }
+
 }

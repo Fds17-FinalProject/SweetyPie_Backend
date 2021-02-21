@@ -22,15 +22,16 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Transactional
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -69,14 +70,10 @@ public class AuthService {
         Member member = memberRepository
                 .findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new DataNotFoundException("로그인할 멤버가 존재하지 않습니다."));
-
-        if (member.isDeleted()) {
-            throw new InputNotValidException("탈퇴된 회원 입니다");
+//         추후구현
+        if (member.isSocialMember() & !loginDto.isSocialMember()) {
+            throw new InputNotValidException("구글회원은 구글로 로그인하기를 이용해주세요");
         }
-        // 추후구현
-//        else if (member.isSocialMember()) {
-//            throw new InputNotValidException("구글회원은 구글로 로그인하기를 이용해주세요");
-//        }
 
     }
 
@@ -88,12 +85,12 @@ public class AuthService {
 
         // 로그인이 가능할 때 로그인을 해서 JWT 토큰을 리턴한다
         if (isLoginPossible(memberDto, googleUserInfo)) {
-            LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
+            LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId(), true);
             Map<String, String> map = new HashMap<>();
             map.put("token", login(loginDto));
 
             return map;
-        // 로그인이 불가능 할 때 회원가입 가능하게 memberDto 를 리턴한다
+        // 로그인이 불가능 할 때 회원가입 가능하게 회원정보를 리턴한다
         } else {
             Map<String, String> map = new HashMap<>();
             map.put("email", memberDto.getEmail());
@@ -108,13 +105,13 @@ public class AuthService {
     public String signupBeforeGoogleLogin(GoogleMemberDto memberDto) {
 
         memberService.signupGoogleMember(memberDto);
-        LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId());
+        LoginDto loginDto = new LoginDto(memberDto.getEmail(), memberDto.getSocialId(), true);
+
         return login(loginDto);
 
     }
 
-    public void logout(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+    public void logout(String token) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         valueOperations.set(token, token, Duration.ofSeconds(tokenValidityInSeconds));
     }
@@ -124,6 +121,31 @@ public class AuthService {
         //HTTP Request를 위한 RestTemplate
         RestTemplate restTemplate = new RestTemplate();
 
+        //요청시 파라미터는 스네이크 케이스로 세팅되므로 Object mapper에 미리 설정해준다.
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
+        GoogleTokenResponseDto googleResponse = getGoogleResponse(restTemplate, mapper, authCode);
+
+        return getGetUserInfoFromGoogleResponse(restTemplate, mapper, googleResponse);
+
+    }
+
+    private Map<String, String> getGetUserInfoFromGoogleResponse(RestTemplate restTemplate, ObjectMapper mapper, GoogleTokenResponseDto googleResponse) throws JsonProcessingException {
+        //ID Token만 추출 (사용자의 정보는 jwt로 인코딩 되어있다)
+        String jwtToken = googleResponse.getIdToken();
+        String requestUrl = UriComponentsBuilder.fromHttpUrl("https://oauth2.googleapis.com/tokeninfo")
+                .queryParam("id_token", jwtToken).encode().toUriString();
+
+        String resultJson = restTemplate.getForObject(requestUrl, String.class);
+
+        Map<String, String> userInfo = mapper.readValue(resultJson, new TypeReference<Map<String, String>>(){});
+        userInfo.put("accessToken", googleResponse.getAccessToken());
+        return userInfo;
+    }
+
+    private GoogleTokenResponseDto getGoogleResponse(RestTemplate restTemplate, ObjectMapper mapper, String authCode ) throws JsonProcessingException {
         //Google OAuth Access Token 요청을 위한 파라미터 세팅
         GoogleTokenRequestDto googleOAuthRequestParam = GoogleTokenRequestDto
                 .builder()
@@ -132,31 +154,13 @@ public class AuthService {
                 .code(authCode)
                 .redirectUri(GOOGLE_REDIRECT_URL)
                 .grantType("authorization_code").build();
-        //JSON 파싱을 위한 기본값 세팅
-        //요청시 파라미터는 스네이크 케이스로 세팅되므로 Object mapper에 미리 설정해준다.
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+
 
         //AccessToken 발급 요청
         ResponseEntity<String> resultEntity = restTemplate.postForEntity(GOOGLE_TOKEN_BASE_URL, googleOAuthRequestParam, String.class);
 
         //Token Request
-        GoogleTokenResponseDto result = mapper.readValue(resultEntity.getBody(), new TypeReference<GoogleTokenResponseDto>() {
-        });
-
-        System.out.println(resultEntity.getBody());
-
-        //ID Token만 추출 (사용자의 정보는 jwt로 인코딩 되어있다)
-        String jwtToken = result.getIdToken();
-        String requestUrl = UriComponentsBuilder.fromHttpUrl("https://oauth2.googleapis.com/tokeninfo")
-                .queryParam("id_token", jwtToken).encode().toUriString();
-
-        String resultJson = restTemplate.getForObject(requestUrl, String.class);
-
-        Map<String, String> userInfo = mapper.readValue(resultJson, new TypeReference<Map<String, String>>(){});
-        userInfo.put("accessToken", result.getAccessToken());
-        return userInfo;
+        return  mapper.readValue(resultEntity.getBody(), new TypeReference<GoogleTokenResponseDto>() {});
     }
 
     private GoogleMemberDto pareUserInfoToGoogleMemberDto (Map<String, String> userInfo) {
@@ -169,19 +173,25 @@ public class AuthService {
     }
 
     private boolean isLoginPossible(GoogleMemberDto memberDto, Map<String, String> userInfo) {
-        Optional<Member> optionalMember = memberRepository.findByEmail(memberDto.getEmail());
+        Optional<Member> optionalMember = memberRepository.findMemberIncludeDeletedMember(memberDto.getEmail());
 
         if (!optionalMember.isPresent()) {
             return false;
         } else {
             Member member = optionalMember.get();
-            if (member.isSocialMember()) {
+
+            if (!member.isDeleted() && member.isSocialMember()) {
                 return true;
-            // google 메일이 이미 가입되어 있을때 에러를 내보낸다
+            // google 메일이 일반회원으로 가입되어 있을때 에러를 내보낸다
             } else {
                 // 액세스 토큰이 필요없으니 만료시킨다
                 revokeAccessToken(userInfo.get("accessToken"));
-                throw new DuplicateValueExeption("이미 가입된 회원입니다 => 액세스토큰을 만료 시켰습니다");
+                //탈퇴한
+                if (member.isDeleted()) {
+                    throw new InputNotValidException("탈퇴한 회원입니다.");
+                } else {
+                    throw new DuplicateValueExeption("일반회원으로 가입된 email입니다");
+                }
             }
         }
     }

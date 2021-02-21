@@ -2,6 +2,7 @@
 insert into member(id, email, password, name, contact, birth_date, is_deleted, role ) values(1, 'test123@gmail.com', '$2a$10$VT30l3sY6tkd53TId.hhUe9LfV2mWixZtyuFLAQh7V2aJrQy65146', '테스터', '01022223333', '19990911', false, 'MEMBER');
 insert into member(id, email, password, name, contact, birth_date, is_deleted, role ) values(2, 'test12345@gmail.com', '$2a$10$VT30l3sY6tkd53TId.hhUe9LfV2mWixZtyuFLAQh7V2aJrQy65146', '테스터', '01022223333', '19990911', false, 'MEMBER');
 insert into member(id, email, password, name, contact, birth_date, is_deleted, role ) values(3, 'withdrawaltest@gmail.com', '$2a$10$VT30l3sY6tkd53TId.hhUe9LfV2mWixZtyuFLAQh7V2aJrQy65146', '테스터', '01022223333', '19990911', true , 'MEMBER');
+insert into member(id, email, password, name, contact, birth_date, is_deleted, role, is_social_member ) values(4, 'google@gmail.com', '$2a$10$VT30l3sY6tkd53TId.hhUe9LfV2mWixZtyuFLAQh7V2aJrQy65146', '테스터', '01022223333', '19990911', false , 'MEMBER', true);
 
 
 INSERT INTO accommodation (id, city, gu, title, accommodation_desc, accommodation_type, address, bathroom_num, bed_num,
