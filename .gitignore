@@ -207,3 +207,6 @@ Temporary Items
 
 # json
 *.json
+
+## redis
+*.rdb
