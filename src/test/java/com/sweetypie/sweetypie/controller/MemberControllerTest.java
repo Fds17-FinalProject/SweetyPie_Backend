@@ -68,16 +68,12 @@ class MemberControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                .email("signuptest@mail.com")
-                                .birthDate(LocalDate.of(1999,2,3))
-                                .contact("01012341234")
-                                .name("테스터")
-                                .password("12345678a!")
-                                .passwordConfirm("12345678a!")
-                                .build()
-                        )
+                    "{ \"email\":\"signuptest@mail.com\"," +
+                            " \"name\":\"테스터\", " +
+                            "\"birthDate\":\"1999-02-03\", " +
+                            "\"contact\":\"01012341234\", " +
+                            "\"password\":\"password123!\", " +
+                            "\"passwordConfirm\":\"password123!\"}"
                 ))
                 .andExpect(status().isOk());
     }
@@ -88,15 +84,12 @@ class MemberControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                        .email("signuptest")
-                                        .birthDate(LocalDate.of(1999,2,3))
-                                        .contact("01012341234")
-                                        .name("테스터")
-                                        .password("12345678a!")
-                                        .build()
-                        )
+                        "{ \"email\":\"signuptest\"," +
+                                " \"name\":\"테스터\", " +
+                                "\"birthDate\":\"1999-02-03\", " +
+                                "\"contact\":\"01012341234\", " +
+                                "\"password\":\"password123!\", " +
+                                "\"passwordConfirm\":\"password123!\"}"
                 ))
                 .andExpect(status().isBadRequest());
     }
@@ -107,15 +100,12 @@ class MemberControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                        .email("signuptest@mail.com")
-                                        .birthDate(LocalDate.of(1999,2,3))
-                                        .contact("01012341234")
-                                        .name("테스터")
-                                        .password("password123")
-                                        .build()
-                        )
+                        "{ \"email\":\"signuptest@mail.com\"," +
+                                " \"name\":\"테스터\", " +
+                                "\"birthDate\":\"1999-02-03\", " +
+                                "\"contact\":\"01012341234\", " +
+                                "\"password\":\"password\", " +
+                                "\"passwordConfirm\":\"password\"}"
                 ))
                 .andExpect(status().isBadRequest());
     }
@@ -126,15 +116,12 @@ class MemberControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/member")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                        .email("signuptest@mail.com")
-                                        .birthDate(LocalDate.of(1999,2,3))
-                                        .contact("010547")
-                                        .name("테스ter")
-                                        .password("12345678a!")
-                                        .build()
-                        )
+                        "{ \"email\":\"signuptest@mail.com\"," +
+                                " \"name\":\"tester\", " +
+                                "\"birthDate\":\"1999-02-03\", " +
+                                "\"contact\":\"123456\", " +
+                                "\"password\":\"password123!\", " +
+                                "\"passwordConfirm\":\"password123!\"}"
                 ))
                 .andExpect(status().isBadRequest());
     }
@@ -146,11 +133,7 @@ class MemberControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
-                        objectMapper.writeValueAsString(
-                                MemberDto.builder()
-                                        .password("31245751@!@a")
-                                        .build()
-                        )
+                        "{ \"password\":\"password123!12\"}"
                 ))
                 .andExpect(status().isOk());
     }
@@ -178,7 +161,7 @@ class MemberControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/member")
                 .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(content().string("true"));
+                .andExpect(content().string("회원 탈퇴가 정상적으로 완료되었습니다"));
     }
 
 
