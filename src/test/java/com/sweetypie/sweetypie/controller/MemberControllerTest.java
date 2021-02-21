@@ -151,7 +151,6 @@ class MemberControllerTest {
                                         .build()
                         )
                 ))
-                .andExpect(jsonPath("$.birthDate").value("1987-12-20"))
                 .andExpect(status().isOk());
     }
 
