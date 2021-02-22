@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 
 
 @Service
@@ -28,7 +26,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public Member signup(MemberDto memberDto) {
-        checkDuplicateEmail(memberDto);
+        checkDuplicateEmail(memberDto.getEmail());
         confirmPassword(memberDto);
 
         Member member = Member.builder()
@@ -44,6 +42,7 @@ public class MemberService {
     }
 
     public Member signupGoogleMember(GoogleMemberDto memberDto) {
+        checkDuplicateEmail(memberDto.getEmail());
 
         Member member = Member.builder()
                 .email(memberDto.getEmail())
@@ -95,8 +94,8 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    private void checkDuplicateEmail(MemberDto memberDto) {
-        if (memberRepository.findMemberIncludeDeletedMember(memberDto.getEmail()).orElse(null) != null) {
+    private void checkDuplicateEmail(String email) {
+        if (memberRepository.findMemberIncludeDeletedMember(email).orElse(null) != null) {
             throw new DuplicateValueExeption("이미 사용되고 있는 Email 입니다.");
         }
     }
