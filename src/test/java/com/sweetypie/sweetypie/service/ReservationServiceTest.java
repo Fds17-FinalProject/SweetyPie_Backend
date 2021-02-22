@@ -172,7 +172,7 @@ class ReservationServiceTest {
 
         InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.updateReservation(1L, 2L, dto));
 
-        assertThat(inputNotValidException.getMessage()).isEqualTo("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다");
+        assertThat(inputNotValidException.getMessage()).isEqualTo("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
 
     }
 
@@ -186,6 +186,18 @@ class ReservationServiceTest {
 
         verify(reservationRepository, times(1)).findById(1L);
         verify(reservationRepository, times(1)).deleteById(1L);
+
+    }
+
+    @DisplayName("예약 취소시 요청한 회원정보와 예약된 회원정보 불일치 예외")
+    @Test
+    void deleteReservationDiscrepancyBetweenRequestedMemberInformationAndReservedMemberInformation (){
+
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.deleteReservation(1L, 2L));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
 
     }
 
