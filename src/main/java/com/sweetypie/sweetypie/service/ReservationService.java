@@ -40,7 +40,7 @@ public class ReservationService {
         return makeReservationDtoList(reservations);
     }
 
-    public void makeAReservation(Long memberId, ReservationDto reservationDto) throws RuntimeException {
+    public Reservation makeAReservation(Long memberId, ReservationDto reservationDto) throws RuntimeException {
 
         handleCheckoutBeforeCheckInInputException(reservationDto);
 
@@ -52,7 +52,7 @@ public class ReservationService {
 
         List<BookedDate> bookedDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodation.getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
-        checkDuplicateReservationDate(bookedDates, reservationDto, member, accommodation);
+        return checkDuplicateReservationDate(bookedDates, reservationDto, member, accommodation);
     }
 
     public Reservation updateReservation(Long reservationId, ReservationDto reservationDto) {
@@ -130,7 +130,7 @@ public class ReservationService {
         }
     }
 
-    private void checkDuplicateReservationDate(List<BookedDate> bookedDates, ReservationDto reservationDto, Member member, Accommodation accommodation) {
+    private Reservation checkDuplicateReservationDate(List<BookedDate> bookedDates, ReservationDto reservationDto, Member member, Accommodation accommodation) {
 
         if (bookedDates.isEmpty()) {
             Reservation reservation = new Reservation();
@@ -144,7 +144,7 @@ public class ReservationService {
                 setBookedDate(date, accommodation, reservation);
             }
 
-            reservationRepository.save(reservation);
+            return reservationRepository.save(reservation);
 
         } else {
             throw new DuplicateValueExeption("이미 예약된 날짜입니다.");
