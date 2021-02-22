@@ -180,8 +180,11 @@ class ReservationServiceTest {
     @Test
     void deleteReservation(){
 
-        reservationService.deleteReservation(1L);
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
 
+        reservationService.deleteReservation(1L, 1L);
+
+        verify(reservationRepository, times(1)).findById(1L);
         verify(reservationRepository, times(1)).deleteById(1L);
 
     }
