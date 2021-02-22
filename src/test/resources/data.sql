@@ -25,7 +25,7 @@ values (3, '서울특별시', '성동구', '깨끗한 아파트', '깔끔해요'
 
 INSERT INTO reservation (id, `check_in_date`, `checkout_date`, `total_guest_num`, `adult_num`, `child_num`, `infant_num`, `is_written_review`,
                          `payment_date`, `total_price`, `accommodation_id`, `member_id`)
-VALUES (1, '2022-02-10', '2022-02-12', '3', '2', '2', '0', 1, '2022-03-01', 60000, 1, 1);
+VALUES (1, '2022-02-10', '2022-02-12', '3', '2', '2', '0', 1, '2022-03-01', 95600, 1, 1);
 
 INSERT INTO reservation (id, `check_in_date`, `checkout_date`, `total_guest_num`, `adult_num`, `child_num`, `infant_num`, `is_written_review`,
                          `payment_date`, `total_price`, `accommodation_id`, `member_id`)
