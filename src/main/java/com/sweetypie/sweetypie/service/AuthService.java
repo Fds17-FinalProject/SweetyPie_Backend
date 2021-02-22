@@ -70,7 +70,6 @@ public class AuthService {
         Member member = memberRepository
                 .findByEmail(loginDto.getEmail())
                 .orElseThrow(() -> new DataNotFoundException("로그인할 멤버가 존재하지 않습니다."));
-//         추후구현
         if (member.isSocialMember() & !loginDto.isSocialMember()) {
             throw new InputNotValidException("구글회원은 구글로 로그인하기를 이용해주세요");
         }
@@ -188,9 +187,9 @@ public class AuthService {
                 revokeAccessToken(userInfo.get("accessToken"));
                 //탈퇴한
                 if (member.isDeleted()) {
-                    throw new InputNotValidException("탈퇴한 회원입니다.");
+                    throw new InputNotValidException("탈퇴한 Google 회원입니다. 다른 계정을 이용해주세요");
                 } else {
-                    throw new DuplicateValueExeption("일반회원으로 가입된 email입니다");
+                    throw new DuplicateValueExeption("일반회원으로 가입된 email입니다. 일반 로그인을 이용해주세요");
                 }
             }
         }

@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
   "email":"fovena@gmail.com",
-  "password":"member33!@"
+  "password":"password123!"
 }
 
 ### 로그인 테스트- 서버
@@ -48,11 +48,11 @@ POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-"email":"member11@mail.com",
-"password":"password123",
-"passwordConfirm":"password123",
+"email":"fovena@gmail.com",
+"password":"password123!",
+"passwordConfirm":"password123!",
 "name":"테스터",
-"birthDate": "1999-02-3",
+"birthDate": "1999-02-03",
 "contact":"01008551213"
 }
 
@@ -91,7 +91,7 @@ Content-Type: application/json
 ### 회원탈퇴 테스트
 
 DELETE http://3.34.122.155/api/member
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXI4QG1haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjUxLCJleHAiOjE2MTM4MTY3NTF9.52XzCklUC_R8sYD2Y8gDUx_hnpXfJLvslBleytzYdd7m5gWj78RV0cQGRIK30NuAiFfsX27hMT-kfzJHIpvT0g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJmb3ZlbmFAZ21haWwuY29tIiwiYXV0aCI6IlJPTEVfTUVNQkVSIiwibWVtYmVySWQiOjY1LCJleHAiOjE2MTM5MTI4OTl9.nDsxClsPApKSJMQmmtFXtIm6AX3yO5yfRaVcB-M6-rKSo0y-TUSGKihww2WbsOJLKWDJs8N5xhEh7vcN-w10pA
 
 ### 구글로그인
 
@@ -113,9 +113,9 @@ Content-Type: application/json
 
 {
   "email":"fovena@gmail.com",
-  "socialId":"1234124123",
-  "name":"name",
+  "socialId":"117256496640184473782",
+  "name":"이미자",
   "birthDate": "2020-02-03",
-  "contact":"010-9908-5511"
+  "contact":"01099085511"
 }
 
