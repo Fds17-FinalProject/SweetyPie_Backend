@@ -55,7 +55,7 @@ public class ReservationService {
         return checkDuplicateReservationDate(bookedDates, reservationDto, member, accommodation);
     }
 
-    public Reservation updateReservation(Long reservationId, ReservationDto reservationDto) {
+    public Reservation updateReservation(Long reservationId, Long memberId, ReservationDto reservationDto) {
 
         handleCheckoutBeforeCheckInInputException(reservationDto);
 
