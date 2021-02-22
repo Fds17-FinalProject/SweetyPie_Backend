@@ -28,7 +28,7 @@ class ReservationRepositoryTest {
         Reservation result = reservationByMember.get(0);
 
         assertThat(reservationByMember.size()).isEqualTo(2);
-        assertThat(reservationByMember.get(0).getTotalPrice()).isEqualTo(60000);
+        assertThat(reservationByMember.get(0).getTotalPrice()).isEqualTo(95600);
         assertThat(reservationByMember.get(0).getAccommodation().getAccommodationType()).isEqualTo("전체");
         assertThat(reservationByMember.get(0).getAccommodation().getBuildingType()).isEqualTo("아파트");
 
