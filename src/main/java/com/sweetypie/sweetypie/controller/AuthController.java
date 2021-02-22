@@ -58,9 +58,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     @PreAuthorize("authenticated")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+    public void logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
-
-        return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 }

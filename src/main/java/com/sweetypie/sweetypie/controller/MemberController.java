@@ -34,33 +34,29 @@ public class MemberController {
 
 
     @PostMapping("/member")
-    public ResponseEntity<String> signup(
+    public void signup(
             @Valid @RequestBody MemberDto memberDto) {
 
         memberService.signup(memberDto);
-
-        return ResponseEntity.ok("회원가입이 정상적으로 완료되었습니다");
     }
 
     @PutMapping("/member")
     @PreAuthorize("authenticated")
-    public ResponseEntity<String> updateMember(
+    public void updateMember(
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody MemberDto memberDto) {
 
         memberService.updateMember(tokenProvider.parseTokenToGetUserId(token),
                                                      memberDto);
-        return ResponseEntity.ok("회원정보가 정상적으로 수정되었습니다");
     }
 
     @DeleteMapping("/member")
     @PreAuthorize("authenticated")
-    public ResponseEntity<String> withdrawalMember(@RequestHeader("Authorization") String token) {
+    public void withdrawalMember(@RequestHeader("Authorization") String token) {
 
         memberService.withdrawal(tokenProvider.parseTokenToGetUserId(token));
         //회원 탈퇴후 접근한 토큰 만료시키기
         authService.logout(token);
-        return ResponseEntity.ok("회원 탈퇴가 정상적으로 완료되었습니다");
     }
 
     private MemberDto mapToMemberDto(Member member) {
