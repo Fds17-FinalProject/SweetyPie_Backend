@@ -44,9 +44,9 @@ public class ReservationController {
 
     @DeleteMapping("/reservation/{id}")
     @PreAuthorize("authenticated")
-    public void cancelReservation(@PathVariable Long id) {
+    public void cancelReservation(@PathVariable Long id,  @RequestHeader(value = "Authorization") String token) {
 
-        reservationService.deleteReservation(id);
+        reservationService.deleteReservation(id, tokenProvider.parseTokenToGetUserId(token));
 
     }
 }
