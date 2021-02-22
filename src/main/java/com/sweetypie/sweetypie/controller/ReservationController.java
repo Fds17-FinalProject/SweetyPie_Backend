@@ -1,12 +1,9 @@
 package com.sweetypie.sweetypie.controller;
 
 import com.sweetypie.sweetypie.dto.ReservationDto;
-import com.sweetypie.sweetypie.model.Reservation;
 import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import com.sweetypie.sweetypie.service.ReservationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,19 +36,17 @@ public class ReservationController {
 
     @PatchMapping("/reservation/{id}")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Reservation> updateReservation(@PathVariable Long id, @Valid @RequestBody ReservationDto reservationDto) {
+    public void updateReservation(@PathVariable Long id, @Valid @RequestBody ReservationDto reservationDto) {
 
-        Reservation reservation = reservationService.updateReservation(id, reservationDto);
+        reservationService.updateReservation(id, reservationDto);
 
-        return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
 
     @DeleteMapping("/reservation/{id}")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Object> cancelReservation(@PathVariable Long id) {
+    public void cancelReservation(@PathVariable Long id) {
 
         reservationService.deleteReservation(id);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
