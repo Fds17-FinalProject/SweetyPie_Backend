@@ -265,8 +265,23 @@ class ReservationControllerTest {
     @DisplayName("예약 취소")
     @Test
     void deleteReservation() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/reservation/1"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/reservation/1")
+                .header("Authorization", token))
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("예약 취소를 요청한 회원정보와 예약된 회원정보의 불일치 예외")
+    @Test
+    void deleteReservationInconsistencyBetweenRequestMemberAndReservedMember() throws Exception {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test12345@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token = authService.login(loginDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/reservation/1")
+                .header("Authorization", token))
+                .andExpect(status().isBadRequest());
     }
 
 }
