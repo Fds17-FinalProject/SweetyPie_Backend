@@ -62,7 +62,7 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new DataNotFoundException("예약 내역을 찾을 수 없습니다."));
 
         if (!memberId.equals(reservation.getMember().getId())) {
-            throw new InputNotValidException("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다");
+            throw new InputNotValidException("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
         }
 
         validateTotalPrice(reservationDto, reservation.getAccommodation().getPrice());
