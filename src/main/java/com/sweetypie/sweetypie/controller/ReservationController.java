@@ -31,11 +31,10 @@ public class ReservationController {
 
     @PostMapping("/reservation")
     @PreAuthorize("authenticated")
-    public ResponseEntity<Reservation> makeAReservation(@RequestHeader(value = "Authorization") String token, @Valid @RequestBody ReservationDto reservationDto){
+    public void makeAReservation(@RequestHeader(value = "Authorization") String token, @Valid @RequestBody ReservationDto reservationDto){
 
-        Reservation reservation = reservationService.makeAReservation(tokenProvider.parseTokenToGetUserId(token), reservationDto);
+        reservationService.makeAReservation(tokenProvider.parseTokenToGetUserId(token), reservationDto);
 
-        return new ResponseEntity<>(reservation, HttpStatus.OK);
     }
 
     @PatchMapping("/reservation/{id}")
