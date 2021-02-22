@@ -36,9 +36,9 @@ public class ReservationController {
 
     @PatchMapping("/reservation/{id}")
     @PreAuthorize("authenticated")
-    public void updateReservation(@PathVariable Long id, @Valid @RequestBody ReservationDto reservationDto) {
+    public void updateReservation(@PathVariable Long id, @RequestHeader(value = "Authorization") String token, @Valid @RequestBody ReservationDto reservationDto) {
 
-        reservationService.updateReservation(id, reservationDto);
+        reservationService.updateReservation(id, tokenProvider.parseTokenToGetUserId(token), reservationDto);
 
     }
 
