@@ -138,7 +138,7 @@ class ReservationServiceTest {
 
         ReservationDto dto = mockReservationDto();
 
-        Reservation reservation = reservationService.updateReservation(1L, dto);
+        Reservation reservation = reservationService.updateReservation(1L, 1L, dto);
 
         assertThat(reservation.getCheckInDate()).isEqualTo(dto.getCheckInDate());
         assertThat(reservation.getCheckoutDate()).isEqualTo(dto.getCheckoutDate());
@@ -157,18 +157,47 @@ class ReservationServiceTest {
 
         ReservationDto dto = mockReservationDto();
 
-        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.updateReservation(1L, dto));
+        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.updateReservation(1L, 1L, dto));
 
         assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
+    }
+
+    @DisplayName("예약수정시 요청한 회원정보와 예약된 회원정보 불일치 예외")
+    @Test
+    void updateReservationRequestMemberNotEqualReservedMember() {
+
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+
+        ReservationDto dto = mockReservationDto();
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.updateReservation(1L, 2L, dto));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
+
     }
 
     @DisplayName("예약 취소")
     @Test
     void deleteReservation(){
 
-        reservationService.deleteReservation(1L);
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
 
+        reservationService.deleteReservation(1L, 1L);
+
+        verify(reservationRepository, times(1)).findById(1L);
         verify(reservationRepository, times(1)).deleteById(1L);
+
+    }
+
+    @DisplayName("예약 취소시 요청한 회원정보와 예약된 회원정보 불일치 예외")
+    @Test
+    void deleteReservationDiscrepancyBetweenRequestedMemberInformationAndReservedMemberInformation (){
+
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.deleteReservation(1L, 2L));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
 
     }
 
@@ -278,6 +307,12 @@ class ReservationServiceTest {
     }
 
     private Optional<Reservation> mockFindReservation(LocalDate checkInDate, LocalDate checkoutDate) {
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("test123@gmail.com");
+        member.setPassword("1234");
+        member.setName("테스터");
+        member.setContact("01022223333");
 
         Accommodation accommodation = new Accommodation();
         accommodation.setId(1L);
@@ -296,6 +331,7 @@ class ReservationServiceTest {
         reservation.setTotalGuestNum(5);
         reservation.setAccommodation(accommodation);
         reservation.setBookedDates(mockBookedDate());
+        reservation.setMember(member);
 
         return Optional.of(reservation);
     }
