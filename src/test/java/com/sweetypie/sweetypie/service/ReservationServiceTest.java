@@ -83,7 +83,7 @@ class ReservationServiceTest {
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
 
-        ReservationDto dto = mockReservationDto();
+        ReservationDto dto = mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22));
 
         Reservation reservation = reservationService.makeAReservation(1L, dto);
 
@@ -101,14 +101,14 @@ class ReservationServiceTest {
     void makeAReservationDataNotFoundException(){
         lenient().when(accommodationRepository.findById(1L)).thenReturn(Optional.of(new Accommodation()));
 
-        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(1L, mockReservationDto()));
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(1L,mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22))));
 
         assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 회원 정보를 찾을 수 없습니다.");
     }
 
-    @DisplayName("예약하기 총 가격 Validation 실패 예외")
+    @DisplayName("예약하기 총 가격 일치하지 않는 예외")
     @Test
-    void validateToTalPriceFail(){
+    void makeAReservationIfTotalPriceMisMatch(){
         ReservationDto reservationDto = ReservationDto.builder()
                 .checkInDate(LocalDate.of(2022,2,20))
                 .checkoutDate(LocalDate.of(2022,2,22))
@@ -135,7 +135,7 @@ class ReservationServiceTest {
         when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
 
-        ReservationDto reservationDto = mockReservationDto();
+        ReservationDto reservationDto = mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22));
 
         DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.makeAReservation(1L, reservationDto));
 
@@ -145,15 +145,21 @@ class ReservationServiceTest {
     @DisplayName("예약하기 체크아웃날짜가 체크인날짜보다 빠른날자로 입력되었을 때 예외")
     @Test
     void makeAReservationIfEnteredCheckoutDateEarlierThanCheckInDate(){
-        when(memberRepository.findById(1L)).thenReturn(mockMember());
-        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
-        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
 
-        ReservationDto reservationDto = mockReservationDto();
+        ReservationDto reservationDto = ReservationDto.builder()
+                .checkInDate(LocalDate.of(2022,2,22))
+                .checkoutDate(LocalDate.of(2022,2,20))
+                .accommodationId(1L)
+                .totalPrice(10000)
+                .totalGuestNum(4)
+                .adultNum(2)
+                .childNum(1)
+                .infantNum(1)
+                .build();
 
-        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.makeAReservation(1L, reservationDto));
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.makeAReservation(1L, reservationDto));
 
-        assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
+        assertThat(inputNotValidException.getMessage()).isEqualTo("예약기간이 잘 못 되었습니다.");
     }
 
     @DisplayName("예약수정 성공")
@@ -164,7 +170,7 @@ class ReservationServiceTest {
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
 
-        ReservationDto dto = mockReservationDto();
+        ReservationDto dto = mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22));
 
         Reservation reservation = reservationService.updateReservation(1L, 1L, dto);
 
@@ -183,7 +189,7 @@ class ReservationServiceTest {
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
 
-        ReservationDto dto = mockReservationDto();
+        ReservationDto dto = mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22));
 
         DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.updateReservation(1L, 1L, dto));
 
@@ -192,7 +198,7 @@ class ReservationServiceTest {
 
     @DisplayName("예약수정시 총 가격이 일치하지 않는 예외")
     @Test
-    void updateReservationIfTotalPriceMisMach(){
+    void updateReservationIfTotalPriceMisMatch(){
         ReservationDto reservationDto = ReservationDto.builder()
                 .checkInDate(LocalDate.of(2022,2,20))
                 .checkoutDate(LocalDate.of(2022,2,22))
@@ -217,12 +223,21 @@ class ReservationServiceTest {
 
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
 
-        ReservationDto dto = mockReservationDto();
+        ReservationDto dto = mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22));
 
         InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.updateReservation(1L, 2L, dto));
 
         assertThat(inputNotValidException.getMessage()).isEqualTo("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
 
+    }
+
+    @DisplayName("예약 수정시 체크아웃이 체크인보다 빠른 날짜로 들어올 때 예외")
+    @Test
+    void updateReservationIfEnteredCheckoutDateEarlierThanCheckInDate(){
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.updateReservation(1L, 1L, mockReservationDto(LocalDate.of(2022,2,22), LocalDate.of(2022,2,20))));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("예약기간이 잘 못 되었습니다.");
     }
 
     @DisplayName("예약 취소")
@@ -240,7 +255,7 @@ class ReservationServiceTest {
 
     @DisplayName("예약 취소시 요청한 회원정보와 예약된 회원정보 불일치 예외")
     @Test
-    void deleteReservationDiscrepancyBetweenRequestedMemberInformationAndReservedMemberInformation (){
+    void deleteReservationDiscrepancyMemberInformation (){
 
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
 
@@ -334,18 +349,20 @@ class ReservationServiceTest {
         reservation.setAdultNum(2);
         reservation.setChildNum(1);
         reservation.setInfantNum(0);
-        reservation.setTotalPrice(50000);
+        reservation.setTotalPrice(95600);
         reservation.setReservationCode("202102070000100001");
 
         return reservation;
     }
 
     // updateReservation
-    private ReservationDto mockReservationDto() {
+    private ReservationDto mockReservationDto(LocalDate checkIn, LocalDate checkout) {
         ReservationDto dto = new ReservationDto();
         dto.setAccommodationId(1L);
-        dto.setCheckInDate(LocalDate.of(2022, 3, 20));
-        dto.setCheckoutDate(LocalDate.of(2022, 3, 22));
+//        dto.setCheckInDate(LocalDate.of(2022, 3, 20));
+        dto.setCheckInDate(checkIn);
+//        dto.setCheckoutDate(LocalDate.of(2022, 3, 22));
+        dto.setCheckoutDate(checkout);
         dto.setTotalGuestNum(3);
         dto.setAdultNum(2);
         dto.setChildNum(1);
