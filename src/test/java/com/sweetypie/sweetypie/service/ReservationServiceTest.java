@@ -98,12 +98,22 @@ class ReservationServiceTest {
 
     @DisplayName("회원 정보를 찾을 수 없습니다.")
     @Test
-    void makeAReservationDataNotFoundException(){
+    void makeAReservationIfNotFoundMemberInfo(){
         lenient().when(accommodationRepository.findById(1L)).thenReturn(Optional.of(new Accommodation()));
 
         DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(1L,mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22), 95600)));
 
         assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 회원 정보를 찾을 수 없습니다.");
+    }
+
+    @DisplayName("숙박 정보를 찾을 수 없습니다.")
+    @Test
+    void makeAReservationIfNotFoundAccommodationInfo(){
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, () -> reservationService.makeAReservation(1L,mockReservationDto(LocalDate.of(2022,3,20), LocalDate.of(2022,3,22), 95600)));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("등록된 숙박 정보를 찾을 수 없습니다.");
     }
 
     @DisplayName("예약하기 총 가격 일치하지 않는 예외")
