@@ -110,10 +110,10 @@ class ReservationServiceTest {
     @Test
     void validateToTalPriceFail(){
         ReservationDto reservationDto = ReservationDto.builder()
-                .checkInDate(LocalDate.of(2022,5,11))
-                .checkoutDate(LocalDate.of(2022,5,13))
+                .checkInDate(LocalDate.of(2022,2,20))
+                .checkoutDate(LocalDate.of(2022,2,22))
                 .accommodationId(1L)
-                .totalPrice(117989)
+                .totalPrice(10000)
                 .totalGuestNum(4)
                 .adultNum(2)
                 .childNum(1)
@@ -160,7 +160,7 @@ class ReservationServiceTest {
     @Test
     void updateReservationSuccess() {
 
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(new ArrayList<>());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(mockReservation());
 
@@ -180,7 +180,7 @@ class ReservationServiceTest {
     @DisplayName("예약 날짜 중복으로 예약수정 실패")
     @Test
     void updateReservationIfDuplicateReservedDate(){
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22)));
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
 
         ReservationDto dto = mockReservationDto();
@@ -190,11 +190,32 @@ class ReservationServiceTest {
         assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
     }
 
+    @DisplayName("예약수정시 총 가격이 일치하지 않는 예외")
+    @Test
+    void updateReservationIfTotalPriceMisMach(){
+        ReservationDto reservationDto = ReservationDto.builder()
+                .checkInDate(LocalDate.of(2022,2,20))
+                .checkoutDate(LocalDate.of(2022,2,22))
+                .accommodationId(1L)
+                .totalPrice(10000)
+                .totalGuestNum(4)
+                .adultNum(2)
+                .childNum(1)
+                .infantNum(1)
+                .build();
+
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.updateReservation(1L, 1L, reservationDto));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("총 가격이 맞지 않습니다.");
+    }
+
     @DisplayName("예약수정시 요청한 회원정보와 예약된 회원정보 불일치 예외")
     @Test
     void updateReservationRequestMemberNotEqualReservedMember() {
 
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
 
         ReservationDto dto = mockReservationDto();
 
@@ -208,7 +229,7 @@ class ReservationServiceTest {
     @Test
     void deleteReservation(){
 
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
 
         reservationService.deleteReservation(1L, 1L);
 
@@ -221,7 +242,7 @@ class ReservationServiceTest {
     @Test
     void deleteReservationDiscrepancyBetweenRequestedMemberInformationAndReservedMemberInformation (){
 
-        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2022, 2, 20), LocalDate.of(2022, 2, 22)));
+        when(reservationRepository.findById(1L)).thenReturn(mockFindReservation());
 
         InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.deleteReservation(1L, 2L));
 
@@ -313,7 +334,7 @@ class ReservationServiceTest {
         reservation.setAdultNum(2);
         reservation.setChildNum(1);
         reservation.setInfantNum(0);
-        reservation.setTotalPrice(95600);
+        reservation.setTotalPrice(50000);
         reservation.setReservationCode("202102070000100001");
 
         return reservation;
@@ -334,7 +355,7 @@ class ReservationServiceTest {
         return dto;
     }
 
-    private Optional<Reservation> mockFindReservation(LocalDate checkInDate, LocalDate checkoutDate) {
+    private Optional<Reservation> mockFindReservation() {
         Member member = new Member();
         member.setId(1L);
         member.setEmail("test123@gmail.com");
@@ -353,9 +374,9 @@ class ReservationServiceTest {
         Reservation reservation = new Reservation();
 
         reservation.setId(1L);
-        reservation.setCheckInDate(checkInDate);
-        reservation.setCheckoutDate(checkoutDate);
-        reservation.setTotalPrice(50000);
+        reservation.setCheckInDate(LocalDate.of(2022,2,20));
+        reservation.setCheckoutDate(LocalDate.of(2022,2,22));
+        reservation.setTotalPrice(95600);
         reservation.setTotalGuestNum(5);
         reservation.setAccommodation(accommodation);
         reservation.setBookedDates(mockBookedDate());
