@@ -37,7 +37,7 @@ class AuthControllerTest {
                 .build();
     }
 
-    @DisplayName("로그인")
+    @DisplayName("로그인성공")
     @Test
     void loginTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
@@ -53,7 +53,7 @@ class AuthControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("로그인 -탈퇴된 회원")
+    @DisplayName("로그인실패 -탈퇴한 회원")
     @Test
     void withdrawalMemberLoginTest() throws Exception {
 
@@ -70,9 +70,26 @@ class AuthControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("일반로그인 - 구글회원")
+    @DisplayName("로그인실패 - 구글회원이 일반로그인 시도")
     @Test
     void googleMemberTryNormalLoginTest() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(
+                        objectMapper.writeValueAsString(
+                                LoginDto.builder()
+                                        .email("google@gmail.com")
+                                        .password("12345678a!")
+                                        .build()
+                        )
+                ))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("로그인실패 - 구글회원이 일반로그인 시도")
+    @Test
+    void wrongEmailLoginFailTestTest() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
