@@ -64,7 +64,7 @@ class ReviewControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
-                        new ReviewDto(1L, 2L, 3, "좋아요"))))
+                        new ReviewDto(1L, 100L, 3, "좋아요"))))
                 .andExpect(status().isOk());
     }
 
