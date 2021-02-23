@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.Max;
@@ -24,11 +23,9 @@ public class ReservationDto {
     private Long reservationId;
 
     @FutureOrPresent(message = "체크인은 현재날짜 이후의 날짜이어야 합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate checkInDate;
 
     @FutureOrPresent(message = "체크아웃은 현재날짜 이후의 날짜이어야 합니다.")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate checkoutDate;
 
     @Min(value = 1, message = "총 인원은 최소 1명입니다.") @Max(value = 15, message = "총 인원은 최대 15명입니다.")
