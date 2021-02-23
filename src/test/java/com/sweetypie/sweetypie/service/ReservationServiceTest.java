@@ -128,6 +128,20 @@ class ReservationServiceTest {
 
     }
 
+    @DisplayName("예약하기 중복된 예약날짜 예외")
+    @Test
+    void makeAReservationIfDuplicateReservedDate(){
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
+
+        ReservationDto reservationDto = mockReservationDto();
+
+        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.makeAReservation(1L, reservationDto));
+
+        assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
+    }
+
     @DisplayName("예약수정 성공")
     @Test
     void updateReservationSuccess() {
@@ -151,7 +165,7 @@ class ReservationServiceTest {
 
     @DisplayName("예약 날짜 중복으로 예약수정 실패")
     @Test
-    void updateReservationFail(){
+    void updateReservationIfDuplicateReservedDate(){
         when(reservationRepository.findById(1L)).thenReturn(mockFindReservation(LocalDate.of(2020, 2, 20), LocalDate.of(2020, 2, 22)));
         when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
 
