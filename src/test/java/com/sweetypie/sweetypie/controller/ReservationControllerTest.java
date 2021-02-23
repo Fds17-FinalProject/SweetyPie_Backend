@@ -62,7 +62,7 @@ class ReservationControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation")
                 .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$.[0].checkInDate").value("2022-02-10"))
                 .andExpect(jsonPath("$.[0].checkoutDate").value("2022-02-12"))
                 .andExpect(jsonPath("$.[0].isWrittenReview").value(true))

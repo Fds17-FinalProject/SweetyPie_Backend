@@ -32,11 +32,15 @@ public class ReviewService {
     private final TokenProvider tokenProvider;
 
     public Review findReviewByReservationId(String token, long reservationId) {
-        memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
-                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
-
-        return reviewRepository.findReviewByReservationId(reservationId)
+        Review review = reviewRepository.findReviewByReservationId(reservationId)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
+
+        if (!memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
+                .orElseThrow(() -> new DataNotFoundException("Member Not Found")).equals(review.getMember())) {
+            throw new InputNotValidException("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
+        }
+
+        return review;
     }
 
     public void writeReview(String token, ReviewDto reviewDto) {
@@ -47,6 +51,10 @@ public class ReviewService {
         if (reviewRepository.findReviewByReservationId(reviewDto.getReservationId()).isPresent()
                 || reservation.getIsWrittenReview()) {
             throw new DuplicateValueExeption("Already Have a Review");
+        }
+
+        if (LocalDate.now().isBefore(reservation.getCheckInDate())) {
+            throw new InputNotValidException("숙소 이용 전에 리뷰를 작성할 수 없습니다.");
         }
 
         Accommodation accommodation = reservation.getAccommodation();
@@ -60,6 +68,10 @@ public class ReviewService {
 
         Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
+
+        if (!reservation.getMember().equals(member)) {
+            throw new InputNotValidException("토큰의 회원 정보와 예약 회원이 일치하지 않습니다.");
+        }
 
         int newReviewNum = accommodation.getReviewNum() + 1;
         float newRating = (accommodation.getRating() * accommodation.getReviewNum() + reviewDto.getRating())
@@ -97,8 +109,10 @@ public class ReviewService {
             throw new InputNotValidException("Accommodation Not Matched");
         }
 
-        memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
-                .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
+        if (!memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
+                .orElseThrow(() -> new DataNotFoundException("Member Not Found")).equals(originReview.getMember())) {
+            throw new InputNotValidException("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
+        }
 
         float originRating = accommodation.getRating();
         float newRating = originRating + (reviewDto.getRating() - originReview.getRating()) / accommodation.getReviewNum();
@@ -110,7 +124,7 @@ public class ReviewService {
         originReview.setCreatedDate(LocalDate.now());
     }
 
-    public void deleteReview(Long id) {
+    public void deleteReview(String token, Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
 
@@ -124,6 +138,11 @@ public class ReviewService {
         Accommodation accommodation = reservation.getAccommodation();
         if (accommodation == null) {
             throw new DataNotFoundException("Accommodation Not Found");
+        }
+
+        if (!memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
+                .orElseThrow(() -> new DataNotFoundException("Member Not Found")).equals(review.getMember())) {
+            throw new InputNotValidException("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
         }
 
         accommodation.setRating((accommodation.getRating() * accommodation.getReviewNum() - review.getRating())
