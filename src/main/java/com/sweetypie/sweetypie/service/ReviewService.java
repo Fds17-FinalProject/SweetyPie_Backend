@@ -53,6 +53,10 @@ public class ReviewService {
             throw new DuplicateValueExeption("Already Have a Review");
         }
 
+        if (LocalDate.now().isBefore(reservation.getCheckInDate())) {
+            throw new InputNotValidException("숙소 이용 전에 리뷰를 작성할 수 없습니다.");
+        }
+
         Accommodation accommodation = reservation.getAccommodation();
         if (accommodation == null) {
             throw new DataNotFoundException("Accommodation Not Found");
