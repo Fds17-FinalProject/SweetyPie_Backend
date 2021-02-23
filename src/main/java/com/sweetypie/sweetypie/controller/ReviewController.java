@@ -46,8 +46,8 @@ public class ReviewController {
     }
 
     @DeleteMapping("/review/{id}")
-    public void deleteReview(@PathVariable Long id) {
+    public void deleteReview(@RequestHeader("Authorization") String token, @PathVariable Long id) {
 
-        reviewService.deleteReview(id);
+        reviewService.deleteReview(token, id);
     }
 }

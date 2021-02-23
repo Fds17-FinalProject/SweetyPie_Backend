@@ -25,11 +25,15 @@ values (3, '서울특별시', '성동구', '깨끗한 아파트', '깔끔해요'
 
 INSERT INTO reservation (id, `check_in_date`, `checkout_date`, `total_guest_num`, `adult_num`, `child_num`, `infant_num`, `is_written_review`,
                          `payment_date`, `total_price`, `accommodation_id`, `member_id`)
-VALUES (1, '2022-02-10', '2022-02-12', '3', '2', '2', '0', 1, '2022-03-01', 60000, 1, 1);
+VALUES (1, '2022-02-10', '2022-02-12', '3', '2', '2', '0', 1, '2022-03-01', 95600, 1, 1);
 
 INSERT INTO reservation (id, `check_in_date`, `checkout_date`, `total_guest_num`, `adult_num`, `child_num`, `infant_num`, `is_written_review`,
                          `payment_date`, `total_price`, `accommodation_id`, `member_id`)
 VALUES (2, '2022-02-20', '2022-02-22', '3', '2', '3', '1', 0, '2022-03-03', 120000, 1, 1);
+
+INSERT INTO reservation (id, `check_in_date`, `checkout_date`, `total_guest_num`, `adult_num`, `child_num`, `infant_num`, `is_written_review`,
+                         `payment_date`, `total_price`, `accommodation_id`, `member_id`)
+VALUES (100, '2021-02-10', '2021-02-12', '3', '2', '3', '1', 0, '2021-02-03', 120000, 1, 1);
 
 INSERT INTO review(id, `rating`, `content`, `accommodation_id`, `member_id`, `reservation_id`)
 values (1, 4, 'new content', 1, 1, 1);
@@ -39,6 +43,8 @@ insert into booked_date(id, date, accommodation_id, reservation_id) values(1, '2
 insert into booked_date(id, date, accommodation_id, reservation_id) values(2, '20220211', 1, 1);
 insert into booked_date(id, date, accommodation_id, reservation_id) values(3, '20220220', 1, 2);
 insert into booked_date(id, date, accommodation_id, reservation_id) values(4, '20220221', 1, 2);
+insert into booked_date(id, date, accommodation_id, reservation_id) values(5, '20210210', 1, 2);
+insert into booked_date(id, date, accommodation_id, reservation_id) values(6, '20210211', 1, 2);
 
 insert into accommodation_picture(id, url, accommodation_id) values(1, 'picture', 1);
 
