@@ -105,11 +105,12 @@ class ReservationControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("Id 값이 잘 못 들어와 객체를 찾을 수 없을 때 예외")
+    @DisplayName("요청된 Id 값으로 정보를 찾을 수 없을 때 예외")
     @Test
     void makeAReservationDataNotFoundException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .accommodationId(0L)// 0인 객체가 없어서 에러발생
@@ -130,6 +131,7 @@ class ReservationControllerTest {
     void makeAReservationInvalidationException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .accommodationId(1L)
@@ -146,6 +148,7 @@ class ReservationControllerTest {
     @Test
     void makeAReservationInvalidDateException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2020, 3, 20))
@@ -155,7 +158,7 @@ class ReservationControllerTest {
                         .childNum(2)
                         .infantNum(0)
                         .accommodationId(1L)
-                        .totalPrice(30000)
+                        .totalPrice(95600)
                         .build())))
                 .andExpect(status().isBadRequest());
     }
@@ -164,6 +167,7 @@ class ReservationControllerTest {
     @Test
     void makeAReservationDuplicateValueException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2022, 2, 20))
@@ -173,15 +177,16 @@ class ReservationControllerTest {
                         .childNum(2)
                         .infantNum(0)
                         .accommodationId(1L)
-                        .totalPrice(30000)
+                        .totalPrice(95600)
                         .build())))
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("예약 수정")
+    @DisplayName("예약 변경")
     @Test
     void updateReservation() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2027, 2, 25))
@@ -199,15 +204,16 @@ class ReservationControllerTest {
     @Test
     void updateReservationDataNotFoundException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/100")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
-                        .checkInDate(LocalDate.of(2020, 2, 20))
-                        .checkoutDate(LocalDate.of(2020, 2, 22))
+                        .checkInDate(LocalDate.of(2022, 2, 20))
+                        .checkoutDate(LocalDate.of(2022, 2, 22))
                         .totalGuestNum(4)
                         .adultNum(2)
                         .childNum(1)
                         .infantNum(1)
-                        .totalPrice(30000)
+                        .totalPrice(95600)
                         .build())))
                 .andExpect(status().isBadRequest());
 
@@ -218,6 +224,7 @@ class ReservationControllerTest {
     void updateReservationDuplicateDateException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2022, 2, 20))
@@ -226,7 +233,31 @@ class ReservationControllerTest {
                         .adultNum(2)
                         .childNum(1)
                         .infantNum(1)
-                        .totalPrice(30000)
+                        .totalPrice(95600)
+                        .build())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("예약 변경을 요청한 회원정보와 예약된 회원정보의 불일치 예외")
+    @Test
+    void updateReservationInconsistencyBetweenRequestMemberAndReservedMember() throws Exception {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test12345@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token = authService.login(loginDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .checkInDate(LocalDate.of(2022, 2, 20))
+                        .checkoutDate(LocalDate.of(2022, 2, 22))
+                        .totalGuestNum(4)
+                        .adultNum(2)
+                        .childNum(1)
+                        .infantNum(1)
+                        .totalPrice(95600)
                         .build())))
                 .andExpect(status().isBadRequest());
     }
@@ -234,8 +265,23 @@ class ReservationControllerTest {
     @DisplayName("예약 취소")
     @Test
     void deleteReservation() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/reservation/1"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/reservation/1")
+                .header("Authorization", token))
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("예약 취소를 요청한 회원정보와 예약된 회원정보의 불일치 예외")
+    @Test
+    void deleteReservationInconsistencyBetweenRequestMemberAndReservedMember() throws Exception {
+        LoginDto loginDto = new LoginDto();
+        loginDto.setEmail("test12345@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token = authService.login(loginDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/reservation/1")
+                .header("Authorization", token))
+                .andExpect(status().isBadRequest());
     }
 
 }
