@@ -88,8 +88,9 @@ class ReviewServiceTest {
     @Test
     void deleteReview() {
         when(reviewRepository.findById(1L)).thenReturn(mockReview());
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
 
-        reviewService.deleteReview(1L);
+        reviewService.deleteReview("token", 1L);
 
         verify(reviewRepository, times(1)).deleteById(1L);
     }
@@ -100,7 +101,7 @@ class ReviewServiceTest {
                 .rating(3)
                 .createdDate(LocalDate.now())
                 .accommodation(null)
-                .member(null)
+                .member(mockMember().get())
                 .content("좋아요")
                 .reservation(mockReservation().get())
                 .build());
@@ -143,6 +144,7 @@ class ReviewServiceTest {
         reservation.setTotalPrice(50000);
         reservation.setTotalGuestNum(5);
         reservation.setIsWrittenReview(false);
+        reservation.setMember(mockMember().get());
         reservation.setAccommodation(mockAccommodation().get());
 
         return Optional.of(reservation);
