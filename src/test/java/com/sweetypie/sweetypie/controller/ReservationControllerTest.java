@@ -110,6 +110,7 @@ class ReservationControllerTest {
     void makeAReservationDataNotFoundException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .accommodationId(0L)// 0인 객체가 없어서 에러발생
@@ -130,6 +131,7 @@ class ReservationControllerTest {
     void makeAReservationInvalidationException() throws Exception {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .accommodationId(1L)
@@ -146,6 +148,7 @@ class ReservationControllerTest {
     @Test
     void makeAReservationInvalidDateException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2020, 3, 20))
@@ -164,6 +167,7 @@ class ReservationControllerTest {
     @Test
     void makeAReservationDuplicateValueException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2022, 2, 20))
