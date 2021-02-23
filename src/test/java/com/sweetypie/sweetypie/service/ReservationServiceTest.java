@@ -142,6 +142,20 @@ class ReservationServiceTest {
         assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
     }
 
+    @DisplayName("예약하기 체크아웃날짜가 체크인날짜보다 빠른날자로 입력되었을 때 예외")
+    @Test
+    void makeAReservationIfEnteredCheckoutDateEarlierThanCheckInDate(){
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+        when(dynamicReservationRepository.findByAccommodationIdAndDate(1L, LocalDate.of(2022, 3, 20), LocalDate.of(2022, 3, 22))).thenReturn(mockBookedDate());
+
+        ReservationDto reservationDto = mockReservationDto();
+
+        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class, () -> reservationService.makeAReservation(1L, reservationDto));
+
+        assertThat(duplicateValueExeption.getMessage()).isEqualTo("이미 예약된 날짜입니다.");
+    }
+
     @DisplayName("예약수정 성공")
     @Test
     void updateReservationSuccess() {
