@@ -97,11 +97,44 @@ class ReviewControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("리뷰 등록하기 (이미 작성)")
+    @DisplayName("리뷰 등록하기 (중복)")
     @Test
-    void postReview2() throws Exception {
+    void postReviewException1() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
                 .header("Authorization", token1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(
+                        new ReviewDto(1L, 1L, 3, "좋아요"))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("리뷰 등록하기 (없는 예약)")
+    @Test
+    void postReviewException2() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+                .header("Authorization", token1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(
+                        new ReviewDto(1L, 1000L, 3, "좋아요"))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("리뷰 등록하기 (없는 숙소)")
+    @Test
+    void postReviewException3() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+                .header("Authorization", token1)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(
+                        new ReviewDto(100L, 1L, 3, "좋아요"))))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("리뷰 등록하기 (다른 회원)")
+    @Test
+    void postReviewException4() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
+                .header("Authorization", token2)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
                         new ReviewDto(1L, 1L, 3, "좋아요"))))
