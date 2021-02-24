@@ -57,7 +57,7 @@ class BookmarkControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/bookmark")
                 .header("Authorization", token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)));
+                .andExpect(jsonPath("$", hasSize(2)));
     }
 
     @DisplayName("북마크 추가")
@@ -96,5 +96,13 @@ class BookmarkControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/bookmark/1")
                 .header("Authorization", token))
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("북마크 제거 (없는 북마크)")
+    @Test
+    void deleteBookmarkException() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/bookmark/3")
+                .header("Authorization", token))
+                .andExpect(status().isBadRequest());
     }
 }
