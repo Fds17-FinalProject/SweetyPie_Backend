@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -39,8 +38,8 @@ public class Reservation {
 
     private int totalPrice;
 
-    @ColumnDefault(value = "false")
-    private Boolean isWrittenReview;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isWrittenReview=false;
 
     @CreationTimestamp
     private LocalDate paymentDate;
