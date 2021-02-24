@@ -24,12 +24,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginDto) {
 
-        String jwt = authService.login(loginDto);
+        String token = authService.login(loginDto);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + jwt);
-
-        return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
+        return ResponseEntity.ok(new TokenDto(token));
     }
 
     @GetMapping("/login/google")
@@ -39,9 +36,7 @@ public class AuthController {
             map = authService.googleLogin(authCode);
         // 로그인 되면 token 리턴
         if (map.get("token")!=null) {
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + map.get("token"));
-            return new ResponseEntity<>(map, httpHeaders,  HttpStatus.OK);
+            return ResponseEntity.ok(map);
         // 로그인 안되면 회원정보를 리턴
         } else {
             return ResponseEntity.ok(map);
@@ -58,9 +53,7 @@ public class AuthController {
 
     @GetMapping("/logout")
     @PreAuthorize("authenticated")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+    public void logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
-
-        return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 }
