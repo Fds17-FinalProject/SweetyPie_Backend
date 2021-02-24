@@ -39,8 +39,8 @@ public class Reservation {
 
     private int totalPrice;
 
-    @ColumnDefault(value = "false")
-    private Boolean isWrittenReview;
+    @ColumnDefault("false")
+    private boolean isWrittenReview;
 
     @CreationTimestamp
     private LocalDate paymentDate;

@@ -49,7 +49,7 @@ public class ReviewService {
                 .orElseThrow(() -> new DataNotFoundException("Reservation Not Found"));
 
         if (reviewRepository.findReviewByReservationId(reviewDto.getReservationId()).isPresent()
-                || reservation.getIsWrittenReview()) {
+                || reservation.isWrittenReview()) {
             throw new DuplicateValueExeption("Already Have a Review");
         }
 
@@ -77,7 +77,7 @@ public class ReviewService {
         float newRating = (accommodation.getRating() * accommodation.getReviewNum() + reviewDto.getRating())
                 / newReviewNum;
 
-        reservation.setIsWrittenReview(true);
+        reservation.setWrittenReview(true);
         accommodation.setRating(newRating);
         accommodation.setReviewNum(newReviewNum);
         accommodation.setHostReviewNum(accommodation.getHostReviewNum() + 1);
@@ -132,7 +132,7 @@ public class ReviewService {
         if (reservation == null) {
             throw new DataNotFoundException("Reservation Not Found");
         }
-        reservation.setIsWrittenReview(false);
+        reservation.setWrittenReview(false);
 
 
         Accommodation accommodation = reservation.getAccommodation();
