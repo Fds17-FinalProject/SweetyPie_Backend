@@ -1,6 +1,5 @@
 package com.sweetypie.sweetypie.security.jwt;
 
-import com.sweetypie.sweetypie.config.Constants;
 import com.sweetypie.sweetypie.exception.InvalidTokenException;
 import com.sweetypie.sweetypie.security.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,22 +38,25 @@ public class TokenProvider implements InitializingBean {
 
     private final RedisTemplate<String, String> redisTemplate;
 
-    private final Constants constants;
+    private @Value("${jwt.secret}") String secret;
+
+    private @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds;
 
     private Key key;
 
     @Override
     public void afterPropertiesSet() {
-        byte[] keyBytes = Decoders.BASE64.decode(constants.getJwtSecret());
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
+
 
     public String createToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        Date validity = Date.from(ZonedDateTime.now().plusSeconds(constants.getJwtTokenValidityInSeconds()).toInstant());
+        Date validity = Date.from(ZonedDateTime.now().plusSeconds(tokenValidityInSeconds).toInstant());
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
