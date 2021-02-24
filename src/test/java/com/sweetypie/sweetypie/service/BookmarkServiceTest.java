@@ -2,6 +2,8 @@ package com.sweetypie.sweetypie.service;
 
 import com.sweetypie.sweetypie.dto.BookmarkDto;
 import com.sweetypie.sweetypie.dto.BookmarkListDto;
+import com.sweetypie.sweetypie.exception.DataNotFoundException;
+import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Bookmark;
 import com.sweetypie.sweetypie.model.Member;
@@ -24,7 +26,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -80,6 +84,42 @@ class BookmarkServiceTest {
         verify(bookmarkRepository, times(1)).save(any(Bookmark.class));
     }
 
+    @DisplayName("북마크 등록 (토큰에 있는 회원 없음)")
+    @Test
+    void postBookmarkException1() {
+        lenient().when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, ()
+                -> bookmarkService.postBookmark("token", mockBookmarkDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
+    }
+
+    @DisplayName("북마크 등록 (없는 숙소)")
+    @Test
+    void postBookmarkException2() {
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> bookmarkService.postBookmark("token", mockBookmarkDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Accommodation Not Found");
+    }
+
+    @DisplayName("북마크 등록 (북마크 중복)")
+    @Test
+    void postBookmarkException3() {
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(0L)).thenReturn(mockAccommodation());
+        when(bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(1L, 0L))
+                .thenReturn(mockBookmark());
+
+        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class,
+                () -> bookmarkService.postBookmark("token", mockBookmarkDto()));
+
+        assertThat(duplicateValueExeption.getMessage()).isEqualTo("Already Have a Bookmark");
+    }
+
     @DisplayName("북마크 제거")
     @Test
     void deleteBookmarkById() {
@@ -90,6 +130,16 @@ class BookmarkServiceTest {
         bookmarkService.deleteBookmark("token", 1);
 
         verify(bookmarkRepository, times(1)).delete(mockBookmark().get());
+    }
+
+    @DisplayName("북마크 제거 (없는 북마크)")
+    @Test
+    void deleteBookmarkException1() {
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> bookmarkService.deleteBookmark("token", 1));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Bookmark Not Found");
     }
 
     private List<BookmarkListDto> mockBookmarks() {
