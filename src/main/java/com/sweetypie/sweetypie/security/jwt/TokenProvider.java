@@ -1,15 +1,16 @@
 package com.sweetypie.sweetypie.security.jwt;
 
+import com.sweetypie.sweetypie.config.Constants;
 import com.sweetypie.sweetypie.exception.InvalidTokenException;
 import com.sweetypie.sweetypie.security.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,32 +29,22 @@ import java.util.Date;
 import java.util.stream.Collectors;
 
 @Component
+@RequiredArgsConstructor
 public class TokenProvider implements InitializingBean {
 
     private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
 
     private static final String AUTHORITIES_KEY = "auth";
 
-    private final String secret;
-
-    private final long tokenValidityInSeconds;
-
     private final RedisTemplate<String, String> redisTemplate;
+
+    private final Constants constants;
 
     private Key key;
 
-    public TokenProvider(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.token-validity-in-seconds}") long tokenValidityInSeconds,
-            RedisTemplate<String, String> redisTemplate) {
-        this.secret = secret;
-        this.tokenValidityInSeconds = tokenValidityInSeconds;
-        this.redisTemplate = redisTemplate;
-    }
-
     @Override
     public void afterPropertiesSet() {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        byte[] keyBytes = Decoders.BASE64.decode(constants.getJwtSecret());
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -62,8 +53,7 @@ public class TokenProvider implements InitializingBean {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        long now = (new Date()).getTime();
-        Date validity = Date.from(ZonedDateTime.now().plusSeconds(tokenValidityInSeconds).toInstant());
+        Date validity = Date.from(ZonedDateTime.now().plusSeconds(constants.getJwtTokenValidityInSeconds()).toInstant());
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
@@ -79,12 +69,7 @@ public class TokenProvider implements InitializingBean {
             token = token.substring(JwtFilter.HEADER_PREFIX.length());
         }
 
-        Claims claims = Jwts
-                .parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+        Claims claims = getClaimsFromToken(token);
 
         String memberId = String.valueOf(claims.get("memberId"));
 
@@ -92,12 +77,8 @@ public class TokenProvider implements InitializingBean {
     }
 
     public Authentication getAuthentication(String token) {
-        Claims claims = Jwts
-                .parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+
+        Claims claims = getClaimsFromToken(token);
 
         Collection<? extends  GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
@@ -107,6 +88,16 @@ public class TokenProvider implements InitializingBean {
         User principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
+    }
+
+    private Claims getClaimsFromToken(String token) {
+
+        return  Jwts
+                .parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public boolean validateToken(String token) {
