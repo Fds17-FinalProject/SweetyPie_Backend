@@ -159,7 +159,7 @@ class ReviewServiceTest {
         assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
     }
 
-    @DisplayName("리뷰 등록 (없는 회원)")
+    @DisplayName("리뷰 등록 (다른 회원)")
     @Test
     void postReviewException6() {
         when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()));
