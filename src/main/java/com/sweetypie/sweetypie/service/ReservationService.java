@@ -102,7 +102,7 @@ public class ReservationService {
             reservationDto.setReservationId(reservation.getId());
             reservationDto.setCheckInDate(reservation.getCheckInDate());
             reservationDto.setCheckoutDate(reservation.getCheckoutDate());
-            reservationDto.setIsWrittenReview(reservation.getIsWrittenReview());
+            reservationDto.setIsWrittenReview(reservation.isWrittenReview());
             reservationDto.setTotalGuestNum(reservation.getTotalGuestNum());
             reservationDto.setAdultNum(reservation.getAdultNum());
             reservationDto.setChildNum(reservation.getChildNum());
