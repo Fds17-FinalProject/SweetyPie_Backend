@@ -1,6 +1,5 @@
 package com.sweetypie.sweetypie.service;
 
-import com.sweetypie.sweetypie.dto.ErrorDto;
 import com.sweetypie.sweetypie.dto.GoogleMemberDto;
 import com.sweetypie.sweetypie.dto.MemberDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
@@ -10,8 +9,6 @@ import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.model.MemberRole;
 import com.sweetypie.sweetypie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +60,7 @@ public class MemberService {
                 .orElseThrow(() -> new DataNotFoundException("조회하는 멤버가 존재하지 않습니다"));
     }
 
-    public Member updateMember(Long id, MemberDto memberDto)  {
+    public void updateMember(Long id, MemberDto memberDto)  {
 
         Member member = memberRepository
                 .findById(id)
@@ -82,7 +79,7 @@ public class MemberService {
             member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         }
 
-        return memberRepository.save(member);
+        memberRepository.save(member);
     }
 
     public Member withdrawal(Long id) {
