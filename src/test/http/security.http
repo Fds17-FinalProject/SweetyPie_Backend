@@ -5,8 +5,8 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {
-  "email":"fovena@gmail.com",
-  "password":"password123!"
+  "email":"membertest1@gmail.com",
+  "password":"12345678a!!"
 }
 
 ### 로그인 테스트- 서버
@@ -46,18 +46,18 @@ POST http://localhost:8080/api/member
 Content-Type: application/json
 
 {
-"email":"fovena@gmail.com",
-"password":"password123!",
-"passwordConfirm":"password123!",
+"email":"membertest1@gmail.com",
+"password":"12345678a!",
+"passwordConfirm":"12345678a!",
 "name":"테스터",
-"birthDate": "1999-02-03",
-"contact":"01008551213"
+"birthDate": "1999-01-01",
+"contact":"01012345678"
 }
 
 ### 회원정보찾기 테스트
 
 GET http://localhost:8080/api/member
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXIxMEBtYWlsLmNvbSIsImF1dGgiOiJST0xFX01FTUJFUiIsIm1lbWJlcklkIjo2MCwiZXhwIjoxNjEzODc0Mjg1fQ.9XF2bjJeK2p1ymHJ5TNRyaEZJSLTxg5mkAvEspZJoImShOuPQ-NteWlQF0d-k6CujQ3gyApTKnSTMPqgKldz2g
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NzIsImV4cCI6MTYxNDE4MjU3N30.Z-DOzP19MaVx1w_fBfctRMNLPJ_qPmo-H9tBi_SZqP7iY3O6hDecgPomsRybMWtyNLK6hTZkeaQS3ol9aBhTBg
 
 ### 회원정보찾기 테스트 -서버
 
@@ -69,11 +69,14 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJodHRwc3Rlc3RAbWFpbC5jb20iL
 ### 회원정보수정 : 비밀번호변경
 
 PUT http://localhost:8080/api/member
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJAbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NywiZXhwIjoxNjEzODgwNDk0fQ.MRQls_oiIS1VKtvOwSrF_TAsriHpd09pfgnFSn6CvYoxEaaUFpAHs2QNVIdf4uC8xrV_PXgSDRUpYwtgcam4Bw
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtZW1iZXJ0ZXN0MUBnbWFpbC5jb20iLCJhdXRoIjoiUk9MRV9NRU1CRVIiLCJtZW1iZXJJZCI6NzIsImV4cCI6MTYxNDE4MjM4MH0.nT6PkndvtvwMpoDmKeWnADAPPUcCVpZt8uPyPghqq2GsB1xYDNLI_zFufEIk1sPAQp3Ngg0AvqFXvQ5-orl-Dw
 Content-Type: application/json
 
 {
-  "password": "member33!@@"
+  "name":"수정된테스터",
+  "birthDate": "1999-12-12",
+  "contact":"01098765432",
+  "password":"12345678a!!"
 }
 
 ### 회원정보수정 : 생년월일변경

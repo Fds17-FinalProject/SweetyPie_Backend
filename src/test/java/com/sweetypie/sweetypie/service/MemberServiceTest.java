@@ -186,15 +186,17 @@ class MemberServiceTest {
 
 
 
-    @DisplayName("회원정보수정-성공")
+    @DisplayName("회원정보수정-성공-이름")
     @Test
     void updateMemberTest() {
-        LocalDate date = LocalDate.now();
         when(memberRepository.findById(1L))
                 .thenReturn(Optional.of(new Member()));
 
         MemberDto memberDto = MemberDto.builder()
-                .birthDate(date)
+                .name("수정된회원이름")
+                .password("12345678aa!!")
+                .contact("01012345678")
+                .birthDate(LocalDate.of(1999,1,1))
                 .build();
 
         memberService.updateMember(1L, memberDto);
