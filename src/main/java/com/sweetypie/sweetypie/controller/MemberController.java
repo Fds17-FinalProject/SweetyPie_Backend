@@ -6,7 +6,6 @@ import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import com.sweetypie.sweetypie.service.AuthService;
 import com.sweetypie.sweetypie.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.jdt.core.compiler.InvalidInputException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +26,7 @@ public class MemberController {
     @PreAuthorize("authenticated")
     public ResponseEntity<MemberDto> getMember(@RequestHeader("Authorization") String token) {
 
-        Member member = memberService.getMember(tokenProvider.parseTokenToGetUserId(token));
+        Member member = memberService.getMember(tokenProvider.parseTokenToGetMemberId(token));
 
         return ResponseEntity.ok(mapToMemberDto(member));
     }
@@ -46,7 +45,7 @@ public class MemberController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody MemberDto memberDto) {
 
-        memberService.updateMember(tokenProvider.parseTokenToGetUserId(token),
+        memberService.updateMember(tokenProvider.parseTokenToGetMemberId(token),
                                                      memberDto);
     }
 
@@ -54,7 +53,7 @@ public class MemberController {
     @PreAuthorize("authenticated")
     public void withdrawalMember(@RequestHeader("Authorization") String token) {
 
-        memberService.withdrawal(tokenProvider.parseTokenToGetUserId(token));
+        memberService.withdrawal(tokenProvider.parseTokenToGetMemberId(token));
         //회원 탈퇴후 접근한 토큰 만료시키기
         authService.logout(token);
     }

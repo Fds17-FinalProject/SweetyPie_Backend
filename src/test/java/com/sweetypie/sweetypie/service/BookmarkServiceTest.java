@@ -64,7 +64,7 @@ class BookmarkServiceTest {
     void deleteBookmarkById() {
         when(bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(0, 1))
                 .thenReturn(mockBookmark());
-        when(tokenProvider.parseTokenToGetUserId("token")).thenReturn(0L);
+        when(tokenProvider.parseTokenToGetMemberId("token")).thenReturn(0L);
 
         bookmarkService.deleteBookmark("token", 1);
 

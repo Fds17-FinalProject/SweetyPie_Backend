@@ -67,7 +67,7 @@ public class TokenProvider implements InitializingBean {
                 .compact();
     }
 
-    public Long parseTokenToGetUserId(String token) {
+    public Long parseTokenToGetMemberId(String token) {
         if (token.startsWith("B")) {
             token = token.substring(JwtFilter.HEADER_PREFIX.length());
         }

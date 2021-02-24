@@ -50,10 +50,10 @@ class TokenProviderTest {
         assertThat(result).isNotEmpty();
     }
 
-    @DisplayName("토큰에서UserId얻기-성공")
+    @DisplayName("토큰에서MemberId얻기-성공")
     @Test
-    void parseTokenToGetUserIdTest() {
-        Long result = tokenProvider.parseTokenToGetUserId(token);
+    void parseTokenToGetMemberIdTest() {
+        Long result = tokenProvider.parseTokenToGetMemberId(token);
         assertThat(result).isEqualTo(1L);
     }
 
