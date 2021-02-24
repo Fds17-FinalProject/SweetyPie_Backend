@@ -1,6 +1,8 @@
 package com.sweetypie.sweetypie.service;
 
 import com.sweetypie.sweetypie.dto.ReviewDto;
+import com.sweetypie.sweetypie.exception.DataNotFoundException;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.model.Reservation;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -56,6 +59,38 @@ class ReviewServiceTest {
 
         assertThat(review.getContent()).isEqualTo("좋아요");
         assertThat(review.getRating()).isEqualTo(3);
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (리뷰 없음)")
+    @Test
+    void findReviewException1() {
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.findReviewByReservationId("token", 1));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Review Not Found");
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (회원 없음)")
+    @Test
+    void findReviewException2() {
+        when(reviewRepository.findReviewByReservationId(1L)).thenReturn(mockReview());
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.findReviewByReservationId("token", 1));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (작성자 불일치)")
+    @Test
+    void findReviewException3() {
+        when(reviewRepository.findReviewByReservationId(1L)).thenReturn(mockReview());
+        when(memberRepository.findById(0L)).thenReturn(Optional.of(new Member()));
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class,
+                () -> reviewService.findReviewByReservationId("token", 1));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
     }
 
     @DisplayName("리뷰 등록")
