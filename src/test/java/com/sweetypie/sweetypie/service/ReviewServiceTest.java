@@ -1,6 +1,9 @@
 package com.sweetypie.sweetypie.service;
 
 import com.sweetypie.sweetypie.dto.ReviewDto;
+import com.sweetypie.sweetypie.exception.DataNotFoundException;
+import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
+import com.sweetypie.sweetypie.exception.InputNotValidException;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.model.Reservation;
@@ -22,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,7 +53,7 @@ class ReviewServiceTest {
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void findReviewByAccommodation_IdAndMember_Id() {
-        when(reviewRepository.findReviewByReservationId(1)).thenReturn(mockReview());
+        when(reviewRepository.findReviewByReservationId(1)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
         when(memberRepository.findById(0L)).thenReturn(mockMember());
 
         Review review = reviewService.findReviewByReservationId("token", 1);
@@ -58,10 +62,42 @@ class ReviewServiceTest {
         assertThat(review.getRating()).isEqualTo(3);
     }
 
+    @DisplayName("작성한 리뷰 가져오기 (리뷰 없음)")
+    @Test
+    void findReviewException1() {
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.findReviewByReservationId("token", 1));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Review Not Found");
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (회원 없음)")
+    @Test
+    void findReviewException2() {
+        when(reviewRepository.findReviewByReservationId(1L)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.findReviewByReservationId("token", 1));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (작성자 불일치)")
+    @Test
+    void findReviewException3() {
+        when(reviewRepository.findReviewByReservationId(1L)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+        when(memberRepository.findById(0L)).thenReturn(Optional.of(new Member()));
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class,
+                () -> reviewService.findReviewByReservationId("token", 1));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
+    }
+
     @DisplayName("리뷰 등록")
     @Test
     void postReview() {
-        when(reservationRepository.findById(0L)).thenReturn(mockReservation());
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()));
         when(memberRepository.findById(0L)).thenReturn(mockMember());
 
         reviewService.writeReview("token", mockReviewDto());
@@ -69,11 +105,78 @@ class ReviewServiceTest {
         verify(reviewRepository, times(1)).save(any(Review.class));
     }
 
+    @DisplayName("리뷰 등록 (없는 예약)")
+    @Test
+    void postReviewException1() {
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.writeReview("token", mockReviewDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Reservation Not Found");
+    }
+
+    @DisplayName("리뷰 등록 (중복)")
+    @Test
+    void postReviewException2() {
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()));
+        when(reviewRepository.findReviewByReservationId(0L)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+
+        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class,
+                () -> reviewService.writeReview("token", mockReviewDto()));
+
+        assertThat(duplicateValueExeption.getMessage()).isEqualTo("Already Have a Review");
+    }
+
+    @DisplayName("리뷰 등록 (체크인 이전)")
+    @Test
+    void postReviewException3() {
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 3, 1), mockAccommodation().get()));
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class,
+                () -> reviewService.writeReview("token", mockReviewDto()));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("숙소 이용 전에 리뷰를 작성할 수 없습니다.");
+    }
+
+    @DisplayName("리뷰 등록 (없는 숙소)")
+    @Test
+    void postReviewException4() {
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 1), null));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.writeReview("token", mockReviewDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Accommodation Not Found");
+    }
+
+    @DisplayName("리뷰 등록 (없는 회원)")
+    @Test
+    void postReviewException5() {
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.writeReview("token", mockReviewDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
+    }
+
+    @DisplayName("리뷰 등록 (다른 회원)")
+    @Test
+    void postReviewException6() {
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()));
+
+        when(memberRepository.findById(0L)).thenReturn(Optional.of(new Member()));
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class,
+                () -> reviewService.writeReview("token", mockReviewDto()));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("토큰의 회원 정보와 예약 회원이 일치하지 않습니다.");
+    }
+
     @DisplayName("리뷰 수정")
     @Test
     void updateReview() {
-        when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview());
-        when(reservationRepository.findById(0L)).thenReturn(mockReservation());
+        when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()));
         when(memberRepository.findById(0L)).thenReturn(mockMember());
 
         reviewService.updateReview("token", mockReviewDto());
@@ -84,10 +187,54 @@ class ReviewServiceTest {
         assertThat(review.getRating()).isEqualTo(4);
     }
 
+    @DisplayName("리뷰 수정 (없는 리뷰)")
+    @Test
+    void updateReviewException1() {
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.updateReview("token", mockReviewDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Review Not Found");
+    }
+
+    @DisplayName("리뷰 수정 (없는 예약)")
+    @Test
+    void updateReviewException2() {
+        when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.updateReview("token", mockReviewDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Reservation Not Found");
+    }
+
+    @DisplayName("리뷰 수정 (없는 숙소)")
+    @Test
+    void updateReviewException3() {
+        when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 1), null));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.updateReview("token", mockReviewDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Accommodation Not Found");
+    }
+
+    @DisplayName("리뷰 수정 (없는 회원)")
+    @Test
+    void updateReviewException4() {
+        when(reviewRepository.findReviewByReservationId(0)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+        when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.updateReview("token", mockReviewDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
+    }
+
     @DisplayName("리뷰 삭제")
     @Test
     void deleteReview() {
-        when(reviewRepository.findById(1L)).thenReturn(mockReview());
+        when(reviewRepository.findById(1L)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
         when(memberRepository.findById(0L)).thenReturn(mockMember());
 
         reviewService.deleteReview("token", 1L);
@@ -95,7 +242,49 @@ class ReviewServiceTest {
         verify(reviewRepository, times(1)).deleteById(1L);
     }
 
-    private Optional<Review> mockReview() {
+    @DisplayName("리뷰 삭제 (없는 리뷰)")
+    @Test
+    void deleteReviewException1() {
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.deleteReview("token", 0L));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Review Not Found");
+    }
+
+    @DisplayName("리뷰 삭제 (없는 예약)")
+    @Test
+    void deleteReviewException2() {
+        when(reviewRepository.findById(0L)).thenReturn(Optional.of(mockReview(null).get()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.deleteReview("token", 0L));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Reservation Not Found");
+    }
+
+    @DisplayName("리뷰 삭제 (없는 숙소)")
+    @Test
+    void deleteReviewException3() {
+        when(reviewRepository.findById(0L)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), null).get()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.deleteReview("token", 0L));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Accommodation Not Found");
+    }
+
+    @DisplayName("리뷰 삭제 (없는 회원)")
+    @Test
+    void deleteReviewException4() {
+        when(reviewRepository.findById(0L)).thenReturn(mockReview(mockReservation(LocalDate.of(2021, 2, 22), mockAccommodation().get()).get()));
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> reviewService.deleteReview("token", 0L));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
+    }
+
+    private Optional<Review> mockReview(Reservation reservation) {
 
         return Optional.of(Review.builder()
                 .rating(3)
@@ -103,7 +292,7 @@ class ReviewServiceTest {
                 .accommodation(null)
                 .member(mockMember().get())
                 .content("좋아요")
-                .reservation(mockReservation().get())
+                .reservation(reservation)
                 .build());
     }
 
@@ -133,11 +322,10 @@ class ReviewServiceTest {
         return Optional.of(member);
     }
 
-    private Optional<Reservation> mockReservation() {
+    private Optional<Reservation> mockReservation(LocalDate checkInDate, Accommodation accommodation) {
         Reservation reservation = new Reservation();
 
-        LocalDate checkInDate = LocalDate.of(2020, 2, 22);
-        LocalDate checkoutDate = LocalDate.of(2020, 2, 24);
+        LocalDate checkoutDate = LocalDate.of(2021, 3, 10);
         reservation.setId(2L);
         reservation.setCheckInDate(checkInDate);
         reservation.setCheckoutDate(checkoutDate);
@@ -145,7 +333,7 @@ class ReviewServiceTest {
         reservation.setTotalGuestNum(5);
         reservation.setIsWrittenReview(false);
         reservation.setMember(mockMember().get());
-        reservation.setAccommodation(mockAccommodation().get());
+        reservation.setAccommodation(accommodation);
 
         return Optional.of(reservation);
     }
