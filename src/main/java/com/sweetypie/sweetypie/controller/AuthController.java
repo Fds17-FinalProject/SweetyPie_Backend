@@ -2,8 +2,11 @@ package com.sweetypie.sweetypie.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sweetypie.sweetypie.dto.*;
+import com.sweetypie.sweetypie.security.jwt.JwtFilter;
 import com.sweetypie.sweetypie.service.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -22,9 +24,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@Valid @RequestBody LoginDto loginDto) {
 
-        String token = authService.login(loginDto);
+        String jwt = authService.login(loginDto);
 
-        return ResponseEntity.ok(new TokenDto(token));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + jwt);
+
+        return new ResponseEntity<>(new TokenDto(jwt), httpHeaders, HttpStatus.OK);
     }
 
     @GetMapping("/login/google")
@@ -34,7 +39,9 @@ public class AuthController {
             map = authService.googleLogin(authCode);
         // 로그인 되면 token 리턴
         if (map.get("token")!=null) {
-            return ResponseEntity.ok(map);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.HEADER_PREFIX + map.get("token"));
+            return new ResponseEntity<>(map, httpHeaders,  HttpStatus.OK);
         // 로그인 안되면 회원정보를 리턴
         } else {
             return ResponseEntity.ok(map);
@@ -51,7 +58,9 @@ public class AuthController {
 
     @GetMapping("/logout")
     @PreAuthorize("authenticated")
-    public void logout(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
         authService.logout(token);
+
+        return new ResponseEntity<>("로그아웃 되었습니다", HttpStatus.OK);
     }
 }

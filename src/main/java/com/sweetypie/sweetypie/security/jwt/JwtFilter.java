@@ -22,7 +22,7 @@ public class JwtFilter extends GenericFilterBean {
 
     public static final String HEADER_PREFIX = "Bearer ";
 
-    private final TokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
 
     public JwtFilter(TokenProvider tokenProvider) {
         this.tokenProvider = tokenProvider;

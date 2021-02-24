@@ -159,7 +159,8 @@ class MemberControllerTest {
     void withdrawalTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/member")
                 .header("Authorization", token))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().string("회원 탈퇴가 정상적으로 완료되었습니다"));
     }
 
 

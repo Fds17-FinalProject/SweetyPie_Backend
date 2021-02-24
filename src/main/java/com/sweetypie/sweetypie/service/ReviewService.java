@@ -35,7 +35,7 @@ public class ReviewService {
         Review review = reviewRepository.findReviewByReservationId(reservationId)
                 .orElseThrow(() -> new DataNotFoundException("Review Not Found"));
 
-        if (!memberRepository.findById(tokenProvider.parseTokenToGetMemberId(token))
+        if (!memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found")).equals(review.getMember())) {
             throw new InputNotValidException("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
         }
@@ -66,7 +66,7 @@ public class ReviewService {
             throw new InputNotValidException("Accommodation Not Matched");
         }
 
-        Member member = memberRepository.findById(tokenProvider.parseTokenToGetMemberId(token))
+        Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
         if (!reservation.getMember().equals(member)) {
@@ -109,7 +109,7 @@ public class ReviewService {
             throw new InputNotValidException("Accommodation Not Matched");
         }
 
-        if (!memberRepository.findById(tokenProvider.parseTokenToGetMemberId(token))
+        if (!memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found")).equals(originReview.getMember())) {
             throw new InputNotValidException("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
         }
@@ -140,7 +140,7 @@ public class ReviewService {
             throw new DataNotFoundException("Accommodation Not Found");
         }
 
-        if (!memberRepository.findById(tokenProvider.parseTokenToGetMemberId(token))
+        if (!memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found")).equals(review.getMember())) {
             throw new InputNotValidException("토큰의 회원 정보와 리뷰 작성자가 일치하지 않습니다.");
         }

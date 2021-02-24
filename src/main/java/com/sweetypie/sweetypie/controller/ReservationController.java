@@ -23,14 +23,14 @@ public class ReservationController {
     @PreAuthorize("authenticated")
     public List<ReservationDto> getReservations(@RequestHeader(value = "Authorization") String token) {
 
-        return reservationService.getReservations(tokenProvider.parseTokenToGetMemberId(token));
+        return reservationService.getReservations(tokenProvider.parseTokenToGetUserId(token));
     }
 
     @PostMapping("/reservation")
     @PreAuthorize("authenticated")
     public void makeAReservation(@RequestHeader(value = "Authorization") String token, @Valid @RequestBody ReservationDto reservationDto){
 
-        reservationService.makeAReservation(tokenProvider.parseTokenToGetMemberId(token), reservationDto);
+        reservationService.makeAReservation(tokenProvider.parseTokenToGetUserId(token), reservationDto);
 
     }
 
@@ -38,7 +38,7 @@ public class ReservationController {
     @PreAuthorize("authenticated")
     public void updateReservation(@PathVariable Long id, @RequestHeader(value = "Authorization") String token, @Valid @RequestBody ReservationDto reservationDto) {
 
-        reservationService.updateReservation(id, tokenProvider.parseTokenToGetMemberId(token), reservationDto);
+        reservationService.updateReservation(id, tokenProvider.parseTokenToGetUserId(token), reservationDto);
 
     }
 
@@ -46,7 +46,7 @@ public class ReservationController {
     @PreAuthorize("authenticated")
     public void cancelReservation(@PathVariable Long id,  @RequestHeader(value = "Authorization") String token) {
 
-        reservationService.deleteReservation(id, tokenProvider.parseTokenToGetMemberId(token));
+        reservationService.deleteReservation(id, tokenProvider.parseTokenToGetUserId(token));
 
     }
 }
