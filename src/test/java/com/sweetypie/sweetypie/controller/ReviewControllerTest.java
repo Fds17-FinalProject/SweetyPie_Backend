@@ -33,7 +33,8 @@ class ReviewControllerTest {
     @Autowired
     AuthService authService;
 
-    private String token;
+    private String token1;
+    private String token2;
 
     @BeforeEach
     void before(WebApplicationContext was) {
@@ -46,22 +47,50 @@ class ReviewControllerTest {
         loginDto.setEmail("test123@gmail.com");
         loginDto.setPassword("12345678a!");
 
-        token = authService.login(loginDto);
+        token1 = authService.login(loginDto);
+
+        loginDto.setEmail("test12345@gmail.com");
+        loginDto.setPassword("12345678a!");
+
+        token2 = authService.login(loginDto);
     }
 
     @DisplayName("작성한 리뷰 가져오기")
     @Test
     void getReview() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/review/1")
-                .header("Authorization", token))
+                .header("Authorization", token1))
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (토큰 없음)")
+    @Test
+    void getReviewException1() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/review/1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (없는 리뷰)")
+    @Test
+    void getReviewException2() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/review/100")
+                .header("Authorization", token1))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("작성한 리뷰 가져오기 (다른 작성자)")
+    @Test
+    void getReviewException3() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/review/1")
+                .header("Authorization", token2))
+                .andExpect(status().isBadRequest());
     }
 
     @DisplayName("리뷰 등록하기")
     @Test
     void postReview() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
-                .header("Authorization", token)
+                .header("Authorization", token1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
                         new ReviewDto(1L, 100L, 3, "좋아요"))))
@@ -72,7 +101,7 @@ class ReviewControllerTest {
     @Test
     void postReview2() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/review")
-                .header("Authorization", token)
+                .header("Authorization", token1)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(
                         new ReviewDto(1L, 1L, 3, "좋아요"))))
