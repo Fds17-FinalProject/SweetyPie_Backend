@@ -53,6 +53,3 @@ values (1, 1, 1);
 
 INSERT INTO bookmark(id, accommodation_id, member_id)
 values (2, 2, 1);
-
-INSERT INTO bookmark(id, accommodation_id, member_id)
-values (3, 3, 1);
