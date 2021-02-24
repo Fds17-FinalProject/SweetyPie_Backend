@@ -17,4 +17,8 @@ public class BookmarkDto {
 
     @Positive
     private long accommodationId;
+
+    public BookmarkDto(@Positive long accommodationId) {
+        this.accommodationId = accommodationId;
+    }
 }
