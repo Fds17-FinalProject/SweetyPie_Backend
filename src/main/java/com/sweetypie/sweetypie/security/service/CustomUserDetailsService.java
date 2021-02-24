@@ -1,5 +1,6 @@
 package com.sweetypie.sweetypie.security.service;
 
+import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.model.Member;
 
 import com.sweetypie.sweetypie.repository.MemberRepository;
@@ -8,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,20 +27,17 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) {
 
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException(email + " -> 데이터베이스에서 찾을 수 없습니다"));
+                .orElseThrow(() -> new DataNotFoundException("멤버가 존재하지 않습니다"));
 
         memberId = member.getId();
 
-        return createUser(member.getEmail(), member);
+        return createUser(member);
     }
 
-    private User createUser(String email, Member member) {
-        if (member.isDeleted()) {
-            throw new RuntimeException(email + " -> 탈퇴한 멤버의 email 입니다");
-        }
+    private User createUser(Member member) {
 
         List<GrantedAuthority> grantedAuthorities = Stream.of(member.getRole())
                 .map(r -> new SimpleGrantedAuthority(r.getRoleName()))

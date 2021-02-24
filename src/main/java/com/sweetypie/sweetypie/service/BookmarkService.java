@@ -38,7 +38,7 @@ public class BookmarkService {
 
     public List<BookmarkListDto> findBookmarksByToken(String token) {
 
-        List<BookmarkListDto> bookmarks = dynamicBookmarkRepository.findByMemberId(tokenProvider.parseTokenToGetUserId(token));
+        List<BookmarkListDto> bookmarks = dynamicBookmarkRepository.findByMemberId(tokenProvider.parseTokenToGetMemberId(token));
 
         for (BookmarkListDto bookmark : bookmarks) {
             bookmark.setAccommodationPicture(accPictureRepository.findFirstByAccommodationId(bookmark.getAccommodationId()));
@@ -48,7 +48,7 @@ public class BookmarkService {
     }
 
     public void postBookmark(String token, BookmarkDto bookmarkDto) {
-        Member member = memberRepository.findById(tokenProvider.parseTokenToGetUserId(token))
+        Member member = memberRepository.findById(tokenProvider.parseTokenToGetMemberId(token))
                 .orElseThrow(() -> new DataNotFoundException("Member Not Found"));
 
         Accommodation accommodation = accommodationRepository.findById(bookmarkDto.getAccommodationId())
@@ -68,7 +68,7 @@ public class BookmarkService {
 
     public void deleteBookmark(String token, long accommodationId) {
 
-        Bookmark bookmark = bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(tokenProvider.parseTokenToGetUserId(token), accommodationId)
+        Bookmark bookmark = bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(tokenProvider.parseTokenToGetMemberId(token), accommodationId)
                 .orElseThrow(() -> new DataNotFoundException("Bookmark Not Found"));
 
         bookmarkRepository.delete(bookmark);
