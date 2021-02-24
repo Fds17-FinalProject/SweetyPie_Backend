@@ -150,8 +150,7 @@ class MemberControllerTest {
                 .content(
                         "{       \"name\":\"수정된테스터\", " +
                                 "\"birthDate\":\"1999-09-11\", " +
-                                "\"contact\":\"01022223333\", " +
-                                "\"password\":\"12354678a!\" }"
+                                "\"contact\":\"01022223333\" }"
                 ))
                 .andExpect(status().isOk());
     }
@@ -165,8 +164,7 @@ class MemberControllerTest {
                 .content(
                         "{       \"name\":\"테스터\", " +
                                 "\"birthDate\":\"1999-09-11\", " +
-                                "\"contact\":\"01099998888\", " +
-                                "\"password\":\"12354678a!\" }"
+                                "\"contact\":\"01099998888\" }"
                 ))
                 .andExpect(status().isOk());
     }
@@ -180,8 +178,7 @@ class MemberControllerTest {
                 .content(
                         "{       \"name\":\"테스터\", " +
                                 "\"birthDate\":\"1999-01-01\", " +
-                                "\"contact\":\"01022223333\", " +
-                                "\"password\":\"12354678a!\" }"
+                                "\"contact\":\"01022223333\" }"
                 ))
                 .andExpect(status().isOk());
     }
