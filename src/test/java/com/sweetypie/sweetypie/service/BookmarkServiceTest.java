@@ -1,11 +1,16 @@
 package com.sweetypie.sweetypie.service;
 
+import com.sweetypie.sweetypie.dto.BookmarkDto;
 import com.sweetypie.sweetypie.dto.BookmarkListDto;
+import com.sweetypie.sweetypie.exception.DataNotFoundException;
+import com.sweetypie.sweetypie.exception.DuplicateValueExeption;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.Bookmark;
 import com.sweetypie.sweetypie.model.Member;
 import com.sweetypie.sweetypie.repository.AccommodationPictureRepository;
+import com.sweetypie.sweetypie.repository.AccommodationRepository;
 import com.sweetypie.sweetypie.repository.BookmarkRepository;
+import com.sweetypie.sweetypie.repository.MemberRepository;
 import com.sweetypie.sweetypie.repository.dynamic.DynamicBookmarkRepository;
 import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +26,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -35,10 +43,16 @@ class BookmarkServiceTest {
     private BookmarkRepository bookmarkRepository;
 
     @Mock
-    DynamicBookmarkRepository dynamicBookmarkRepository;
+    private DynamicBookmarkRepository dynamicBookmarkRepository;
 
     @Mock
-    AccommodationPictureRepository accommodationPictureRepository;
+    private MemberRepository memberRepository;
+
+    @Mock
+    private AccommodationRepository accommodationRepository;
+
+    @Mock
+    private AccommodationPictureRepository accommodationPictureRepository;
 
     @Mock
     private TokenProvider tokenProvider;
@@ -59,6 +73,53 @@ class BookmarkServiceTest {
         assertThat(bookmarks.get(1).getAccommodationId()).isEqualTo(2);
     }
 
+    @DisplayName("북마크 등록")
+    @Test
+    void postBookmark() {
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(0L)).thenReturn(mockAccommodation());
+
+        bookmarkService.postBookmark("token", mockBookmarkDto());
+
+        verify(bookmarkRepository, times(1)).save(any(Bookmark.class));
+    }
+
+    @DisplayName("북마크 등록 (토큰에 있는 회원 없음)")
+    @Test
+    void postBookmarkException1() {
+        lenient().when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class, ()
+                -> bookmarkService.postBookmark("token", mockBookmarkDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
+    }
+
+    @DisplayName("북마크 등록 (없는 숙소)")
+    @Test
+    void postBookmarkException2() {
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> bookmarkService.postBookmark("token", mockBookmarkDto()));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Accommodation Not Found");
+    }
+
+    @DisplayName("북마크 등록 (북마크 중복)")
+    @Test
+    void postBookmarkException3() {
+        when(memberRepository.findById(0L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(0L)).thenReturn(mockAccommodation());
+        when(bookmarkRepository.findBookmarkByMemberIdAndAccommodationId(1L, 0L))
+                .thenReturn(mockBookmark());
+
+        DuplicateValueExeption duplicateValueExeption = assertThrows(DuplicateValueExeption.class,
+                () -> bookmarkService.postBookmark("token", mockBookmarkDto()));
+
+        assertThat(duplicateValueExeption.getMessage()).isEqualTo("Already Have a Bookmark");
+    }
+
     @DisplayName("북마크 제거")
     @Test
     void deleteBookmarkById() {
@@ -69,6 +130,16 @@ class BookmarkServiceTest {
         bookmarkService.deleteBookmark("token", 1);
 
         verify(bookmarkRepository, times(1)).delete(mockBookmark().get());
+    }
+
+    @DisplayName("북마크 제거 (없는 북마크)")
+    @Test
+    void deleteBookmarkException1() {
+
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
+                () -> bookmarkService.deleteBookmark("token", 1));
+
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Bookmark Not Found");
     }
 
     private List<BookmarkListDto> mockBookmarks() {
@@ -113,5 +184,16 @@ class BookmarkServiceTest {
         member.setBirthDate(LocalDate.of(1993, 5, 1));
 
         return Optional.of(member);
+    }
+
+    private BookmarkDto mockBookmarkDto() {
+        BookmarkDto bookmarkDto = new BookmarkDto();
+        bookmarkDto.setBookmarkId(1L);
+
+        return bookmarkDto;
+    }
+
+    private Optional<Accommodation> mockAccommodation() {
+        return Optional.of(new Accommodation(1L, 0, "서울특별시", "마포구", "서울특별시 마포구 독막로 266", "원룸", 1, 1, 1, 40000, 2, "010-1234-5678", 36.141f, 126.531f, "마포역 1번 출구 앞", "버스 7016", "깨끗해요", "착해요", 4.56f, 125, "전체", "원룸", "이재복", 543, null, new ArrayList<>(), null, null));
     }
 }
