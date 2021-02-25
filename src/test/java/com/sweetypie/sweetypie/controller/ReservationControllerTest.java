@@ -336,6 +336,25 @@ class ReservationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("예약 변경 체크아웃이 체크인보다 빠른 날짜일 때 예외")
+    @Test
+    void updateReservationCheckCheckoutEarlierThanCheckout() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .checkInDate(LocalDate.of(2022, 3, 22))
+                        .checkoutDate(LocalDate.of(2022, 3, 20))
+                        .totalGuestNum(2)
+                        .adultNum(2)
+                        .childNum(0)
+                        .infantNum(0)
+                        .totalPrice(95600)
+                        .build())))
+                .andExpect(status().isBadRequest());
+
+    }
+
     @DisplayName("예약 취소")
     @Test
     void deleteReservation() throws Exception {
