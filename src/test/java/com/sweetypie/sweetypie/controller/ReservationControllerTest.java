@@ -281,6 +281,24 @@ class ReservationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("예약 변경 숙박의 수용 가능한 인원보다 예약된 최대인원을 초과하였을 때 예외")
+    @Test
+    void updateReservationTotalGuestNumGreaterThanCapacity() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .checkInDate(LocalDate.of(2022, 3, 20))
+                        .checkoutDate(LocalDate.of(2022, 3, 22))
+                        .totalGuestNum(8)
+                        .adultNum(4)
+                        .childNum(4)
+                        .infantNum(0)
+                        .totalPrice(95600)
+                        .build())))
+                .andExpect(status().isBadRequest());
+    }
+
     @DisplayName("예약 취소")
     @Test
     void deleteReservation() throws Exception {
