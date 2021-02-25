@@ -67,6 +67,8 @@ public class ReservationService {
             throw new InputNotValidException("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
         }
 
+        validateCapacity(reservationDto, reservation.getAccommodation());
+
         validateTotalPrice(reservationDto, reservation.getAccommodation().getPrice());
 
         bookedDateRepository.deleteBookedDateByReservationId(reservationId);
