@@ -48,7 +48,7 @@ public class ReservationService {
 
         Accommodation accommodation = accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new DataNotFoundException("등록된 숙박 정보를 찾을 수 없습니다."));
 
-        checkCapacity(reservationDto, accommodation);
+        validateCapacity(reservationDto, accommodation);
 
         validateTotalPrice(reservationDto, accommodation.getPrice());
 
@@ -88,9 +88,9 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 
-    private void checkCapacity(ReservationDto reservationDto, Accommodation accommodation){
+    private void validateCapacity(ReservationDto reservationDto, Accommodation accommodation){
         if (reservationDto.getTotalGuestNum() > accommodation.getCapacity()) {
-            throw new InputNotValidException("최대 인원이 초과하였습니다.");
+            throw new InputNotValidException("숙소의 수용 가능한 최대 인원을 초과하였습니다.");
         }
     }
 
