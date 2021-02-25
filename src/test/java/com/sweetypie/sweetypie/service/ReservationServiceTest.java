@@ -152,6 +152,28 @@ class ReservationServiceTest {
         assertThat(inputNotValidException.getMessage()).isEqualTo("예약기간이 잘 못 되었습니다.");
     }
 
+    @DisplayName("예약 할 때, 숙박 수용인원보다 예약한 최대인원이 더 많을 때 예외")
+    @Test
+    void makeAReservationIfTotalGuestNumGreaterThanCapacity(){
+        when(memberRepository.findById(1L)).thenReturn(mockMember());
+        when(accommodationRepository.findById(1L)).thenReturn(mockAccommodation());
+
+        ReservationDto reservationDto = ReservationDto.builder()
+                .accommodationId(1L)
+                .checkInDate(LocalDate.of(2022, 3, 20))
+                .checkoutDate(LocalDate.of(2022, 3, 22))
+                .totalPrice(95600)
+                .totalGuestNum(8)
+                .adultNum(4)
+                .childNum(4)
+                .infantNum(0)
+                .build();
+
+        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class, () -> reservationService.makeAReservation(1L, reservationDto));
+
+        assertThat(inputNotValidException.getMessage()).isEqualTo("숙소의 수용 가능한 최대 인원을 초과하였습니다.");
+    }
+
     @DisplayName("예약수정 성공")
     @Test
     void updateReservationSuccess() {
@@ -300,8 +322,8 @@ class ReservationServiceTest {
     private Optional<Accommodation> mockAccommodation() {
 
         BookedDate bookedDate = new BookedDate();
-        bookedDate.setDate(LocalDate.of(2020,2,22));
-        bookedDate.setDate(LocalDate.of(2020, 2, 22));
+        bookedDate.setDate(LocalDate.of(2020,2,20));
+        bookedDate.setDate(LocalDate.of(2020, 2, 21));
 
         List<BookedDate> bookedDates = new ArrayList<>();
         bookedDates.add(bookedDate);
@@ -314,7 +336,7 @@ class ReservationServiceTest {
         accommodation.setAccommodationType("집전체");
         accommodation.setBuildingType("게스트하우스");
         accommodation.setBookedDates(bookedDates);
-        accommodation.setCapacity(4);
+        accommodation.setCapacity(5);
 
         return Optional.of(accommodation);
     }
