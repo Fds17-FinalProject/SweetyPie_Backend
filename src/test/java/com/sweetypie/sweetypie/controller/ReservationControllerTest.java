@@ -81,7 +81,7 @@ class ReservationControllerTest {
         token = authService.login(loginDto);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/api/reservation")
-                .header("Authorization",token))
+                .header("Authorization", token))
                 .andExpect(jsonPath("$", hasSize(0)))
                 .andExpect(status().isOk());
     }
@@ -105,7 +105,7 @@ class ReservationControllerTest {
                 .andExpect(status().isOk());
     }
 
-    @DisplayName("요청된 Id 값으로 정보를 찾을 수 없을 때 예외")
+    @DisplayName("예약하기 요청된 Id 값으로 정보를 찾을 수 없을 때 예외")
     @Test
     void makeAReservationDataNotFoundException() throws Exception {
 
@@ -117,16 +117,16 @@ class ReservationControllerTest {
                         .reservationId(1L)
                         .checkInDate(LocalDate.of(2022, 2, 20))
                         .checkoutDate(LocalDate.of(2022, 2, 20))
-                        .totalGuestNum(6)
-                        .adultNum(4)
-                        .childNum(2)
+                        .totalGuestNum(2)
+                        .adultNum(2)
+                        .childNum(0)
                         .infantNum(0)
                         .totalPrice(11000)
                         .build())))
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("totalGuestNum or totalPrice 값이 잘 못 들어왔을 때 예외")
+    @DisplayName("예약하기 totalGuestNum or totalPrice 값이 잘 못 들어왔을 때 예외")
     @Test
     void makeAReservationInvalidationException() throws Exception {
 
@@ -144,7 +144,7 @@ class ReservationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("현재 날짜이전으로 예약이 들어왔을 때 예외")
+    @DisplayName("예약하기 현재 날짜이전으로 예약이 들어왔을 때 예외")
     @Test
     void makeAReservationInvalidDateException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
@@ -153,9 +153,9 @@ class ReservationControllerTest {
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2020, 3, 20))
                         .checkoutDate(LocalDate.of(2020, 3, 23))
-                        .totalGuestNum(6)
-                        .adultNum(4)
-                        .childNum(2)
+                        .totalGuestNum(2)
+                        .adultNum(2)
+                        .childNum(0)
                         .infantNum(0)
                         .accommodationId(1L)
                         .totalPrice(95600)
@@ -163,7 +163,7 @@ class ReservationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("중복된 예약 날짜가 들어왔을 때 예외")
+    @DisplayName("예약하기 중복된 예약 날짜가 들어왔을 때 예외")
     @Test
     void makeAReservationDuplicateValueException() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
@@ -172,11 +172,30 @@ class ReservationControllerTest {
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
                         .checkInDate(LocalDate.of(2022, 2, 20))
                         .checkoutDate(LocalDate.of(2022, 2, 22))
-                        .totalGuestNum(6)
-                        .adultNum(4)
-                        .childNum(2)
+                        .totalGuestNum(2)
+                        .adultNum(2)
+                        .childNum(0)
                         .infantNum(0)
                         .accommodationId(1L)
+                        .totalPrice(95600)
+                        .build())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("예약하기 숙박의 수용인원보다 예약된 최대인원이 초과하였을 때 예외")
+    @Test
+    void makeAReservationToTalGuestNumGreaterThanCapacity() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .accommodationId(1L)
+                        .checkInDate(LocalDate.of(2022, 2, 20))
+                        .checkoutDate(LocalDate.of(2022, 2, 22))
+                        .totalGuestNum(8)
+                        .adultNum(4)
+                        .childNum(4)
+                        .infantNum(0)
                         .totalPrice(95600)
                         .build())))
                 .andExpect(status().isBadRequest());
