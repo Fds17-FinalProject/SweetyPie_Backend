@@ -113,7 +113,7 @@ class ReservationControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(ReservationDto.builder()
-                        .accommodationId(0L)// 0인 객체가 없어서 에러발생
+                        .accommodationId(0L)// 0인 숙박정보가 없어서 예외발생
                         .reservationId(1L)
                         .checkInDate(LocalDate.of(2022, 2, 20))
                         .checkoutDate(LocalDate.of(2022, 2, 20))
@@ -126,7 +126,7 @@ class ReservationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @DisplayName("예약하기 totalGuestNum or totalPrice 값이 잘 못 들어왔을 때 예외")
+    @DisplayName("예약하기 totalGuestNum or totalPrice validation 예외")
     @Test
     void makeAReservationInvalidationException() throws Exception {
 
@@ -137,9 +137,9 @@ class ReservationControllerTest {
                         .accommodationId(1L)
                         .reservationId(1L)
                         .checkInDate(LocalDate.of(2022, 2, 20))
-                        .checkoutDate(LocalDate.of(2022, 2, 20))
+                        .checkoutDate(LocalDate.of(2022, 2, 22))
                         .totalGuestNum(-1)
-                        .totalPrice(11000) // 음수 값이 올 수 없어서 에러 발생
+                        .totalPrice(95600)
                         .build())))
                 .andExpect(status().isBadRequest());
     }
@@ -197,6 +197,25 @@ class ReservationControllerTest {
                         .childNum(4)
                         .infantNum(0)
                         .totalPrice(95600)
+                        .build())))
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("예약하기 총 가격이 맞지 않을 때 예외")
+    @Test
+    void makeAReservationCheckTotalPriceDiscrepancies() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/reservation")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .accommodationId(1L)
+                        .checkInDate(LocalDate.of(2022, 2, 20))
+                        .checkoutDate(LocalDate.of(2022, 2, 22))
+                        .totalGuestNum(2)
+                        .adultNum(2)
+                        .childNum(0)
+                        .infantNum(0)
+                        .totalPrice(10000)
                         .build())))
                 .andExpect(status().isBadRequest());
     }
