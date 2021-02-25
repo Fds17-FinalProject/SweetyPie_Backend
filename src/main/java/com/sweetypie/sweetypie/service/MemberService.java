@@ -66,20 +66,17 @@ public class MemberService {
                 .findById(id)
                 .orElseThrow(() -> new DataNotFoundException("수정할 멤버가 존재하지 않습니다"));
 
-        if (memberDto.getName() != null) {
             member.setName(memberDto.getName());
-        } else if (memberDto.getBirthDate() != null) {
             member.setBirthDate(memberDto.getBirthDate());
-        } else if (memberDto.getContact() != null) {
             member.setContact(memberDto.getContact());
-        } else if (memberDto.getPassword() != null) {
+
+        if (memberDto.getPassword() != null) {
 //            if (!passwordEncoder.matches(memberDto.getPrePassword(), member.getPassword())) {
 //                throw new InputNotValidException("이전 비밀번호가 일치하지 않습니다");
 //            } // 추후 구현
             member.setPassword(passwordEncoder.encode(memberDto.getPassword()));
         }
-
-        memberRepository.save(member);
+            memberRepository.save(member);
     }
 
     public Member withdrawal(Long id) {

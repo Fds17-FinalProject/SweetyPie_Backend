@@ -45,8 +45,7 @@ public class MemberController {
             @RequestHeader("Authorization") String token,
             @Valid @RequestBody MemberDto memberDto) {
 
-        memberService.updateMember(tokenProvider.parseTokenToGetMemberId(token),
-                                                     memberDto);
+        memberService.updateMember(tokenProvider.parseTokenToGetMemberId(token), memberDto);
     }
 
     @DeleteMapping("/member")
