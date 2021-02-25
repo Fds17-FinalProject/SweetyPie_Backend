@@ -79,13 +79,16 @@ public class MemberService {
             memberRepository.save(member);
     }
 
-    public Member withdrawal(Long id) {
+    public void withdrawal(Long id) {
         Member member = memberRepository
                 .findById(id)
                 .orElseThrow(() -> new DataNotFoundException("탈퇴할 멤버가 존재하지 않습니다"));
 
-        member.setDeleted(true);
-        return memberRepository.save(member);
+        if(member.isSocialMember()) {
+            memberRepository.delete(member);
+        } else {
+            member.setDeleted(true);
+        }
     }
 
     private void checkDuplicateEmail(String email) {
