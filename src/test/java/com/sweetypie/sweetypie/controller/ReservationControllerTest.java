@@ -318,6 +318,24 @@ class ReservationControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @DisplayName("예약 변경 총 가격 일치하지 않는 예외")
+    @Test
+    void updateReservationCheckTotalPriceDiscrepancies() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/reservation/1")
+                .header("Authorization", token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(ReservationDto.builder()
+                        .checkInDate(LocalDate.of(2022, 3, 20))
+                        .checkoutDate(LocalDate.of(2022, 3, 22))
+                        .totalGuestNum(2)
+                        .adultNum(2)
+                        .childNum(0)
+                        .infantNum(0)
+                        .totalPrice(10000)
+                        .build())))
+                .andExpect(status().isBadRequest());
+    }
+
     @DisplayName("예약 취소")
     @Test
     void deleteReservation() throws Exception {
