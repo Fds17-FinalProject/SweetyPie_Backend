@@ -228,15 +228,17 @@ class MemberServiceTest {
     void withdrawalTest() {
         Member member = Member.builder()
                 .email("test@mail.com")
-                .isDeleted(false)
                 .build();
 
         when(memberRepository.findById(1L))
                 .thenReturn(Optional.of(member));
 
-        memberService.withdrawal(1L);
+        when(memberRepository.save(member))
+                .thenReturn(member);
 
-        assertThat(member.isDeleted()).isEqualTo(true);
+        Member result = memberService.withdrawal(1L);
+
+        assertThat(result.isDeleted()).isEqualTo(true);
     }
 
     @DisplayName("회원탈퇴-실패-존재하지않는멤버")
