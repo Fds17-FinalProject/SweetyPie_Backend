@@ -263,7 +263,11 @@ public class DynamicAccommodationRepository {
     private void setPriceQuery(Integer minPrice, Integer maxPrice, BooleanBuilder builder) {
 
         if (minPrice != null && maxPrice != null) {
-            builder.and(ac.price.between(minPrice, maxPrice));
+            if (maxPrice == 250000) {
+                builder.and(ac.price.goe(minPrice));
+            } else {
+                builder.and(ac.price.between(minPrice, maxPrice));
+            }
         }
     }
 }
