@@ -58,4 +58,5 @@
 ### 백엔드
 - AWS의 EC2, S3, Code Deploy와 Github Actions를 활용하여 배포하였습니다.
 
+## 결과
 ### [Sweetypie 홈페이지](https://sweetypie.netlify.app/)
