@@ -196,20 +196,40 @@ public class DynamicAccommodationRepository {
     }
 
     private void setSearchKeywordQuery(String searchKeyword, BooleanBuilder builder) {
+        int count = 0;
+
+
         if (searchKeyword != null && !searchKeyword.equals("")) {
             String match = "[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]";
 
-            searchKeyword = searchKeyword.replace("특별시", "")
-                    .replace("광역시", "")
+            searchKeyword = searchKeyword.replace("특별시", "시")
+                    .replace("광역시", "시")
                     .replaceAll(match, "");
 
-            for (String keyword : searchKeyword.split(" ")) {
-                if (keyword.charAt(keyword.length() - 1) == '시') {
+            String[] keywords = searchKeyword.split(" ");
+
+            for (String keyword : keywords) {
+                char lastChar = keyword.charAt(keyword.length() - 1);
+                boolean flag = false;
+
+                if (lastChar == '시') {
                     keyword = keyword.substring(0, keyword.length() - 1);
+                    flag = true;
+                } else if (lastChar == '면' || lastChar == '읍' || lastChar == '구') {
+                    flag = true;
                 }
-                builder.and(ac.city.startsWith(keyword).or(ac.gu.startsWith(keyword)));
+
+                if (flag) {
+                    builder.and(ac.city.startsWith(keyword).or(ac.gu.startsWith(keyword)));
+                    count++;
+                }
+            }
+
+            if (count == 0) {
+                builder.and(ac.city.startsWith(keywords[keywords.length - 1]).or(ac.gu.startsWith(keywords[keywords.length - 1])));
             }
         }
+
     }
 
     private void setCheckInCheckOutQuery(LocalDate checkIn, LocalDate checkout, BooleanBuilder builder) {
@@ -243,7 +263,11 @@ public class DynamicAccommodationRepository {
     private void setPriceQuery(Integer minPrice, Integer maxPrice, BooleanBuilder builder) {
 
         if (minPrice != null && maxPrice != null) {
-            builder.and(ac.price.between(minPrice, maxPrice));
+            if (maxPrice == 250000) {
+                builder.and(ac.price.goe(minPrice));
+            } else {
+                builder.and(ac.price.between(minPrice, maxPrice));
+            }
         }
     }
 }

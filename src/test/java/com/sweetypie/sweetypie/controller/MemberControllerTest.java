@@ -148,9 +148,13 @@ class MemberControllerTest {
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(
-                        "{       \"name\":\"수정된테스터\", " +
-                                "\"birthDate\":\"1999-09-11\", " +
-                                "\"contact\":\"01022223333\" }"
+                        objectMapper.writeValueAsString(
+                        MemberDto.builder()
+                        .name("수정된테스터")
+                        .birthDate(LocalDate.of(1999,9,11))
+                        .contact("01022223333")
+                        .build()
+                        )
                 ))
                 .andExpect(status().isOk());
     }
