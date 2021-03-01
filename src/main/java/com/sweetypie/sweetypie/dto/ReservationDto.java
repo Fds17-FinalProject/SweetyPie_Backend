@@ -31,11 +31,13 @@ public class ReservationDto {
     @Min(value = 1, message = "총 인원은 최소 1명입니다.") @Max(value = 15, message = "총 인원은 최대 15명입니다.")
     private int totalGuestNum;
 
-    @Min(value = 1, message = "성인 인원은 최소 1명입니다.")
+    @Min(value = 1, message = "성인 인원은 최소 1명입니다.") @Max(value = 5, message = "성인 인원은 최대 5명입니다.")
     private int adultNum;
 
+    @Max(value = 5, message = "어린이 인원은 최대 5명입니다.")
     private int childNum;
 
+    @Max(value = 5, message = "유아 인원은 최대 5명입니다.")
     private int infantNum;
 
     @Positive(message = "총 비용이 맞지 않습니다.")
