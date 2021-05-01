@@ -1,5 +1,6 @@
 package com.sweetypie.sweetypie.controller;
 
+import com.sweetypie.sweetypie.aspect.LogExecutionTime;
 import com.sweetypie.sweetypie.dto.AccommodationDto;
 import com.sweetypie.sweetypie.dto.SearchAccommodationDto;
 import com.sweetypie.sweetypie.model.Accommodation;
@@ -54,6 +55,7 @@ public class AccommodationController {
         return accommodationService.findByBuildingType(token, buildingType, page);
     }
 
+    @LogExecutionTime
     @GetMapping("/accommodations/search")
     public Page<SearchAccommodationDto> getAccommodationsBySearch(@RequestHeader(value = "Authorization", required = false) String token, @RequestParam(required = false) String searchKeyword,
                                                                   @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate checkIn,
@@ -65,6 +67,7 @@ public class AccommodationController {
         return accommodationService.findAccommodationsBySearch(token, searchKeyword, checkIn, checkout, guestNum, minPrice, maxPrice, types, page);
     }
 
+    @LogExecutionTime
     @GetMapping("/accommodations/mapSearch")
     public Page<SearchAccommodationDto> getAccommodationsByMapSearch(@RequestParam float minLatitude, @RequestParam float maxLatitude,
                                                                      @RequestParam float minLongitude, @RequestParam float maxLongitude,
