@@ -136,10 +136,8 @@ public class DynamicAccommodationRepository {
     }
 
     private QueryResults<SearchAccommodationDto> getQueryResults(BooleanBuilder builder, Long memberId, Pageable page) {
-        QueryResults<SearchAccommodationDto> results;
-
         if (memberId != null) {
-            results = queryFactory
+            return queryFactory
                     .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
                             ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
                             ac.accommodationType, ac.buildingType, ac.hostName, bookmark))
@@ -152,7 +150,7 @@ public class DynamicAccommodationRepository {
                     .limit(page.getPageSize())
                     .fetchResults();
         } else {
-            results = queryFactory
+            return queryFactory
                     .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
                             ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
                             ac.accommodationType, ac.buildingType, ac.hostName))
@@ -163,8 +161,6 @@ public class DynamicAccommodationRepository {
                     .limit(page.getPageSize())
                     .fetchResults();
         }
-
-        return results;
     }
 
     private AccommodationDto getQueryResult(Long memberId, Long accommodationId) {
