@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Column;
@@ -92,14 +93,17 @@ public class Accommodation {
     private int hostReviewNum;
 
     @JsonIgnore
+    @ToString.Exclude
     @OneToMany(mappedBy = "accommodation")
     private List<Reservation> reservations;
 
     @JsonIgnore
+    @ToString.Exclude
     @OneToMany(mappedBy = "accommodation")
     private List<Review> reviews;
 
     @JsonIgnore
+    @ToString.Exclude
     @OneToMany(mappedBy = "accommodation")
     private List<BookedDate> bookedDates;
 
