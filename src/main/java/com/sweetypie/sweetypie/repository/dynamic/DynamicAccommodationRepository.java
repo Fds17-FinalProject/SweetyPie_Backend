@@ -133,6 +133,17 @@ public class DynamicAccommodationRepository {
                 .fetch();
     }
 
+    private QueryResults<Long> getIds(BooleanBuilder builder, Pageable page) {
+        return queryFactory
+                .select(accommodation.id)
+                .from(accommodation)
+                .where(builder)
+                .orderBy(accommodation.randId.asc())
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .fetchResults();
+    }
+
     private QueryResults<SearchAccommodationDto> getQueryResults(BooleanBuilder builder, Long memberId, Pageable page) {
         if (memberId != null) {
             return queryFactory

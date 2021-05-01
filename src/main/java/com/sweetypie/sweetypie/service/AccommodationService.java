@@ -1,6 +1,7 @@
 package com.sweetypie.sweetypie.service;
 
 import com.sweetypie.sweetypie.dto.AccommodationDto;
+import com.sweetypie.sweetypie.dto.IsBookmarkDto;
 import com.sweetypie.sweetypie.dto.SearchAccommodationDto;
 import com.sweetypie.sweetypie.exception.DataNotFoundException;
 import com.sweetypie.sweetypie.exception.InputNotValidException;
@@ -15,11 +16,13 @@ import com.sweetypie.sweetypie.repository.dynamic.DynamicBookedDateRepository;
 import com.sweetypie.sweetypie.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -67,9 +70,15 @@ public class AccommodationService {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return setPictures(dynamicAccRepository
-                .findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token),
-                        minPrice, maxPrice, types, page));
+        Page<Accommodation> accommodations = dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token), minPrice, maxPrice, types, page);
+        List<IsBookmarkDto> bookmarks = dynamicAccRepository.findIsBookmarkedList(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token), minPrice, maxPrice, types, page);
+
+        List<SearchAccommodationDto> result = new ArrayList<>();
+        for (int i = 0; i < accommodations.toList().size(); i++) {
+            result.add(mapToSearchAccommodationDto(accommodations.toList().get(i), bookmarks.get(i)));
+        }
+
+        return new PageImpl<>(result, page, accommodations.getTotalPages());
     }
 
     public Page<SearchAccommodationDto> findAccommodationsByMapSearch(String token, float minLatitude, float maxLatitude,
@@ -140,5 +149,30 @@ public class AccommodationService {
         }
 
         return checkIn;
+    }
+
+    private SearchAccommodationDto mapToSearchAccommodationDto(Accommodation accommodation, IsBookmarkDto isBookmarkDto) {
+        return SearchAccommodationDto.builder()
+                .accommodationType(accommodation.getAccommodationType())
+                .accommodationPictures(accommodation.getAccommodationPictures())
+                .address(accommodation.getAddress())
+                .bathroomNum(accommodation.getBathroomNum())
+                .bedNum(accommodation.getBedNum())
+                .bedroomNum(accommodation.getBedroomNum())
+                .buildingType(accommodation.getBuildingType())
+                .capacity(accommodation.getCapacity())
+                .city(accommodation.getCity())
+                .gu(accommodation.getGu())
+                .contact(accommodation.getContact())
+                .hostName(accommodation.getHostName())
+                .latitude(accommodation.getLatitude())
+                .longitude(accommodation.getLongitude())
+                .id(accommodation.getId())
+                .price(accommodation.getPrice())
+                .rating(accommodation.getRating())
+                .reviewNum(accommodation.getReviewNum())
+                .title(accommodation.getTitle())
+                .isBookmarked(isBookmarkDto.isBookmark())
+                .build();
     }
 }
