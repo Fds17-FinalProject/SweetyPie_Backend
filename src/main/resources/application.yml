@@ -18,7 +18,7 @@ logging:
           descriptor:
             sql: off
       springframework:
-        web: DEBUG
+        web: info
 
 jasypt:
   encryptor:
