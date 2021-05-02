@@ -1,6 +1,5 @@
 package com.sweetypie.sweetypie.repository.dynamic;
 
-import com.sweetypie.sweetypie.dto.SearchAccommodationDto;
 import com.sweetypie.sweetypie.model.Accommodation;
 import com.sweetypie.sweetypie.model.BookedDate;
 import com.sweetypie.sweetypie.model.Member;
@@ -46,16 +45,15 @@ class DynamicAccommodationRepositoryTest {
             accRepository.save(accommodation);
         }
 
-        Page<SearchAccommodationDto> accommodations = dynamicAccRepository.
-                findAccommodationsBySearch("대구",
-                        LocalDate.of(2022, 3, 3),
-                        LocalDate.of(2022, 3, 4), 1,
-                        null, null, null, null, PageRequest.of(0, 10));
+        Page<Accommodation> accommodations = dynamicAccRepository.findAccommodationsBySearch("대구",
+                LocalDate.of(2022, 3, 3),
+                LocalDate.of(2022, 3, 4), 1,
+                null, null, null, PageRequest.of(0, 10));
 
-        assertThat(accommodations.toList().size()).isEqualTo(10);
+        assertThat(accommodations.toList().size()).isEqualTo(0);
 
         if (!accommodations.isEmpty()) {
-            for (SearchAccommodationDto ac : accommodations) {
+            for (Accommodation ac : accommodations) {
                 assertThat(ac.getCity()).isEqualTo("대구광역시");
             }
         }
@@ -68,11 +66,11 @@ class DynamicAccommodationRepositoryTest {
         setBookDates(accommodation);
         accRepository.save(accommodation);
 
-        Page<SearchAccommodationDto> accommodations = dynamicAccRepository.
+        Page<Accommodation> accommodations = dynamicAccRepository.
                 findAccommodationsBySearch("대구",
                         LocalDate.of(2022, 3, 3),
                         LocalDate.of(2022, 3, 7), 1,
-                        null, null, null, null, PageRequest.of(0, 10));
+                        null, null, null, PageRequest.of(0, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
     }
@@ -84,13 +82,13 @@ class DynamicAccommodationRepositoryTest {
         setBookDates(accommodation);
         accRepository.save(accommodation);
 
-        Page<SearchAccommodationDto> accommodations = dynamicAccRepository
+        Page<Accommodation> accommodations = dynamicAccRepository
                 .findAccommodationsBySearch(null, LocalDate.now(), null, 0, null,
-                        null, null, null, PageRequest.of(1, 10));
+                        null, null, PageRequest.of(1, 10));
 
         assertThat(accommodations.toList().size()).isEqualTo(0);
 
-        for (SearchAccommodationDto acc : accommodations) {
+        for (Accommodation acc : accommodations) {
             assertThat(acc.getCapacity()).isGreaterThanOrEqualTo(3);
         }
     }
@@ -98,11 +96,11 @@ class DynamicAccommodationRepositoryTest {
     @DisplayName("지도 범위(좌표 기준) 내 검색")
     @Test
     void searchByCoordinate() {
-        Page<SearchAccommodationDto> accommodations = dynamicAccRepository
+        Page<Accommodation> accommodations = dynamicAccRepository
                 .findAccommodationsByMapSearch(37f, 37.5f, 126f, 127f,
-                        LocalDate.now(), null, null, null, 0, null, null, PageRequest.of(1, 10));
+                        LocalDate.now(), null, null, null, 0, null, PageRequest.of(1, 10));
 
-        for (SearchAccommodationDto accommodation : accommodations) {
+        for (Accommodation accommodation : accommodations) {
             assertThat(accommodation.getLatitude()).isGreaterThan(37f);
             assertThat(accommodation.getLatitude()).isLessThan(37.5f);
             assertThat(accommodation.getLongitude()).isGreaterThan(126f);

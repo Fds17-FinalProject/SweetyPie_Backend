@@ -54,15 +54,15 @@ class AccommodationControllerTest {
     void getAccommodationsByCity() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations/city/서울?page=0"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(3)));
+                .andExpect(jsonPath("$.content", hasSize(1)));
     }
 
     @DisplayName("메인 검색 기능 (검색어, 체크인, 체크아웃, 인원수)")
     @Test
     void getAccommodationsBySearch() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations/search?searchKeyword=서울&checkIn=2021-04-06&checkout=2021-05-05"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/accommodations/search?searchKeyword=서울&checkIn=2031-04-06&checkout=2031-05-05"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].city").value("서울특별시"))
-                .andExpect(jsonPath("$.content[0].gu").value("성동구"));
+                .andExpect(jsonPath("$.content[0].gu").value("마포구"));
     }
 }
