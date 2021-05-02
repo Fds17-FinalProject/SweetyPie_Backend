@@ -56,12 +56,16 @@ public class AccommodationService {
 
     public Page<SearchAccommodationDto> findByCity(String token, String city, Pageable page) {
 
-        return setPictures(dynamicAccRepository.findByCity(city, parseTokenToMemberId(token), page));
+        Page<Accommodation> accommodations = dynamicAccRepository.findByCity(city, parseTokenToMemberId(token), page);
+
+        return mapToSearchAccommodationDtos(accommodations, page);
     }
 
     public Page<SearchAccommodationDto> findByBuildingType(String token, String buildingType, Pageable page) {
 
-        return setPictures(dynamicAccRepository.findByBuildingType(buildingType, parseTokenToMemberId(token), page));
+        Page<Accommodation> accommodations = dynamicAccRepository.findByBuildingType(buildingType, page);
+
+        return mapToSearchAccommodationDtos(accommodations, page);
     }
 
     public Page<SearchAccommodationDto> findAccommodationsBySearch(String token, String searchKeyword,
@@ -70,25 +74,25 @@ public class AccommodationService {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        Page<Accommodation> accommodations = dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token), minPrice, maxPrice, types, page);
-        List<IsBookmarkDto> bookmarks = dynamicAccRepository.findIsBookmarkedList(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token), minPrice, maxPrice, types, page);
+        Page<Accommodation> accommodations = dynamicAccRepository.findAccommodationsBySearch(searchKeyword, checkIn, checkout, guestNum, minPrice, maxPrice, types, page);
+        List<IsBookmarkDto> bookmarks = dynamicAccRepository.findIsBookmarks(searchKeyword, checkIn, checkout, guestNum, parseTokenToMemberId(token), minPrice, maxPrice, types, page);
 
-        List<SearchAccommodationDto> result = new ArrayList<>();
-        for (int i = 0; i < accommodations.toList().size(); i++) {
-            result.add(mapToSearchAccommodationDto(accommodations.toList().get(i), bookmarks.get(i)));
-        }
-
-        return new PageImpl<>(result, page, accommodations.getTotalPages());
+        return bookmarks == null ? mapToSearchAccommodationDtos(accommodations, page) : mapToSearchAccommodationDtos(accommodations, bookmarks, page);
     }
 
-    public Page<SearchAccommodationDto> findAccommodationsByMapSearch(String token, float minLatitude, float maxLatitude,
-                                                                      float minLongitude, float maxLongitude, Integer minPrice, Integer maxPrice,
+    public Page<SearchAccommodationDto> findAccommodationsByMapSearch(String token, Float minLatitude, Float maxLatitude,
+                                                                      Float minLongitude, Float maxLongitude, Integer minPrice, Integer maxPrice,
                                                                       LocalDate checkIn, LocalDate checkout, int guestNum, String types, Pageable page) {
 
         checkIn = validateCheckInCheckout(checkIn, checkout);
 
-        return setPictures(dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
-                checkIn, checkout, minPrice, maxPrice, guestNum, parseTokenToMemberId(token), types, page));
+        Page<Accommodation> accommodations = dynamicAccRepository.findAccommodationsByMapSearch(minLatitude, maxLatitude, minLongitude, maxLongitude,
+                checkIn, checkout, minPrice, maxPrice, guestNum, types, page);
+
+        List<IsBookmarkDto> bookmarks = dynamicAccRepository.findIsBookmarks(minLatitude, maxLatitude, minLongitude, maxLongitude,
+                checkIn, checkout, minPrice, maxPrice, guestNum, parseTokenToMemberId(token), types, page);
+
+        return bookmarks == null ? mapToSearchAccommodationDtos(accommodations, page) : mapToSearchAccommodationDtos(accommodations, bookmarks, page);
     }
 
     public List<Integer> findPricesBySearch(String searchKeyword, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude,
@@ -106,15 +110,6 @@ public class AccommodationService {
         acc.setReviews(reviewRepository.findReviewsByAccommodationId(acc.getId()));
 
         return acc;
-    }
-
-    private Page<SearchAccommodationDto> setPictures(Page<SearchAccommodationDto> searchAccommodationDtos) {
-
-        for (SearchAccommodationDto acc : searchAccommodationDtos) {
-            acc.setAccommodationPictures(accommodationPictureRepository.findByAccommodationId(acc.getId()));
-        }
-
-        return searchAccommodationDtos;
     }
 
     private Long parseTokenToMemberId(String token) {
@@ -149,6 +144,53 @@ public class AccommodationService {
         }
 
         return checkIn;
+    }
+
+    private Page<SearchAccommodationDto> mapToSearchAccommodationDtos(Page<Accommodation> accommodations, Pageable page) {
+        List<Accommodation> accommodationList = accommodations.toList();
+        List<SearchAccommodationDto> searchAccommodationDtos = new ArrayList<>();
+
+        for (int i = 0; i < accommodationList.size(); i++) {
+            searchAccommodationDtos.add(mapToSearchAccommodationDto(accommodationList.get(i)));
+        }
+
+        return new PageImpl<>(searchAccommodationDtos, page, accommodations.getTotalPages());
+    }
+
+    private Page<SearchAccommodationDto> mapToSearchAccommodationDtos(Page<Accommodation> accommodations, List<IsBookmarkDto> isBookmarkDtos, Pageable page) {
+        List<Accommodation> accommodationList = accommodations.toList();
+        List<SearchAccommodationDto> searchAccommodationDtos = new ArrayList<>();
+
+        for (int i = 0; i < accommodationList.size(); i++) {
+            searchAccommodationDtos.add(mapToSearchAccommodationDto(accommodationList.get(i), isBookmarkDtos.get(i)));
+        }
+
+        return new PageImpl<>(searchAccommodationDtos, page, accommodations.getTotalPages());
+    }
+
+    private SearchAccommodationDto mapToSearchAccommodationDto(Accommodation accommodation) {
+        return SearchAccommodationDto.builder()
+                .accommodationType(accommodation.getAccommodationType())
+                .accommodationPictures(accommodation.getAccommodationPictures())
+                .address(accommodation.getAddress())
+                .bathroomNum(accommodation.getBathroomNum())
+                .bedNum(accommodation.getBedNum())
+                .bedroomNum(accommodation.getBedroomNum())
+                .buildingType(accommodation.getBuildingType())
+                .capacity(accommodation.getCapacity())
+                .city(accommodation.getCity())
+                .gu(accommodation.getGu())
+                .contact(accommodation.getContact())
+                .hostName(accommodation.getHostName())
+                .latitude(accommodation.getLatitude())
+                .longitude(accommodation.getLongitude())
+                .id(accommodation.getId())
+                .price(accommodation.getPrice())
+                .rating(accommodation.getRating())
+                .reviewNum(accommodation.getReviewNum())
+                .title(accommodation.getTitle())
+                .isBookmarked(false)
+                .build();
     }
 
     private SearchAccommodationDto mapToSearchAccommodationDto(Accommodation accommodation, IsBookmarkDto isBookmarkDto) {
