@@ -47,3 +47,16 @@
 
 ## DB 구조 (ERD)
 ![ERD](img/SweetyPie_ERD.png)
+
+## API 문서
+- Postman 을 활용하여 API 문서화하였습니다.
+[API 문서 링크](https://documenter.getpostman.com/view/14479786/TWDUrJpP)
+
+## 배포
+### 프론트엔드
+- Netlify 를 활용하여 배포하였습니다.
+### 백엔드
+- AWS의 EC2, S3, Code Deploy와 Github Actions를 활용하여 배포하였습니다.
+
+## 결과
+### [Sweetypie 홈페이지](https://sweetypie.netlify.app/)
