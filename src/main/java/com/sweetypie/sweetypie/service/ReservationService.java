@@ -48,7 +48,9 @@ public class ReservationService {
 
         Accommodation accommodation = accommodationRepository.findById(reservationDto.getAccommodationId()).orElseThrow(() -> new DataNotFoundException("등록된 숙박 정보를 찾을 수 없습니다."));
 
-        validateTotalPrice(reservationDto, accommodation.getPrice());
+        checkCapacity(reservationDto, accommodation);
+
+        checkTotalPrice(reservationDto, accommodation.getPrice());
 
         List<BookedDate> bookedDates = dynamicReservationRepository.findByAccommodationIdAndDate(accommodation.getId(), reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
@@ -65,7 +67,9 @@ public class ReservationService {
             throw new InputNotValidException("요청한 회원정보와 예약된 회원정보가 일치하지 않습니다.");
         }
 
-        validateTotalPrice(reservationDto, reservation.getAccommodation().getPrice());
+        checkCapacity(reservationDto, reservation.getAccommodation());
+
+        checkTotalPrice(reservationDto, reservation.getAccommodation().getPrice());
 
         bookedDateRepository.deleteBookedDateByReservationId(reservationId);
 
@@ -84,6 +88,12 @@ public class ReservationService {
         }
 
         reservationRepository.deleteById(reservationId);
+    }
+
+    private void checkCapacity(ReservationDto reservationDto, Accommodation accommodation){
+        if (reservationDto.getTotalGuestNum() > accommodation.getCapacity()) {
+            throw new InputNotValidException("숙소의 수용 가능한 최대 인원을 초과하였습니다.");
+        }
     }
 
     private void handleCheckoutBeforeCheckInInputException(ReservationDto reservationDto) {
@@ -189,7 +199,7 @@ public class ReservationService {
         reservation.setTotalPrice(reservationDto.getTotalPrice());
     }
 
-    private void validateTotalPrice(ReservationDto reservationDto, int pricePerDay) {
+    private void checkTotalPrice(ReservationDto reservationDto, int pricePerDay) {
 
         long night = ChronoUnit.DAYS.between(reservationDto.getCheckInDate(), reservationDto.getCheckoutDate());
 
