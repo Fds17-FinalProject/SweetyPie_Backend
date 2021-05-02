@@ -5,12 +5,10 @@ import com.querydsl.core.QueryResults;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sweetypie.sweetypie.dto.AccommodationDto;
+import com.sweetypie.sweetypie.dto.IsBookmarkDto;
 import com.sweetypie.sweetypie.dto.QAccommodationDto;
-import com.sweetypie.sweetypie.dto.QSearchAccommodationDto;
-import com.sweetypie.sweetypie.dto.SearchAccommodationDto;
-import com.sweetypie.sweetypie.model.QAccommodation;
-import com.sweetypie.sweetypie.model.QBookedDate;
-import com.sweetypie.sweetypie.model.QBookmark;
+import com.sweetypie.sweetypie.dto.QIsBookmarkDto;
+import com.sweetypie.sweetypie.model.Accommodation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,79 +18,57 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.sweetypie.sweetypie.model.QAccommodation.accommodation;
+import static com.sweetypie.sweetypie.model.QAccommodationPicture.accommodationPicture;
+import static com.sweetypie.sweetypie.model.QBookedDate.bookedDate;
+import static com.sweetypie.sweetypie.model.QBookmark.bookmark;
+
 @Repository
 @RequiredArgsConstructor
 public class DynamicAccommodationRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    QAccommodation ac = QAccommodation.accommodation;
-    QBookedDate bd = QBookedDate.bookedDate;
-    QBookmark bookmark = QBookmark.bookmark;
-
     public AccommodationDto findById(Long memberId, Long accommodationId) {
 
         return getQueryResult(memberId, accommodationId);
     }
 
-    public Page<SearchAccommodationDto> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout,
-                                                                   int guestNum, Long memberId, Integer minPrice, Integer maxPrice, String types, Pageable page) {
-        BooleanBuilder bdBuilder = new BooleanBuilder();
-        BooleanBuilder acBuilder = new BooleanBuilder();
+    public Page<Accommodation> findAccommodationsBySearch(String searchKeyword, LocalDate checkIn, LocalDate checkout,
+                                                          int guestNum, Integer minPrice, Integer maxPrice, String types, Pageable page) {
 
-        acBuilder.and(ac.capacity.goe(guestNum));
+        QueryResults<Long> ids = getIds(setSearchBuilder(searchKeyword, checkIn, checkout, guestNum, minPrice, maxPrice, types, page), page);
+        QueryResults<Accommodation> accommodations = getQueryResults(ids.getResults());
 
-        setPriceQuery(minPrice, maxPrice, acBuilder);
-        setAccommodationTypesQuery(types, acBuilder);
-        setSearchKeywordQuery(searchKeyword, acBuilder);
-        setCheckInCheckOutQuery(checkIn, checkout, bdBuilder);
-
-        acBuilder.andNot(ac.id.in(JPAExpressions
-                .select(bd.accommodation.id)
-                .from(bd)
-                .where(bdBuilder)));
-
-        QueryResults<SearchAccommodationDto> results = getQueryResults(acBuilder, memberId, page);
-
-        return new PageImpl<>(results.getResults(), page, results.getTotal());
+        return new PageImpl<>(accommodations.getResults(), page, ids.getTotal());
     }
 
-    public Page<SearchAccommodationDto> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
-                                                                      float minLongitude, float maxLongitude,
-                                                                      LocalDate checkIn, LocalDate checkout,
-                                                                      Integer minPrice, Integer maxPrice,
-                                                                      int guestNum, Long memberId, String types, Pageable page) {
-        BooleanBuilder bdBuilder = new BooleanBuilder();
-        BooleanBuilder acBuilder = new BooleanBuilder();
+    public Page<Accommodation> findAccommodationsByMapSearch(float minLatitude, float maxLatitude,
+                                                             float minLongitude, float maxLongitude,
+                                                             LocalDate checkIn, LocalDate checkout,
+                                                             Integer minPrice, Integer maxPrice,
+                                                             int guestNum, String types, Pageable page) {
 
-        acBuilder.and(ac.capacity.goe(guestNum));
+        QueryResults<Long> ids = getIds(setMapSearchBuilder(minLatitude, maxLatitude, minLongitude, maxLongitude, checkIn,
+                checkout, minPrice, maxPrice, guestNum, types), page);
 
-        setPriceQuery(minPrice, maxPrice, acBuilder);
-        setAccommodationTypesQuery(types, acBuilder);
-        setCheckInCheckOutQuery(checkIn, checkout, bdBuilder);
-        setCoordinate(minLatitude, maxLatitude, minLongitude, maxLongitude, acBuilder);
+        QueryResults<Accommodation> accommodations = getQueryResults(ids.getResults());
 
-        acBuilder.andNot(ac.id.in(JPAExpressions
-                .select(bd.accommodation.id)
-                .from(bd)
-                .where(bdBuilder)));
-
-        QueryResults<SearchAccommodationDto> results = getQueryResults(acBuilder, memberId, page);
-
-        return new PageImpl<>(results.getResults(), page, results.getTotal());
+        return new PageImpl<>(accommodations.getResults(), page, ids.getTotal());
     }
 
-    public Page<SearchAccommodationDto> findByBuildingType(String buildingType, Long memberId, Pageable page) {
+    public Page<Accommodation> findByBuildingType(String buildingType, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
-        builder.and(ac.buildingType.eq(buildingType));
+        builder.and(accommodation.buildingType.eq(buildingType));
 
-        QueryResults<SearchAccommodationDto> results = getQueryResults(builder, memberId, page);
+        QueryResults<Long> ids = getIds(builder, page);
+        QueryResults<Accommodation> accommodations = getQueryResults(ids.getResults());
 
-        return new PageImpl<>(results.getResults(), page, results.getTotal());
+        return new PageImpl<>(accommodations.getResults(), page, accommodations.getTotal());
     }
 
-    public Page<SearchAccommodationDto> findByCity(String city, Long memberId, Pageable page) {
+    public Page<Accommodation> findByCity(String city, Long memberId, Pageable page) {
         BooleanBuilder builder = new BooleanBuilder();
 
         city = city.replace("특별시", "")
@@ -102,11 +78,12 @@ public class DynamicAccommodationRepository {
             city = city.substring(0, city.length() - 1);
         }
 
-        builder.and(ac.city.startsWith(city));
+        builder.and(accommodation.city.startsWith(city));
 
-        QueryResults<SearchAccommodationDto> results = getQueryResults(builder, memberId, page);
+        QueryResults<Long> ids = getIds(builder, page);
+        QueryResults<Accommodation> accommodations = getQueryResults(ids.getResults());
 
-        return new PageImpl<>(results.getResults(), page, results.getTotal());
+        return new PageImpl<>(accommodations.getResults(), page, accommodations.getTotal());
     }
 
     public List<Integer> findPricesBySearch(String searchKeyword, Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude,
@@ -120,79 +97,108 @@ public class DynamicAccommodationRepository {
         setCheckInCheckOutQuery(checkIn, checkout, bdBuilder);
         setCoordinate(minLatitude, maxLatitude, minLongitude, maxLongitude, acBuilder);
 
-        acBuilder.and(ac.capacity.goe(guestNum));
+        acBuilder.and(accommodation.capacity.goe(guestNum));
 
-        acBuilder.andNot(ac.id.in(JPAExpressions
-                .select(bd.accommodation.id)
-                .from(bd)
+        acBuilder.andNot(accommodation.id.in(JPAExpressions
+                .select(bookedDate.accommodation.id)
+                .from(bookedDate
+                )
                 .where(bdBuilder)));
 
         return queryFactory
-                .select(ac.price)
-                .from(ac)
+                .select(accommodation.price)
+                .from(accommodation)
                 .where(acBuilder)
-                .orderBy(ac.price.asc())
+                .orderBy(accommodation.price.asc())
                 .fetch();
     }
 
-    private QueryResults<SearchAccommodationDto> getQueryResults(BooleanBuilder builder, Long memberId, Pageable page) {
-        QueryResults<SearchAccommodationDto> results;
-
-        if (memberId != null) {
-            results = queryFactory
-                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
-                            ac.accommodationType, ac.buildingType, ac.hostName, bookmark))
-                    .from(ac)
-                    .where(builder)
-                    .leftJoin(bookmark)
-                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
-                    .orderBy(ac.randId.asc())
-                    .offset(page.getOffset())
-                    .limit(page.getPageSize())
-                    .fetchResults();
-        } else {
-            results = queryFactory
-                    .select(new QSearchAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.price, ac.capacity, ac.contact, ac.latitude, ac.longitude, ac.rating, ac.reviewNum,
-                            ac.accommodationType, ac.buildingType, ac.hostName))
-                    .from(ac)
-                    .where(builder)
-                    .orderBy(ac.randId.asc())
-                    .offset(page.getOffset())
-                    .limit(page.getPageSize())
-                    .fetchResults();
+    public List<IsBookmarkDto> findIsBookmarks(String searchKeyword, LocalDate checkIn, LocalDate checkout,
+                                               int guestNum, Long memberId, Integer minPrice, Integer maxPrice, String types, Pageable page) {
+        if (memberId == null) {
+            return null;
         }
 
-        return results;
+        return queryFactory
+                .select(new QIsBookmarkDto(bookmark))
+                .from(accommodation)
+                .where(setSearchBuilder(searchKeyword, checkIn, checkout, guestNum, minPrice, maxPrice, types, page))
+                .leftJoin(bookmark)
+                .on(accommodation.id.eq(bookmark.accommodation.id).and(bookmark.member.id.eq(memberId)))
+                .orderBy(accommodation.randId.asc())
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .fetch();
+    }
+
+    public List<IsBookmarkDto> findIsBookmarks(Float minLatitude, Float maxLatitude,
+                                               Float minLongitude, Float maxLongitude,
+                                               LocalDate checkIn, LocalDate checkout,
+                                               Integer minPrice, Integer maxPrice,
+                                               int guestNum, Long memberId, String types, Pageable page) {
+
+        if (memberId == null) {
+            return null;
+        }
+
+        return queryFactory
+                .select(new QIsBookmarkDto(bookmark))
+                .from(accommodation)
+                .where(setMapSearchBuilder(minLatitude, maxLatitude, minLongitude, maxLongitude, checkIn,
+                        checkout, minPrice, maxPrice, guestNum, types))
+                .leftJoin(bookmark)
+                .on(accommodation.id.eq(bookmark.accommodation.id).and(bookmark.member.id.eq(memberId)))
+                .orderBy(accommodation.randId.asc())
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .fetch();
+    }
+
+    private QueryResults<Long> getIds(BooleanBuilder builder, Pageable page) {
+
+        return queryFactory
+                .select(accommodation.id)
+                .from(accommodation)
+                .where(builder)
+                .orderBy(accommodation.randId.asc())
+                .offset(page.getOffset())
+                .limit(page.getPageSize())
+                .fetchResults();
+    }
+
+    private QueryResults<Accommodation> getQueryResults(List<Long> ids) {
+        return queryFactory
+                .selectFrom(accommodation)
+                .where(accommodation.id.in(ids))
+                .join(accommodation.accommodationPictures, accommodationPicture)
+                .fetchJoin()
+                .orderBy(accommodation.randId.asc())
+                .distinct()
+                .fetchResults();
     }
 
     private AccommodationDto getQueryResult(Long memberId, Long accommodationId) {
-        AccommodationDto result;
-
         if (memberId != null) {
-            result = queryFactory
-                    .select(new QAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.capacity, ac.price, ac.contact, ac.latitude, ac.longitude, ac.locationDesc, ac.transportationDesc,
-                            ac.accommodationDesc, ac.rating, ac.reviewNum, ac.accommodationType, ac.buildingType, ac.hostName, ac.hostDesc,
-                            ac.hostReviewNum, bookmark))
-                    .from(ac)
-                    .where(ac.id.eq(accommodationId))
+            return queryFactory
+                    .select(new QAccommodationDto(accommodation.id, accommodation.city, accommodation.gu, accommodation.address, accommodation.title, accommodation.bathroomNum, accommodation.bedroomNum,
+                            accommodation.bedNum, accommodation.capacity, accommodation.price, accommodation.contact, accommodation.latitude, accommodation.longitude, accommodation.locationDesc, accommodation.transportationDesc,
+                            accommodation.accommodationDesc, accommodation.rating, accommodation.reviewNum, accommodation.accommodationType, accommodation.buildingType, accommodation.hostName, accommodation.hostDesc,
+                            accommodation.hostReviewNum, bookmark))
+                    .from(accommodation)
+                    .where(accommodation.id.eq(accommodationId))
                     .leftJoin(bookmark)
-                    .on(bookmark.accommodation.id.eq(ac.id).and(bookmark.member.id.eq(memberId)))
+                    .on(bookmark.accommodation.id.eq(accommodation.id).and(bookmark.member.id.eq(memberId)))
                     .fetchOne();
         } else {
-            result = queryFactory
-                    .select(new QAccommodationDto(ac.id, ac.city, ac.gu, ac.address, ac.title, ac.bathroomNum, ac.bedroomNum,
-                            ac.bedNum, ac.capacity, ac.price, ac.contact, ac.latitude, ac.longitude, ac.locationDesc, ac.transportationDesc,
-                            ac.accommodationDesc, ac.rating, ac.reviewNum, ac.accommodationType, ac.buildingType, ac.hostName, ac.hostDesc,
-                            ac.hostReviewNum))
-                    .from(ac)
-                    .where(ac.id.eq(accommodationId))
+            return queryFactory
+                    .select(new QAccommodationDto(accommodation.id, accommodation.city, accommodation.gu, accommodation.address, accommodation.title, accommodation.bathroomNum, accommodation.bedroomNum,
+                            accommodation.bedNum, accommodation.capacity, accommodation.price, accommodation.contact, accommodation.latitude, accommodation.longitude, accommodation.locationDesc, accommodation.transportationDesc,
+                            accommodation.accommodationDesc, accommodation.rating, accommodation.reviewNum, accommodation.accommodationType, accommodation.buildingType, accommodation.hostName, accommodation.hostDesc,
+                            accommodation.hostReviewNum))
+                    .from(accommodation)
+                    .where(accommodation.id.eq(accommodationId))
                     .fetchOne();
         }
-
-        return result;
     }
 
     private void setSearchKeywordQuery(String searchKeyword, BooleanBuilder builder) {
@@ -220,23 +226,23 @@ public class DynamicAccommodationRepository {
                 }
 
                 if (flag) {
-                    builder.and(ac.city.startsWith(keyword).or(ac.gu.startsWith(keyword)));
+                    builder.and(accommodation.city.startsWith(keyword).or(accommodation.gu.startsWith(keyword)));
                     count++;
                 }
             }
 
             if (count == 0) {
-                builder.and(ac.city.startsWith(keywords[keywords.length - 1]).or(ac.gu.startsWith(keywords[keywords.length - 1])));
+                builder.and(accommodation.city.startsWith(keywords[keywords.length - 1]).or(accommodation.gu.startsWith(keywords[keywords.length - 1])));
             }
         }
 
     }
 
     private void setCheckInCheckOutQuery(LocalDate checkIn, LocalDate checkout, BooleanBuilder builder) {
-        builder.and(bd.date.goe(checkIn));
+        builder.and(bookedDate.date.goe(checkIn));
 
         if (checkout != null) {
-            builder.and(bd.date.before(checkout));
+            builder.and(bookedDate.date.before(checkout));
         }
     }
 
@@ -245,7 +251,7 @@ public class DynamicAccommodationRepository {
             BooleanBuilder typeBuilder = new BooleanBuilder();
 
             for (String type : types.split(" ")) {
-                typeBuilder.or(ac.accommodationType.eq(type));
+                typeBuilder.or(accommodation.accommodationType.eq(type));
             }
             builder.and(typeBuilder);
         }
@@ -255,8 +261,8 @@ public class DynamicAccommodationRepository {
     private void setCoordinate(Float minLatitude, Float maxLatitude, Float minLongitude, Float maxLongitude, BooleanBuilder builder) {
 
         if (minLatitude != null && maxLatitude != null && minLongitude != null && maxLongitude != null) {
-            builder.and(ac.latitude.between(minLatitude, maxLatitude));
-            builder.and(ac.longitude.between(minLongitude, maxLongitude));
+            builder.and(accommodation.latitude.between(minLatitude, maxLatitude));
+            builder.and(accommodation.longitude.between(minLongitude, maxLongitude));
         }
     }
 
@@ -264,10 +270,55 @@ public class DynamicAccommodationRepository {
 
         if (minPrice != null && maxPrice != null) {
             if (maxPrice == 250000) {
-                builder.and(ac.price.goe(minPrice));
+                builder.and(accommodation.price.goe(minPrice));
             } else {
-                builder.and(ac.price.between(minPrice, maxPrice));
+                builder.and(accommodation.price.between(minPrice, maxPrice));
             }
         }
+    }
+
+    private BooleanBuilder setSearchBuilder(String searchKeyword, LocalDate checkIn, LocalDate checkout,
+                                            int guestNum, Integer minPrice, Integer maxPrice, String types, Pageable page) {
+
+        BooleanBuilder bdBuilder = new BooleanBuilder();
+        BooleanBuilder acBuilder = new BooleanBuilder();
+
+        acBuilder.and(accommodation.capacity.goe(guestNum));
+
+        setPriceQuery(minPrice, maxPrice, acBuilder);
+        setAccommodationTypesQuery(types, acBuilder);
+        setSearchKeywordQuery(searchKeyword, acBuilder);
+        setCheckInCheckOutQuery(checkIn, checkout, bdBuilder);
+
+        acBuilder.andNot(accommodation.id.in(JPAExpressions
+                .select(bookedDate.accommodation.id)
+                .from(bookedDate)
+                .where(bdBuilder)));
+
+        return acBuilder;
+    }
+
+    private BooleanBuilder setMapSearchBuilder(Float minLatitude, Float maxLatitude,
+                                               Float minLongitude, Float maxLongitude,
+                                               LocalDate checkIn, LocalDate checkout,
+                                               Integer minPrice, Integer maxPrice,
+                                               int guestNum, String types) {
+
+        BooleanBuilder bdBuilder = new BooleanBuilder();
+        BooleanBuilder acBuilder = new BooleanBuilder();
+
+        acBuilder.and(accommodation.capacity.goe(guestNum));
+
+        setPriceQuery(minPrice, maxPrice, acBuilder);
+        setAccommodationTypesQuery(types, acBuilder);
+        setCheckInCheckOutQuery(checkIn, checkout, bdBuilder);
+        setCoordinate(minLatitude, maxLatitude, minLongitude, maxLongitude, acBuilder);
+
+        acBuilder.andNot(accommodation.id.in(JPAExpressions
+                .select(bookedDate.accommodation.id)
+                .from(bookedDate)
+                .where(bdBuilder)));
+
+        return acBuilder;
     }
 }

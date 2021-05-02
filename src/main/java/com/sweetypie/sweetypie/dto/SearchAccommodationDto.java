@@ -1,13 +1,17 @@
 package com.sweetypie.sweetypie.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
 import com.sweetypie.sweetypie.model.AccommodationPicture;
 import com.sweetypie.sweetypie.model.Bookmark;
-import com.querydsl.core.annotations.QueryProjection;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@Builder
+@AllArgsConstructor
 public class SearchAccommodationDto {
     private long id;
 
@@ -50,7 +54,7 @@ public class SearchAccommodationDto {
     private List<AccommodationPicture> accommodationPictures;
 
     @QueryProjection
-    public SearchAccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int price, int capacity, String contact, float latitude, float longitude, float rating, int reviewNum, String accommodationType, String buildingType, String hostName, Bookmark isBookmarked/*, List<AccommodationPicture> accommodationPictures*/) {
+    public SearchAccommodationDto(long id, String city, String gu, String address, String title, int bathroomNum, int bedroomNum, int bedNum, int price, int capacity, String contact, float latitude, float longitude, float rating, int reviewNum, String accommodationType, String buildingType, String hostName, Bookmark isBookmarked) {
         this.id = id;
         this.city = city;
         this.gu = gu;

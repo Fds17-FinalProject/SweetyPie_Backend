@@ -131,10 +131,10 @@ class ReviewServiceTest {
     void postReviewException3() {
         when(reservationRepository.findById(0L)).thenReturn(mockReservation(LocalDate.of(2021, 3, 1), mockAccommodation().get()));
 
-        InputNotValidException inputNotValidException = assertThrows(InputNotValidException.class,
+        DataNotFoundException dataNotFoundException = assertThrows(DataNotFoundException.class,
                 () -> reviewService.writeReview("token", mockReviewDto()));
 
-        assertThat(inputNotValidException.getMessage()).isEqualTo("숙소 이용 전에 리뷰를 작성할 수 없습니다.");
+        assertThat(dataNotFoundException.getMessage()).isEqualTo("Member Not Found");
     }
 
     @DisplayName("리뷰 등록 (없는 숙소)")
