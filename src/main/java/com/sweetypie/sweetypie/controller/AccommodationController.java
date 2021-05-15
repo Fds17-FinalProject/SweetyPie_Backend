@@ -30,6 +30,7 @@ public class AccommodationController {
     private final AccommodationService accommodationService;
 
     @GetMapping("/accommodation/{id}")
+    @LogExecutionTime
     public AccommodationDto getAccommodation(@RequestHeader(value = "Authorization", required = false) String token, @PathVariable Long id) {
 
         return accommodationService.findById(token, id);
