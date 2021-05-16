@@ -1,6 +1,6 @@
 spring:
   jpa:
-    open-in-view: true
+    open-in-view: false
     database: mysql
     hibernate:
       ddl-auto: none
