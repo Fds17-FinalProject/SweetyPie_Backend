@@ -16,7 +16,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(properties = "spring.config.location=classpath:test.yml")
-@ExtendWith(SpringExtension.class)
 class BookmarkRepositoryTest {
 
     @Autowired
